@@ -83,6 +83,8 @@ firebase deploy --only firestore:rules
       (apex 308 → `www`, `domowka.vercel.app` 308 → `www`; repo: `w84kubus/doplay`)
 - [x] Faza J — porządki w warstwach Tailwinda (`@layer components`), przebudowa
       zrzutów w README, koordynacja pasków przy dolnej krawędzi
+- [x] Faza K — sprzątanie bazy: cron kasujący wygasłe pokoje z podkolekcjami,
+      poprawka `leave` (nie zostawia sierot), plan Blaze zamiast Spark
 
 ### Co realnie zostało
 
@@ -161,3 +163,25 @@ Klasy komponentów (`.btn`, `.card`, `.screen`) żyją w `@layer components`
 w `globals.css`. To nie kosmetyka: bez warstwy miały tę samą specyficzność co
 utility Tailwinda i wygrywała kolejność w pliku, więc `rounded-tr-none` po cichu
 nie nadpisywało `.card`.
+
+### Kasowanie pokoju zawsze przez `recursiveDelete`
+
+Zwykłe `delete()` na dokumencie pokoju **nie rusza podkolekcji**. `secret/state`
+i `private/{uid}` zostają wtedy w bazie bez rodzica: niewidoczne w konsoli, poza
+zasięgiem crona (szuka po `expiresAt`, a nieistniejący dokument nie ma pól) i pełne
+ról graczy. Tak nazbierało się 74 osieroconych dokumentów, zanim ktokolwiek zauważył.
+
+- Kasujesz pokój → `db.recursiveDelete(ref)`. Bez wyjątków.
+- W transakcji się nie da. Wzorzec z `leave/route.ts`: flaga ustawiana w środku
+  transakcji (**zerowana na starcie każdej próby**, bo Firestore powtarza callback),
+  `recursiveDelete` po zatwierdzeniu.
+- Natywne TTL Firestore z tego samego powodu odpada — kasuje tylko rodzica.
+  Stąd własny cron `/api/cron/cleanup` (`vercel.json`, raz na dobę).
+
+Sam miniony `expiresAt` nie wystarcza do skasowania: partia może trwać dłużej niż
+8 h. Drugim warunkiem jest godzina ciszy od ostatniego pinga — pokój z żywym
+graczem czeka do jutra. Logika wyboru siedzi w `lib/server/cleanup.ts`, celowo bez
+`server-only` i bez firebase-admin, żeby dała się przetestować jak zwykła funkcja.
+
+Bramka crona zamyka się przy braku `CRON_SECRET` (odpowiada 401), zamiast otwierać
+trasę dla wszystkich. Sekret jest w Vercelu i w `.env.local`.

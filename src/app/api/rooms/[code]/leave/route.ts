@@ -25,7 +25,13 @@ export async function POST(
     const ref = db.doc(`rooms/${code}`);
     const now = Date.now();
 
+    // Ustawiane w transakcji, czytane po jej zatwierdzeniu — recursiveDelete nie
+    // działa wewnątrz transakcji. Zerowane na starcie każdej próby, bo Firestore
+    // potrafi powtórzyć callback i flaga z poprzedniego przebiegu byłaby kłamstwem.
+    let pokojSkasowany = false;
+
     await db.runTransaction(async (t) => {
+      pokojSkasowany = false;
       const snap = await t.get(ref);
       if (!snap.exists) return; // już nie istnieje — nic do roboty
       const room = snap.data() as Room;
@@ -39,6 +45,7 @@ export async function POST(
       const remaining = Object.keys(room.players).filter((u) => u !== targetUid);
       if (remaining.length === 0) {
         t.delete(ref); // ostatni gracz wyszedł — kasujemy pokój
+        pokojSkasowany = true;
         return;
       }
 
@@ -58,6 +65,14 @@ export async function POST(
 
       t.update(ref, update);
     });
+
+    // Samo `t.delete(ref)` zdejmuje wyłącznie dokument pokoju — `secret/state`
+    // i `private/{uid}` zostawałyby w bazie jako sieroty, bez rodzica i bez szans
+    // na sprzątnięcie (cron szuka po `expiresAt`, a nieistniejący dokument nie ma pól).
+    // To właśnie ta droga nazbierała 74 osierocone dokumenty z rolami graczy.
+    if (pokojSkasowany) {
+      await db.recursiveDelete(ref);
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err) {

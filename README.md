@@ -23,7 +23,7 @@
   <img src="https://img.shields.io/badge/PWA-installable-5A0FC8?logo=pwa&logoColor=white" alt="PWA" />
   <img src="https://img.shields.io/badge/i18n-PL%20%C2%B7%20EN-7CF0AE" alt="Polish and English" />
   <img src="https://img.shields.io/badge/multiplayer-realtime-E4002B" alt="Multiplayer Realtime" />
-  <img src="https://img.shields.io/badge/tests-206-7CF0AE?logo=vitest&logoColor=black" alt="206 tests" />
+  <img src="https://img.shields.io/badge/tests-287-7CF0AE?logo=vitest&logoColor=black" alt="287 tests" />
 </p>
 
 ---
@@ -76,12 +76,18 @@ Open it from the lobby; players keep their own phones.
 | **Mafia** | The town sleeps. The Mafia doesn't. Auto-narrator, roles: detective, doctor, mafia. | 4–16 |
 | **Shade** | Memorise the colour. Rebuild it from memory with three sliders. | 1–16 |
 | **Casino** | Bet your chips. Run out and you're out. 4 modes: Jackpot, Double, Wheel, Slots. | 2–16 |
+| **Tic-tac-toe** | Three in a row. The winner keeps the table, the rest queue up to take it. | 2–16 |
 
 > **Stopwatch has two modes.** In **TARGET**, everyone gets the same time to hit and stops the
 > clock on their own device — the digits are masked, so you count in your head. In **GUESS THE
 > TIME**, one player is the Runner (rotating each round): they start and stop whenever they want,
 > and **nobody sees the digits — not even them**. START and STOP are broadcast as sound to every
 > phone, so the rest estimate by ear and type in their guess.
+
+> **The Stopwatch also trains alone.** A separate page, no room required: set your own target,
+> and after a few attempts you get the error on each one, the spread, your current streak and a
+> read on the thing that actually costs you points — whether you are consistently early or late,
+> which is a habit you can correct, or simply erratic, which you can't.
 
 ## Features
 
@@ -91,7 +97,8 @@ Open it from the lobby; players keep their own phones.
 - **Deep link** — `doplay.pl/?kod=XYZW` goes straight into the room
 - **Sharing** — Share button (native share / clipboard fallback)
 - **Host screen (TV)** — separate landscape layout for a laptop/TV, readable from the couch
-- **Avatars** — 30 illustrated icons on colored tiles
+- **Avatars** — 30 illustrated icons on colored tiles; no two people in a room get the same one
+- **Spectator mode** — `?widz=1` gets you into the room to watch without taking a seat, in any game
 - **Game rules** — modal with steps for each game
 - **Room records** — who won how many times plus a list of feats, persistent for the room's lifetime
 - **Empty slots** — the lobby shows free seats, so a host waiting alone isn't staring at one row and a void
@@ -147,13 +154,13 @@ Open it from the lobby; players keep their own phones.
 | Auth | Firebase Anonymous Auth |
 | Server | Route Handlers + `firebase-admin` |
 | PWA | Serwist (Service Worker, manifest, offline) |
-| Tests | Vitest (206 tests — full playthroughs, security, core contracts) |
+| Tests | Vitest (287 tests — full playthroughs, security, core contracts) |
 | Deploy | Vercel (auto-deploy from GitHub) |
 | Sound | Web Audio API (zero audio files) |
 | QR | `qrcode` (SVG generation) |
-| i18n | Own dictionary (~250 keys, no library — next-intl would force a language prefix in the URL) |
+| i18n | Own dictionary (~500 keys per language, no library — next-intl would force a language prefix in the URL) |
 | Fonts | Baloo 2 (display), Nunito (body), JetBrains Mono (numbers) |
-| Icons | Lucide (interface) + a custom illustration pack (30 avatars, 7 game icons, characters) |
+| Icons | Lucide (interface) + a custom illustration pack (30 avatars, 8 game icons, characters) |
 | Image pipeline | `scripts/process-assets.py` — Pillow + NumPy, cuts the background off generated art |
 
 ## Architecture
@@ -171,25 +178,31 @@ src/
 │   ├── pokoj/[code]/           # player screen (lobby + game)
 │   │   └── ekran/              # host screen for TV (landscape layout)
 │   ├── p/[code]/               # deep link from the QR (code pre-filled)
+│   ├── gry/stoper/trening/     # solo Stopwatch practice (no room needed)
 │   ├── prywatnosc/             # privacy notice (GDPR art. 13)
 │   ├── opengraph-image.jpg     # link card for chats and social
 │   ├── ~offline/               # offline page (PWA)
-│   └── api/rooms/              # Route Handlers (the ONLY place that writes!)
-│       ├── route.ts            # POST — create room
-│       └── [code]/
-│           ├── join/           # joining
-│           ├── leave/          # leaving
-│           ├── ping/           # presence + host migration
-│           ├── start/          # start the game
-│           ├── action/         # player action (idempotent)
-│           ├── tick/           # phase tick (timer)
-│           ├── reset/          # back to lobby (transaction)
-│           └── observe/        # observer mode (host screen)
+│   ├── robots.ts               # robots.txt (rooms stay out of the index)
+│   ├── sitemap.ts              # sitemap.xml
+│   └── api/                    # Route Handlers (the ONLY place that writes!)
+│       ├── cron/cleanup/       # nightly: expired rooms + orphan sweep
+│       └── rooms/
+│           ├── route.ts        # POST — create room
+│           └── [code]/
+│               ├── join/       # joining
+│               ├── leave/      # leaving
+│               ├── ping/       # presence + host migration
+│               ├── start/      # start the game
+│               ├── action/     # player action (idempotent)
+│               ├── tick/       # phase tick (timer)
+│               ├── reset/      # back to lobby (transaction)
+│               └── observe/    # observer mode (host screen)
 │
 ├── games/                      # Game engines and UI (plugin architecture)
 │   ├── registry.ts             # engine registry (server)
 │   ├── manifests.ts            # game manifests (client — without engines)
 │   ├── icons.tsx               # fallback game icons (Lucide)
+│   ├── rules.ts                # "How to play?" cards — PL and EN separately
 │   ├── finish.test.ts          # "end game" contract across the whole registry
 │   ├── components.tsx          # game UI (dynamic imports)
 │   ├── types.ts                # GameEngine, GameManifest interfaces
@@ -205,7 +218,8 @@ src/
 │   ├── impostor/               # 🕵️ Impostor
 │   ├── mafia/                  # 🔪 Mafia
 │   ├── odcien/                 # 🎨 Shade
-│   └── kasyno/                 # 🎰 Casino
+│   ├── kasyno/                 # 🎰 Casino
+│   └── kolko/                  # ⭕ Tic-tac-toe
 │
 ├── components/                 # React components
 │   ├── game/                   # GameShell, LobbyGames, GameRulesCard
@@ -230,7 +244,9 @@ src/
 │   ├── EntryTabs.tsx           # folder tabs (create / join)
 │   ├── LanguageSwitcher.tsx    # PL / EN
 │   ├── PrivacyNotice.tsx       # first-visit notice (one bar at a time)
-│   └── ReturnToRoom.tsx        # "you have an active room"
+│   ├── ReturnToRoom.tsx        # "you have an active room"
+│   ├── SpectatorRoom.tsx       # watching without taking a seat (reuses HostView)
+│   └── WatchLink.tsx           # "watch" entry point
 │
 ├── hooks/                      # Custom hooks
 │   ├── useRoom.ts              # Firestore onSnapshot + backoff
@@ -246,6 +262,9 @@ src/
 ├── lib/                        # Infrastructure
 │   ├── server/game-runner.ts   # applyAction, persist, idempotency
 │   ├── server/records.ts       # room records (pure functions, testable)
+│   ├── server/cleanup.ts       # which room to delete (pure, testable)
+│   ├── trening-stats.ts        # Stopwatch practice stats (pure)
+│   ├── site.ts                 # canonical address for SEO
 │   ├── client/api.ts           # apiPost with error handling
 │   ├── sound.ts                # Web Audio SFX (10 sounds)
 │   ├── confetti.ts             # canvas-confetti wrapper
@@ -262,10 +281,11 @@ src/
 
 - **Read-only client** — the client NEVER writes to Firestore. Everything goes through Route Handlers + `firebase-admin`. Breaking this rule leaks roles in DevTools.
 - **Engines are pure functions** — zero `Date.now()`, zero `Math.random()`. Time and randomness arrive via `ctx.now` and `ctx.rng`. Fully deterministic, fully testable.
-- **Plugin architecture** — adding a game = a new folder in `src/games/` + one line in `registry.ts`. Zero changes to the core.
-- **Dynamic imports** — game components load on demand (`next/dynamic`). A player downloads only the current game's code, not all seven.
+- **Plugin architecture** — adding a game = a new folder in `src/games/` plus an entry in **six registries** (engine, client manifest, views, icon, rules card, dictionary). Zero changes to the core. The six are worth naming, because missing one **doesn't break the build**: the game just quietly stops working in one place, which is far harder to spot than a red build. Verified while adding Tic-tac-toe — the contract tests passed straight away, without touching `GameShell` or `game-runner`.
+- **Dynamic imports** — game components load on demand (`next/dynamic`). A player downloads only the current game's code, not all eight.
 - **Secrets in three layers** — `publicState` (everyone sees), `secret/state` (nobody reads, `allow read: if false`), `private/{uid}` (yours only).
 - **Timers without cron** — the server writes `phaseEndsAt`, clients count down, and once it passes **only the host** nudges the server. The rest step in as a fallback after 3s, in case the host drops. Previously everyone nudged at once, which with 8 players meant ~6.6 transactions/s against a single document versus Firestore's ~1/s limit — transactions collided, retried, and phase changes ran several seconds late.
+- **Deleting a room always means `recursiveDelete`** — a plain `delete()` on a Firestore document leaves its subcollections behind, and `secret/state` and `private/{uid}` are exactly where the roles live. The room would vanish from the list while every player's role stayed in the database, parentless and invisible in the console. Firestore's own TTL policies are out for the same reason: they only delete the parent. Hence a nightly cron of our own, which also sweeps orphans as a second line of defence. The sweeper's hard part isn't deleting — it's the race: a room created *after* the cron read the room list has no parent on that list, though it is very much alive. So the cutoff is the query's `readTime`, not an age threshold, and both timestamps come from Firestore's clock rather than the process's.
 - **Polish first, English alongside** — code, routes and directory names stay Polish; the interface reads from a dictionary. No i18n library: next-intl would force a language prefix into the URL, and room codes live there. The language sits in a cookie the server reads before the first render, so nothing flashes in the wrong language.
 - **Fonts with `latin-ext`** (Ą Ć Ę Ł Ń Ó Ś Ź Ż) — having the glyphs isn't enough though: Fredoka has them, but draws the ogonek in Ą/Ę as a thin hairline detached from the letter. Hence Baloo 2 — details in [`DESIGN.md`](DESIGN.md).
 - **Component rules live in `@layer components`** — Tailwind orders the cascade theme → base → components → utilities. Outside a layer these rules land *after* the utilities and win every tie, so `px-4` next to `.card` silently did nothing. About forty such spots existed before the fix.
@@ -300,11 +320,16 @@ NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 
-# firebase-admin (Route Handlers)
-FIREBASE_ADMIN_PROJECT_ID=your_project_id
-FIREBASE_ADMIN_CLIENT_EMAIL=your_service_account@...iam.gserviceaccount.com
-FIREBASE_ADMIN_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+# firebase-admin (Route Handlers) — the whole service account JSON, base64-encoded:
+#   base64 -i path/to/key.json | tr -d '\n'
+FIREBASE_SERVICE_ACCOUNT_KEY=your_base64_encoded_service_account_json
+
+# Secret for the nightly cleanup cron. Generate with: openssl rand -hex 32
+# Without it /api/cron/cleanup answers 401 and nothing is deleted.
+CRON_SECRET=your_random_secret
 ```
+
+See [`.env.local.example`](.env.local.example) for the same list with comments.
 
 ### Commands
 
@@ -312,7 +337,7 @@ FIREBASE_ADMIN_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE K
 npm run dev        # dev server (localhost:3000)
 npm run build      # production build
 npm run lint       # eslint
-npm run test       # vitest run (206 tests)
+npm run test       # vitest run (287 tests)
 ```
 
 ## Installing on a phone (PWA)

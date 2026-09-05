@@ -41,6 +41,47 @@ export function wybierzDoUsuniecia(kandydaci: Kandydat[], teraz: number): string
     .map((p) => p.code);
 }
 
+/** Ile osieroconych dokumentów zamiatamy w jednym przebiegu. */
+export const LIMIT_SIEROT = 500;
+
+/** Dokument z podkolekcji pokoju, sprowadzony do tego, co potrzebne do decyzji. */
+export interface KandydatSierota {
+  sciezka: string;
+  kodPokoju: string;
+  /** `updateTime` dokumentu w ms — zegar serwera Firestore, nie nasz. */
+  zapisanyMs: number;
+}
+
+/**
+ * Zamiatarka: dokumenty w `private`/`secret`, których pokój-rodzic już nie istnieje.
+ * Druga linia obrony na wypadek, gdyby kiedyś pojawiła się trzecia droga kasowania
+ * pokoju, omijająca `recursiveDelete`. Sam brak rodzica NIE wystarcza jako dowód.
+ *
+ * Wyścig, który trzeba tu odsiać: czytamy listę pokoi w chwili T, ktoś zakłada pokój
+ * w T+1 s i jego role lądują w bazie w T+2 s, a odczyt podkolekcji w T+3 s już je widzi.
+ * Rodzica nie ma na naszej liście, bo lista jest starsza — i skasowalibyśmy dane
+ * trwającej gry.
+ *
+ * Stąd `odczytPokoiMs` zamiast progu w rodzaju „starsze niż godzina": bierzemy tylko
+ * dokumenty zapisane ZANIM zrobiliśmy zdjęcie listy pokoi. O takim dokumencie wiemy
+ * na pewno, że jego nieobecność na liście oznacza skasowany pokój, a nie nowy.
+ * Świeższe poczekają do jutra, kiedy będą już po właściwej stronie zdjęcia.
+ *
+ * Oba czasy muszą pochodzić z zegara Firestore (`readTime` zapytania i `updateTime`
+ * dokumentu) — porównywanie ich z `Date.now()` procesu wpuściłoby dryf zegarów.
+ */
+export function wybierzSieroty(
+  kandydaci: KandydatSierota[],
+  zyjacePokoje: ReadonlySet<string>,
+  odczytPokoiMs: number,
+): string[] {
+  return kandydaci
+    .filter((d) => !zyjacePokoje.has(d.kodPokoju))
+    .filter((d) => d.zapisanyMs < odczytPokoiMs)
+    .slice(0, LIMIT_SIEROT)
+    .map((d) => d.sciezka);
+}
+
 /**
  * Bramka crona. Vercel dokłada `Authorization: Bearer $CRON_SECRET` do żądania
  * z harmonogramu, więc sprawdzamy dokładnie ten nagłówek.

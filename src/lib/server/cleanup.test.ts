@@ -5,6 +5,8 @@ import {
   LIMIT_PARTII,
   ostatniaAktywnosc,
   wybierzDoUsuniecia,
+  wybierzSieroty,
+  LIMIT_SIEROT,
   type Kandydat,
 } from "./cleanup";
 import { newPlayer } from "./rooms";
@@ -87,5 +89,48 @@ describe("sprzątanie — bramka crona", () => {
     // timingSafeEqual rzuca przy różnych długościach buforów
     expect(() => cronAutoryzowany("Bearer krotki", SEKRET)).not.toThrow();
     expect(cronAutoryzowany("Bearer krotki", SEKRET)).toBe(false);
+  });
+});
+
+describe("sprzątanie — zamiatarka sierot", () => {
+  const ODCZYT = 1_000_000;
+  const zyje = new Set(["ZYWY"]);
+  const dok = (sciezka: string, kodPokoju: string, zapisanyMs: number) => ({
+    sciezka,
+    kodPokoju,
+    zapisanyMs,
+  });
+
+  it("nie rusza dokumentu istniejącego pokoju", () => {
+    const d = dok("rooms/ZYWY/secret/state", "ZYWY", ODCZYT - 5000);
+    expect(wybierzSieroty([d], zyje, ODCZYT)).toEqual([]);
+  });
+
+  it("zamiata dokument po skasowanym pokoju", () => {
+    const d = dok("rooms/TRUP/secret/state", "TRUP", ODCZYT - 5000);
+    expect(wybierzSieroty([d], zyje, ODCZYT)).toEqual(["rooms/TRUP/secret/state"]);
+  });
+
+  it("NIE rusza dokumentu zapisanego po zdjęciu listy pokoi", () => {
+    // Wyścig: pokój powstał już po naszym odczycie listy, więc nie ma go na liście,
+    // choć żyje. Skasowanie zabrałoby role z trwającej gry.
+    const nowy = dok("rooms/NOWY/private/u1", "NOWY", ODCZYT + 2000);
+    expect(wybierzSieroty([nowy], zyje, ODCZYT)).toEqual([]);
+  });
+
+  it("granica: dokument zapisany dokładnie w chwili odczytu zostaje", () => {
+    const d = dok("rooms/GRAN/private/u1", "GRAN", ODCZYT);
+    expect(wybierzSieroty([d], zyje, ODCZYT)).toEqual([]);
+  });
+
+  it("tnie do limitu", () => {
+    const duzo = Array.from({ length: LIMIT_SIEROT + 10 }, (_, i) =>
+      dok(`rooms/T${i}/private/u`, `T${i}`, ODCZYT - 1),
+    );
+    expect(wybierzSieroty(duzo, zyje, ODCZYT)).toHaveLength(LIMIT_SIEROT);
+  });
+
+  it("pusta baza nie wywołuje kasowania", () => {
+    expect(wybierzSieroty([], zyje, ODCZYT)).toEqual([]);
   });
 });

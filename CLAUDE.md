@@ -183,5 +183,11 @@ Sam miniony `expiresAt` nie wystarcza do skasowania: partia może trwać dłuże
 graczem czeka do jutra. Logika wyboru siedzi w `lib/server/cleanup.ts`, celowo bez
 `server-only` i bez firebase-admin, żeby dała się przetestować jak zwykła funkcja.
 
+Ten sam cron ma **zamiatarkę sierot** — dokumenty w `private`/`secret` bez rodzica.
+Niebezpieczny jest tu wyścig, nie kasowanie: pokój założony po odczycie listy pokoi
+nie ma rodzica *na naszej liście*, choć żyje. Dlatego progiem jest `readTime`
+zapytania, a nie „starsze niż godzina" — bierzemy wyłącznie dokumenty zapisane
+przed zdjęciem listy. Oba czasy z zegara Firestore, nigdy z `Date.now()` procesu.
+
 Bramka crona zamyka się przy braku `CRON_SECRET` (odpowiada 401), zamiast otwierać
 trasę dla wszystkich. Sekret jest w Vercelu i w `.env.local`.

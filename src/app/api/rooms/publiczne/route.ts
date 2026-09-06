@@ -26,7 +26,14 @@ export async function GET() {
       snap.docs.map((d) => d.data() as Kandydat),
       Date.now(),
     );
-    return NextResponse.json({ pokoje });
+    // Krótki cache na krawędzi. Od kiedy zachęta na stronie głównej odpytuje tę
+    // trasę przy każdym wejściu, bez tego każdy gość kosztowałby odczyt Firestore.
+    // 10 s zgadza się z tempem odświeżania listy w zakładce, więc nikt nie zobaczy
+    // nic bardziej nieaktualnego, niż zobaczyłby i tak.
+    return NextResponse.json(
+      { pokoje },
+      { headers: { "cache-control": "public, s-maxage=10, stale-while-revalidate=20" } },
+    );
   } catch (err) {
     return handleApiError(err);
   }

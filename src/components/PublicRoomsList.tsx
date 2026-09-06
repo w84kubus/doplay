@@ -84,40 +84,47 @@ export function PublicRoomsList({
           {t("publiczne.empty")}
         </p>
       ) : (
-        <ul className="flex max-h-[19rem] flex-col gap-2 overflow-y-auto">
-          {pokoje.map((p) => (
-            <li key={p.code}>
-              <button
-                type="button"
-                disabled={busy}
-                onClick={() => onPick(p.code)}
-                className="flex min-h-[56px] w-full items-center gap-3 rounded-[14px] border-[3px] border-stroke bg-panel px-3 py-2 text-left shadow-[0_3px_0_rgb(0_0_0/0.35)] transition-transform duration-75 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-mint focus-visible:outline-offset-2 active:translate-y-[3px] active:shadow-none disabled:opacity-50"
-              >
-                <span className="flex flex-1 flex-col gap-0.5 overflow-hidden">
-                  <span className="font-display flex items-center gap-1.5 text-sm font-bold uppercase tracking-[0.06em] text-ink">
-                    <Users size={14} strokeWidth={2.5} aria-hidden />
-                    {t("publiczne.waiting", { ilu: p.ilu })}
-                  </span>
-                  <span className="truncate text-xs font-semibold text-ink-muted">{swiezosc(p.createdAt, t)}</span>
-                </span>
-                {/* Cztery awatary i dość: liczba osób stoi obok cyfrą, więc to jest
-                    ozdoba. Przy pięciu rząd zjadał tekst obok na wąskim telefonie. */}
-                <span className="flex flex-none -space-x-2">
-                  {p.avatars.slice(0, 4).map((a, i) => (
-                    <span
-                      key={i}
-                      className="flex size-7 items-center justify-center rounded-full border-2 border-stroke"
-                      style={{ background: avatarColor(a) }}
-                      aria-hidden
-                    >
-                      <AvatarIcon avatar={a} size={16} />
+        /* Przewijanie w osobnym opakowaniu, nie na <ul>. CSS wylicza `overflow-x`
+           na `auto`, gdy druga oś nie jest `visible`, więc kontener przycinał cień
+           3 px pod ostatnim kafelkiem i obwódkę fokusu po bokach. Padding robi im
+           miejsce, a ujemny margines cofa kafelki na tę samą oś co reszta panelu
+           (karta ma 24 px paddingu, więc 6 px zapasu się mieści). */
+        <div className="-mx-1.5 max-h-[19rem] overflow-y-auto px-1.5 pb-1.5">
+          <ul className="flex flex-col gap-2">
+            {pokoje.map((p) => (
+              <li key={p.code}>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => onPick(p.code)}
+                  className="flex min-h-[56px] w-full items-center gap-3 rounded-[14px] border-[3px] border-stroke bg-panel px-3 py-2 text-left shadow-[0_3px_0_rgb(0_0_0/0.35)] transition-transform duration-75 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-mint focus-visible:outline-offset-2 active:translate-y-[3px] active:shadow-none disabled:opacity-50"
+                >
+                  <span className="flex flex-1 flex-col gap-0.5 overflow-hidden">
+                    <span className="font-display flex items-center gap-1.5 text-sm font-bold uppercase tracking-[0.06em] text-ink">
+                      <Users size={14} strokeWidth={2.5} aria-hidden />
+                      {t("publiczne.waiting", { ilu: p.ilu })}
                     </span>
-                  ))}
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
+                    <span className="truncate text-xs font-semibold text-ink-muted">{swiezosc(p.createdAt, t)}</span>
+                  </span>
+                  {/* Cztery awatary i dość: liczba osób stoi obok cyfrą, więc to jest
+                      ozdoba. Przy pięciu rząd zjadał tekst obok na wąskim telefonie. */}
+                  <span className="flex flex-none -space-x-2">
+                    {p.avatars.slice(0, 4).map((a, i) => (
+                      <span
+                        key={i}
+                        className="flex size-7 items-center justify-center rounded-full border-2 border-stroke"
+                        style={{ background: avatarColor(a) }}
+                        aria-hidden
+                      >
+                        <AvatarIcon avatar={a} size={16} />
+                      </span>
+                    ))}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   );

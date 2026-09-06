@@ -5,6 +5,7 @@ import { ReturnToRoom } from "@/components/ReturnToRoom";
 import { GameCard } from "@/components/GameCard";
 import { ComingSoonCard } from "@/components/ComingSoonCard";
 import { HowToPlay } from "@/components/HowToPlay";
+import { PublicRoomsHint } from "@/components/PublicRoomsHint";
 import { GithubMark } from "@/components/GithubMark";
 import { Illustration } from "@/components/Illustration";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -56,6 +57,9 @@ export function LandingContent() {
               {t("landing.join")}
             </Link>
           </div>
+
+          {/* Widoczne tylko wtedy, gdy ktoś realnie czeka — komponent sam znika przy pustej liście. */}
+          <PublicRoomsHint />
         </div>
         <Illustration
           id="postacie/hero-ekipa"

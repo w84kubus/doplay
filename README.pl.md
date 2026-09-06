@@ -22,7 +22,7 @@
   <img src="https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind v4" />
   <img src="https://img.shields.io/badge/PWA-instalowalna-5A0FC8?logo=pwa&logoColor=white" alt="PWA" />
   <img src="https://img.shields.io/badge/multiplayer-realtime-E4002B" alt="Multiplayer Realtime" />
-  <img src="https://img.shields.io/badge/testy-287-7CF0AE?logo=vitest&logoColor=black" alt="287 testów" />
+  <img src="https://img.shields.io/badge/testy-307-7CF0AE?logo=vitest&logoColor=black" alt="307 testów" />
 </p>
 
 ---
@@ -37,6 +37,9 @@
 2. 📱 **Gracze dołączają** — wpisują kod na swoim telefonie (lub skanują QR)
 3. 🎮 **Host wybiera grę** — ustawienia, start, gramy!
 4. 🔄 **Kolejna runda** — po zakończeniu wracasz do lobby i wybierasz następną
+
+Nie masz z kim grać? Zakładka **Publiczne** pokazuje pokoje otwarte dla wszystkich
+wraz z liczbą osób, które już czekają. Wybierasz jeden albo wskakujesz do losowego.
 
 ## Zrzuty ekranu
 
@@ -91,6 +94,7 @@ Otwierasz go z lobby; gracze zostają przy swoich telefonach.
 - **Ekran hosta (TV)** — osobny układ poziomy na laptop/TV, czytelny z kanapy
 - **Awatary** — 30 ilustrowanych ikon w kolorowych kafelkach; w jednym pokoju nikt nie dostaje tego samego
 - **Tryb widza** — `?widz=1` wpuszcza do pokoju na podgląd, bez zajmowania miejsca, w każdej grze
+- **Pokoje publiczne** — host otwiera pokój dla obcych jednym przełącznikiem w lobby i zamyka go, gdy skład się skompletuje. Lista pokazuje, ilu czeka i jak dawno pokój stoi otwarty, a odsiewa pokoje pełne, w trakcie gry i porzucone
 - **Zasady gier** — modal z krokami dla każdej gry
 - **Rekordy pokoju** — kto ile wygrał i lista wyczynów, trwałe przez cały czas życia pokoju
 - **Wolne miejsca** — lobby pokazuje puste sloty, żeby czekający host nie patrzył na jeden wiersz i pustkę
@@ -146,7 +150,7 @@ Otwierasz go z lobby; gracze zostają przy swoich telefonach.
 | Autoryzacja | Firebase Anonymous Auth |
 | Serwer | Route Handlers + `firebase-admin` |
 | PWA | Serwist (Service Worker, manifest, offline) |
-| Testy | Vitest (287 testów — pełne partie, bezpieczeństwo, kontrakty rdzenia) |
+| Testy | Vitest (307 testów — pełne partie, bezpieczeństwo, kontrakty rdzenia) |
 | Deploy | Vercel (auto-deploy z GitHub) |
 | Dźwięki | Web Audio API (zero plików audio) |
 | QR | `qrcode` (generowanie SVG) |
@@ -168,6 +172,7 @@ src/
 │   │   └── ekran/              # ekran hosta na TV (układ poziomy)
 │   ├── p/[code]/               # deep link ze skanu QR (kod wpisany)
 │   ├── gry/stoper/trening/     # trening Stopera solo (bez pokoju)
+│   ├── publiczne/              # lista pokoi otwartych dla obcych
 │   ├── prywatnosc/             # obowiązek informacyjny (RODO art. 13)
 │   ├── opengraph-image.jpg     # karta linku do czatów i social mediów
 │   ├── ~offline/               # strona offline (PWA)
@@ -177,8 +182,10 @@ src/
 │       ├── cron/cleanup/       # co noc: wygasłe pokoje + zamiatarka sierot
 │       └── rooms/
 │           ├── route.ts        # POST — tworzenie pokoju
+│           ├── publiczne/      # GET — lista publiczna (bez nicków)
 │           └── [code]/
 │               ├── join/       # dołączanie
+│               ├── publiczny/  # host otwiera/zamyka pokój dla obcych
 │               ├── leave/      # wyjście
 │               ├── ping/       # presence + migracja hosta
 │               ├── start/      # start gry
@@ -234,6 +241,9 @@ src/
 │   ├── LanguageSwitcher.tsx    # PL / EN
 │   ├── PrivacyNotice.tsx       # informacja przy pierwszej wizycie
 │   ├── ReturnToRoom.tsx        # „masz aktywny pokój"
+│   ├── PublicRoomsList.tsx     # lista pokoi publicznych
+│   ├── PublicRoomToggle.tsx    # przełącznik hosta „otwórz dla obcych"
+│   ├── PublicRoomsHint.tsx     # zachęta na landingu, tylko gdy ktoś czeka
 │   ├── SpectatorRoom.tsx       # podgląd bez zajmowania miejsca (używa HostView)
 │   └── WatchLink.tsx           # wejście „oglądaj"
 │
@@ -252,6 +262,7 @@ src/
 │   ├── server/game-runner.ts   # applyAction, persist, idempotencja
 │   ├── server/records.ts       # rekordy pokoju (czyste funkcje, testowalne)
 │   ├── server/cleanup.ts       # który pokój kasujemy (czyste, testowalne)
+│   ├── server/publiczne.ts     # co trafia na listę publiczną (czyste, testowalne)
 │   ├── trening-stats.ts        # statystyki treningu Stopera (czyste)
 │   ├── site.ts                 # adres kanoniczny pod SEO
 │   ├── client/api.ts           # apiPost z obsługą błędów
@@ -274,6 +285,7 @@ src/
 - **Dynamic imports** — komponenty gier ładowane dynamicznie (`next/dynamic`). Gracz pobiera tylko kod aktualnej gry, nie wszystkich ośmiu.
 - **Tajne dane w trzech warstwach** — `publicState` (wszyscy widzą), `secret/state` (nikt nie czyta, `allow read: if false`), `private/{uid}` (tylko Twoje).
 - **Timer bez crona** — serwer pisze `phaseEndsAt`, klienci odliczają, a po upływie czasu ponagla serwer **wyłącznie host**. Reszta wchodzi jako zapas dopiero po 3 s, gdyby host wypadł. Wcześniej ponaglali wszyscy naraz, co przy 8 graczach dawało ~6,6 transakcji/s na jednym dokumencie przy limicie Firestore ~1/s — transakcje wchodziły w konflikt i faza spóźniała się o kilka sekund.
+- **Lista publiczna nie niesie żadnego tekstu wpisanego przez gracza** — to jedyny ekran w aplikacji widoczny dla kogoś spoza pokoju, więc pokazuje kod, awatary i liczbę osób, a nicków nie. Reguły Firestore też zostają zamknięte: dopisanie do nich „albo pokój jest publiczny" pozwoliłoby każdemu zalogowanemu czytać CAŁY dokument dowolnego publicznego pokoju bez wchodzenia do niego. Zamiast tego listę serwuje Route Handler przez Admin SDK. Cena to brak realtime na liście, co załatwia odświeżanie co 10 s.
 - **Kasowanie pokoju zawsze przez `recursiveDelete`** — zwykłe `delete()` na dokumencie Firestore zostawia jego podkolekcje, a `secret/state` i `private/{uid}` to dokładnie te miejsca, w których siedzą role. Pokój znikałby z listy, a role wszystkich graczy zostawały w bazie: bez rodzica i niewidoczne w konsoli. Natywne TTL Firestore odpada z tego samego powodu — kasuje wyłącznie rodzica. Stąd własny nocny cron, który przy okazji zamiata sieroty jako druga linia obrony. Trudne jest w nim nie kasowanie, tylko wyścig: pokój założony *po* odczycie listy pokoi nie ma na niej rodzica, choć żyje. Dlatego progiem jest `readTime` zapytania, a nie wiek dokumentu, a oba czasy pochodzą z zegara Firestore, nie procesu.
 - **Polski jako pierwszy, angielski obok** — kod, trasy i nazwy katalogów zostają po polsku, podobnie jak TREŚĆ gier: listy haseł do Wisielca i Państw-miast są polskie, a klawiatura Wisielca razem z nimi. Interfejs czyta ze słownika. Bez biblioteki i18n: next-intl wymusiłby prefiks języka w adresie, a tam siedzą kody pokoi. Język trzyma ciasteczko, które serwer czyta przed pierwszym renderem, więc nic nie miga w złym języku.
 - **Fonty z `latin-ext`** (Ą Ć Ę Ł Ń Ó Ś Ź Ż) — sama obecność glifów to jednak za mało: Fredoka je ma, ale rysuje ogonek w Ą/Ę cienkim włosem oderwanym od litery. Stąd Baloo 2 — szczegóły w [`DESIGN.md`](DESIGN.md).
@@ -326,7 +338,7 @@ Ta sama lista z komentarzami jest w [`.env.local.example`](.env.local.example).
 npm run dev        # serwer deweloperski (localhost:3000)
 npm run build      # produkcyjny build
 npm run lint       # eslint
-npm run test       # vitest run (287 testów)
+npm run test       # vitest run (307 testów)
 ```
 
 ## Instalacja na telefonie (PWA)

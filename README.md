@@ -23,7 +23,7 @@
   <img src="https://img.shields.io/badge/PWA-installable-5A0FC8?logo=pwa&logoColor=white" alt="PWA" />
   <img src="https://img.shields.io/badge/i18n-PL%20%C2%B7%20EN-7CF0AE" alt="Polish and English" />
   <img src="https://img.shields.io/badge/multiplayer-realtime-E4002B" alt="Multiplayer Realtime" />
-  <img src="https://img.shields.io/badge/tests-287-7CF0AE?logo=vitest&logoColor=black" alt="287 tests" />
+  <img src="https://img.shields.io/badge/tests-307-7CF0AE?logo=vitest&logoColor=black" alt="307 tests" />
 </p>
 
 ---
@@ -44,6 +44,9 @@
 2. 📱 **Players join** — type the code on their phone (or scan the QR)
 3. 🎮 **Host picks a game** — settings, start, play!
 4. 🔄 **Next round** — when it ends you're back in the lobby to pick another
+
+Nobody around to play with? The **Public** tab lists rooms that are open to everyone,
+with how many people are already waiting. Pick one, or jump into a random one.
 
 ## Screenshots
 
@@ -99,6 +102,7 @@ Open it from the lobby; players keep their own phones.
 - **Host screen (TV)** — separate landscape layout for a laptop/TV, readable from the couch
 - **Avatars** — 30 illustrated icons on colored tiles; no two people in a room get the same one
 - **Spectator mode** — `?widz=1` gets you into the room to watch without taking a seat, in any game
+- **Public rooms** — the host opens the room to strangers with one switch in the lobby, and closes it again once the group is complete. The list shows how many are waiting and how long the room has been open, and drops rooms that are full, mid-game or abandoned
 - **Game rules** — modal with steps for each game
 - **Room records** — who won how many times plus a list of feats, persistent for the room's lifetime
 - **Empty slots** — the lobby shows free seats, so a host waiting alone isn't staring at one row and a void
@@ -154,7 +158,7 @@ Open it from the lobby; players keep their own phones.
 | Auth | Firebase Anonymous Auth |
 | Server | Route Handlers + `firebase-admin` |
 | PWA | Serwist (Service Worker, manifest, offline) |
-| Tests | Vitest (287 tests — full playthroughs, security, core contracts) |
+| Tests | Vitest (307 tests — full playthroughs, security, core contracts) |
 | Deploy | Vercel (auto-deploy from GitHub) |
 | Sound | Web Audio API (zero audio files) |
 | QR | `qrcode` (SVG generation) |
@@ -179,6 +183,7 @@ src/
 │   │   └── ekran/              # host screen for TV (landscape layout)
 │   ├── p/[code]/               # deep link from the QR (code pre-filled)
 │   ├── gry/stoper/trening/     # solo Stopwatch practice (no room needed)
+│   ├── publiczne/              # list of rooms open to strangers
 │   ├── prywatnosc/             # privacy notice (GDPR art. 13)
 │   ├── opengraph-image.jpg     # link card for chats and social
 │   ├── ~offline/               # offline page (PWA)
@@ -188,8 +193,10 @@ src/
 │       ├── cron/cleanup/       # nightly: expired rooms + orphan sweep
 │       └── rooms/
 │           ├── route.ts        # POST — create room
+│           ├── publiczne/      # GET — public room list (no nicknames)
 │           └── [code]/
 │               ├── join/       # joining
+│               ├── publiczny/  # host opens/closes the room to strangers
 │               ├── leave/      # leaving
 │               ├── ping/       # presence + host migration
 │               ├── start/      # start the game
@@ -245,6 +252,9 @@ src/
 │   ├── LanguageSwitcher.tsx    # PL / EN
 │   ├── PrivacyNotice.tsx       # first-visit notice (one bar at a time)
 │   ├── ReturnToRoom.tsx        # "you have an active room"
+│   ├── PublicRoomsList.tsx     # the public room list
+│   ├── PublicRoomToggle.tsx    # host's "open to strangers" switch
+│   ├── PublicRoomsHint.tsx     # landing nudge, shown only when someone is waiting
 │   ├── SpectatorRoom.tsx       # watching without taking a seat (reuses HostView)
 │   └── WatchLink.tsx           # "watch" entry point
 │
@@ -263,6 +273,7 @@ src/
 │   ├── server/game-runner.ts   # applyAction, persist, idempotency
 │   ├── server/records.ts       # room records (pure functions, testable)
 │   ├── server/cleanup.ts       # which room to delete (pure, testable)
+│   ├── server/publiczne.ts     # what lands on the public list (pure, testable)
 │   ├── trening-stats.ts        # Stopwatch practice stats (pure)
 │   ├── site.ts                 # canonical address for SEO
 │   ├── client/api.ts           # apiPost with error handling
@@ -285,6 +296,7 @@ src/
 - **Dynamic imports** — game components load on demand (`next/dynamic`). A player downloads only the current game's code, not all eight.
 - **Secrets in three layers** — `publicState` (everyone sees), `secret/state` (nobody reads, `allow read: if false`), `private/{uid}` (yours only).
 - **Timers without cron** — the server writes `phaseEndsAt`, clients count down, and once it passes **only the host** nudges the server. The rest step in as a fallback after 3s, in case the host drops. Previously everyone nudged at once, which with 8 players meant ~6.6 transactions/s against a single document versus Firestore's ~1/s limit — transactions collided, retried, and phase changes ran several seconds late.
+- **The public room list never carries player-written text** — it is the only screen in the app visible to someone outside a room, so it shows a code, avatars and a headcount, and no nicknames. Firestore rules stay closed too: adding "or the room is public" to them would let any signed-in user read the *whole* document of any public room without entering it, so the list is served by a Route Handler through the Admin SDK instead. The cost is no realtime on the list, which a ten-second refresh covers.
 - **Deleting a room always means `recursiveDelete`** — a plain `delete()` on a Firestore document leaves its subcollections behind, and `secret/state` and `private/{uid}` are exactly where the roles live. The room would vanish from the list while every player's role stayed in the database, parentless and invisible in the console. Firestore's own TTL policies are out for the same reason: they only delete the parent. Hence a nightly cron of our own, which also sweeps orphans as a second line of defence. The sweeper's hard part isn't deleting — it's the race: a room created *after* the cron read the room list has no parent on that list, though it is very much alive. So the cutoff is the query's `readTime`, not an age threshold, and both timestamps come from Firestore's clock rather than the process's.
 - **Polish first, English alongside** — code, routes and directory names stay Polish; the interface reads from a dictionary. No i18n library: next-intl would force a language prefix into the URL, and room codes live there. The language sits in a cookie the server reads before the first render, so nothing flashes in the wrong language.
 - **Fonts with `latin-ext`** (Ą Ć Ę Ł Ń Ó Ś Ź Ż) — having the glyphs isn't enough though: Fredoka has them, but draws the ogonek in Ą/Ę as a thin hairline detached from the letter. Hence Baloo 2 — details in [`DESIGN.md`](DESIGN.md).
@@ -337,7 +349,7 @@ See [`.env.local.example`](.env.local.example) for the same list with comments.
 npm run dev        # dev server (localhost:3000)
 npm run build      # production build
 npm run lint       # eslint
-npm run test       # vitest run (287 tests)
+npm run test       # vitest run (307 tests)
 ```
 
 ## Installing on a phone (PWA)

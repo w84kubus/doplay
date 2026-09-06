@@ -143,7 +143,7 @@ function beginRound(state: WisielecState, round: number, now: number, rng: () =>
     password,
     category,
     per,
-    pendingEvents: [{ type: "runda", text: `Runda ${round}: kategoria ${category} — wyścig!` }],
+    pendingEvents: [{ type: "runda", text: `Runda ${round}: kategoria ${category} - wyścig!` }],
   };
 }
 
@@ -251,7 +251,7 @@ export const wisielecEngine: GameEngine<WisielecState, WisielecAction, WisielecS
         category: action.category.trim(),
         phase: "zgadywanie",
         phaseEndsAt: ctx.now + TURN_MS_ZADAJACY,
-        pendingEvents: [{ type: "haslo", text: `Hasło gotowe — kategoria: ${action.category.trim()}` }],
+        pendingEvents: [{ type: "haslo", text: `Hasło gotowe - kategoria: ${action.category.trim()}` }],
       };
     }
 

@@ -111,7 +111,7 @@ function beginRound(state: ImpostorState, round: number, now: number, rng: () =>
 }
 
 function startClues(state: ImpostorState, now: number): ImpostorState {
-  return { ...state, phase: "podpowiedzi", clueRound: 1, clues: [], phaseEndsAt: turaKonczySie(state, now), pendingEvents: [{ type: "podpowiedzi", text: "Podpowiedzi — po jednym słowie" }] };
+  return { ...state, phase: "podpowiedzi", clueRound: 1, clues: [], phaseEndsAt: turaKonczySie(state, now), pendingEvents: [{ type: "podpowiedzi", text: "Podpowiedzi - po jednym słowie" }] };
 }
 
 /** Tura podpowiedzi domknięta: albo kolejna tura, albo dyskusja. */
@@ -137,7 +137,7 @@ function startDiscussion(state: ImpostorState, now: number): ImpostorState {
   return { ...state, phase: "dyskusja", phaseEndsAt: ms ? now + ms : null, pendingEvents: [{ type: "dyskusja", text: "Dyskusja!" }] };
 }
 function startVoting(state: ImpostorState, now: number): ImpostorState {
-  return { ...state, phase: "glosowanie", votes: {}, phaseEndsAt: now + 60000, pendingEvents: [{ type: "glosowanie", text: "Głosowanie — kto jest impostorem?" }] };
+  return { ...state, phase: "glosowanie", votes: {}, phaseEndsAt: now + 60000, pendingEvents: [{ type: "glosowanie", text: "Głosowanie - kto jest impostorem?" }] };
 }
 
 function score(state: ImpostorState, result: "cywile" | "impostorzy", byGuess: boolean): Record<string, number> {
@@ -195,7 +195,7 @@ function resolveVote(state: ImpostorState, now: number): ImpostorState {
   if (ejectedImpostor) {
     // złapany; jeśli włączone — dostaje szansę odgadnięcia hasła
     if (state.settings.postEjectGuess) {
-      return { ...s2, phase: "zgadywanie", phaseEndsAt: now + GUESS_MS, pendingEvents: [{ type: "wylot", text: "Impostor wyleciał — ma 30 s na hasło!" }] };
+      return { ...s2, phase: "zgadywanie", phaseEndsAt: now + GUESS_MS, pendingEvents: [{ type: "wylot", text: "Impostor wyleciał - ma 30 s na hasło!" }] };
     }
     return toResult(s2, now, "cywile", false);
   }

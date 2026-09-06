@@ -47,7 +47,7 @@ export async function POST(
       }
 
       if (room.status !== "lobby") {
-        throw new ApiError(409, "Gra już trwa — poczekaj na koniec rundy.");
+        throw new ApiError(409, "Gra już trwa - poczekaj na koniec rundy.");
       }
 
       // Sprawdzane tylko dla NOWEGO gracza: wracający po odświeżeniu ma już swoje

@@ -5,7 +5,7 @@
 export const NARRATOR: Record<string, string[]> = {
   noc: [
     "Miasto pogrąża się w ciszy… ktoś skrada się uliczkami.",
-    "Zapada noc. Zamknijcie oczy — nie każdy zaśnie.",
+    "Zapada noc. Zamknijcie oczy - nie każdy zaśnie.",
     "Latarnie gasną jedna po drugiej. Miasto zasypia.",
     "W ciemności słychać tylko czyjeś kroki.",
     "Noc otula miasto. Gdzieś ostrzy się nóż.",
@@ -14,7 +14,7 @@ export const NARRATOR: Record<string, string[]> = {
   switt: [
     "Świt. Miasto budzi się i liczy swoich.",
     "Pierwsze promienie słońca odsłaniają, co stało się w nocy.",
-    "Poranek przynosi wieści — nie wszystkie dobre.",
+    "Poranek przynosi wieści - nie wszystkie dobre.",
     "Kogut zapiał. Czas spojrzeć prawdzie w oczy.",
   ],
   dzien: [

@@ -80,7 +80,7 @@ export function StoperHostView({ publicState, accent }: GameHostViewProps) {
                   {nickOf(r.uid)}{r.suspicious && <> <TriangleAlert size={15} strokeWidth={2.5} className="inline-block align-[-0.18em]" aria-hidden /></>}{r.perfect && <> <Target size={15} strokeWidth={2.5} className="inline-block align-[-0.18em]" aria-hidden /></>}
                 </span>
                 <span className="tabular text-right font-bold">
-                  {r.valueMs == null ? "—" : <>{fmt(r.valueMs)} <span className="text-base font-semibold text-ink-muted">({signed(r.signedMs ?? 0)})</span></>}
+                  {r.valueMs == null ? "-" : <>{fmt(r.valueMs)} <span className="text-base font-semibold text-ink-muted">({signed(r.signedMs ?? 0)})</span></>}
                 </span>
               </li>
             ))}

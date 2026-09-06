@@ -53,7 +53,7 @@ export function PmHostView({ publicState, accent }: GameHostViewProps) {
           {pub.active ? (
             <div className="card p-4 text-center" style={{ borderColor: accent }}>
               <p className="text-lg">Kwestia: „{pub.entries?.find((e) => e.uid === pub.active!.targetUid)?.answer}” ({nickOf(pub.active.targetUid)})</p>
-              {pub.active.justification && <p className="italic text-[var(--color-ink-muted)]">— {pub.active.justification}</p>}
+              {pub.active.justification && <p className="italic text-[var(--color-ink-muted)]">- {pub.active.justification}</p>}
               <p className="mt-2 text-xl">{t("pm.accept")} {pub.active.tally.uznaje} · {t("pm.reject")} {pub.active.tally.odrzucam}</p>
             </div>
           ) : (
@@ -61,7 +61,7 @@ export function PmHostView({ publicState, accent }: GameHostViewProps) {
               {pub.entries?.map((e) => (
                 <li key={e.uid} className="flex justify-between border-b border-[var(--color-stroke)] py-1">
                   <span className="text-[var(--color-ink-muted)]">{nickOf(e.uid)}</span>
-                  <span className={e.autoZero || e.rejected ? "text-[var(--color-ink-muted)] line-through" : ""}>{e.answer || "—"}</span>
+                  <span className={e.autoZero || e.rejected ? "text-[var(--color-ink-muted)] line-through" : ""}>{e.answer || "-"}</span>
                 </li>
               ))}
             </ul>

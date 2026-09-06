@@ -100,7 +100,7 @@ export function MafiaPlayerView({ room, publicState, privateState, meUid, isHost
       <div className="flex flex-col items-center gap-4" style={{ ["--accent" as string]: accent }}>
         {narrator}
         {pub.deaths.length ? pub.deaths.map((d) => (
-          <p key={d} className="text-xl font-bold"><Skull size={22} strokeWidth={2.5} className="inline-block align-[-0.18em]" aria-hidden /> {nickOf(d)}{pub.players.find((p) => p.uid === d)?.role ? ` — ${t(ROLE_INFO[pub.players.find((p) => p.uid === d)!.role!].nameKey)}` : ""}</p>
+          <p key={d} className="text-xl font-bold"><Skull size={22} strokeWidth={2.5} className="inline-block align-[-0.18em]" aria-hidden /> {nickOf(d)}{pub.players.find((p) => p.uid === d)?.role ? ` - ${t(ROLE_INFO[pub.players.find((p) => p.uid === d)!.role!].nameKey)}` : ""}</p>
         )) : <p className="text-lg text-[var(--color-ink-muted)]">{t("mafia.nobodyDied")}</p>}
         <AliveList pub={pub} meUid={meUid} />
         {isHost && <button className="btn btn-accent" style={{ ["--accent" as string]: accent }} onClick={() => dispatch({ type: "NEXT" })}>{t("common.next")}</button>}
@@ -248,7 +248,7 @@ function RoleReveal({ pub, meUid, accent }: { pub: Pub; meUid: string; accent: s
     <ul className="w-full max-w-sm">
       {[...pub.players].sort((a, b) => b.score - a.score).map((p) => (
         <li key={p.uid} className="flex items-center justify-between px-2 py-1 text-sm">
-          <span><AvatarIcon avatar={p.avatar} size={18} /> {p.nick}{p.uid === meUid && ` ${t("common.you")}`} — <b style={{ color: p.role === "mafia" ? accent : undefined }}>{p.role ? t(ROLE_INFO[p.role].nameKey) : "?"}</b></span>
+          <span><AvatarIcon avatar={p.avatar} size={18} /> {p.nick}{p.uid === meUid && ` ${t("common.you")}`} - <b style={{ color: p.role === "mafia" ? accent : undefined }}>{p.role ? t(ROLE_INFO[p.role].nameKey) : "?"}</b></span>
           <span className="tabular font-bold">{p.score}</span>
         </li>
       ))}

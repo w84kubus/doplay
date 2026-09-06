@@ -37,7 +37,7 @@ export function MafiaHostView({ publicState, accent }: GameHostViewProps) {
       {pub.phase === "switt" && (
         <div className="text-center">
           {pub.deaths.length ? pub.deaths.map((d) => (
-            <p key={d} className="text-3xl font-bold"><Skull size={30} strokeWidth={2.5} className="inline-block align-[-0.18em]" aria-hidden /> {nickOf(d)}{pub.players.find((p) => p.uid === d)?.role ? ` — ${ROLE_NAME[pub.players.find((p) => p.uid === d)!.role!]}` : ""}</p>
+            <p key={d} className="text-3xl font-bold"><Skull size={30} strokeWidth={2.5} className="inline-block align-[-0.18em]" aria-hidden /> {nickOf(d)}{pub.players.find((p) => p.uid === d)?.role ? ` - ${ROLE_NAME[pub.players.find((p) => p.uid === d)!.role!]}` : ""}</p>
           )) : <p className="text-2xl text-[var(--color-ink-muted)]">{t("mafia.quietNight")}</p>}
         </div>
       )}

@@ -98,7 +98,7 @@ function toReveal(state: OdcienState, now: number): OdcienState {
   for (const uid of perfect) {
     events.push({
       type: "idealnie",
-      text: `Trafiony odcień — ${hexOf(results[uid].guess)}`,
+      text: `Trafiony odcień - ${hexOf(results[uid].guess)}`,
       key: "feat.odcien.perfect",
       params: { hex: hexOf(results[uid].guess) },
       meta: { uid, rekord: true },

@@ -81,7 +81,7 @@ export function PmPlayerView({ room, publicState, privateState, meUid, isHost, d
         {active && (
           <div className="card sticky top-2 z-10 flex flex-col gap-3 p-4" style={{ borderColor: accent }}>
             <p className="text-sm text-[var(--color-ink-muted)]">{t("pm.challengeOf")} <b>{nickOf(active.targetUid)}</b></p>
-            {active.justification && <p className="text-center text-sm italic text-[var(--color-ink-muted)]">— {active.justification}</p>}
+            {active.justification && <p className="text-center text-sm italic text-[var(--color-ink-muted)]">- {active.justification}</p>}
             {priv?.amTarget ? (
               <JustifyBox dispatch={dispatch} />
             ) : priv?.myVote || sent ? (
@@ -106,7 +106,7 @@ export function PmPlayerView({ room, publicState, privateState, meUid, isHost, d
                 <li key={e.uid} className="card flex items-center gap-3 px-4 py-2">
                   <span className="w-20 shrink-0 truncate text-sm text-[var(--color-ink-muted)]">{nickOf(e.uid)}</span>
                   <span className={`flex-1 truncate font-semibold ${e.rejected || e.autoZero ? "text-[var(--color-ink-muted)] line-through" : ""}`}>
-                    {e.answer || <span className="italic text-[var(--color-ink-muted)]">—</span>}
+                    {e.answer || <span className="italic text-[var(--color-ink-muted)]">-</span>}
                   </span>
                   {e.autoZero && <span title={t("pm.wrongLetter")} className="text-xs text-[var(--color-magenta)]">{t("pm.wrongLetter")}</span>}
                   {e.rejected && <span className="text-xs text-[var(--color-magenta)]">odrzucona</span>}

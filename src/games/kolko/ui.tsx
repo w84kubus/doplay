@@ -41,7 +41,7 @@ export function Plansza({
             key={i}
             type="button"
             role="gridcell"
-            aria-label={`Pole ${i + 1}${pole === 0 ? " — krzyżyk" : pole === 1 ? " — kółko" : " — puste"}`}
+            aria-label={`Pole ${i + 1}${pole === 0 ? " - krzyżyk" : pole === 1 ? " - kółko" : " - puste"}`}
             disabled={!klikalne}
             onClick={() => klikalne && onPole?.(i)}
             className="flex items-center justify-center rounded-[14px] border-[3px] transition-transform duration-75 active:translate-y-[3px] disabled:active:translate-y-0"

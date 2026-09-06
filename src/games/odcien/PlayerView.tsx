@@ -176,7 +176,7 @@ export function OdcienPlayerView({ publicState, meUid, isHost, dispatch }: GameV
       {koniec && <Podium players={pub.players} meUid={meUid} />}
 
       <p className="font-display text-lg font-bold uppercase tracking-wide text-ink">
-        {koniec ? t("odcien.lastRound") : `${t("common.round")} ${pub.round} — ${t("common.results")}`}
+        {koniec ? t("odcien.lastRound") : `${t("common.round")} ${pub.round} - ${t("common.results")}`}
       </p>
 
       <div className="flex w-full max-w-md flex-col items-center gap-1">

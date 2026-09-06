@@ -118,7 +118,7 @@ function beginRound(state: PmState, round: number, now: number, rng: () => numbe
     active: null,
     roundScores: {},
     breakdown: null,
-    pendingEvents: [{ type: "runda", text: `Runda ${round} — litera ${letter}` }],
+    pendingEvents: [{ type: "runda", text: `Runda ${round} - litera ${letter}` }],
   };
 }
 
@@ -332,7 +332,7 @@ export const pmEngine: GameEngine<PmState, PmAction, PmSettings> = {
         ...state,
         active: { targetUid: action.targetUid, cat: action.cat, by: ctx.uid, justification: "", votes: {} },
         phaseEndsAt: ctx.now + CHALLENGE_MS,
-        pendingEvents: [{ type: "kwestia", text: "Odpowiedź zakwestionowana — głosujcie" }],
+        pendingEvents: [{ type: "kwestia", text: "Odpowiedź zakwestionowana - głosujcie" }],
       };
     }
 

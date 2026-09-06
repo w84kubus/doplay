@@ -82,7 +82,7 @@ function Wpis({ wpis, mode, players }: { wpis: string; mode: string; players: Gr
   if (!gracz) {
     return (
       <span className="flex size-9 items-center justify-center rounded-full border-2 border-stroke bg-panel text-sm font-bold text-ink-muted">
-        —
+        -
       </span>
     );
   }

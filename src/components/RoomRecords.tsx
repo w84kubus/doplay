@@ -58,7 +58,7 @@ export function RoomRecords({ records, players }: { records?: Records; players: 
                   <GameIcon gameId={h.gameId} size={20} />
                   <AvatarIcon avatar={avatar(h.uid)} size={18} />
                   <span className="truncate">
-                    <b className="text-ink">{nick(h.uid)}</b> — {h.key ? t(h.key as Parameters<typeof t>[0], h.params) : h.text}
+                    <b className="text-ink">{nick(h.uid)}</b> - {h.key ? t(h.key as Parameters<typeof t>[0], h.params) : h.text}
                   </span>
                 </li>
               ))}

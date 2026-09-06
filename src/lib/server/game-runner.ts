@@ -141,9 +141,9 @@ export async function startGame(
 
     const count = Object.keys(room.players).length;
     if (count < manifest.minPlayers)
-      throw new ApiError(409, `Za mało graczy — potrzeba min. ${manifest.minPlayers}.`);
+      throw new ApiError(409, `Za mało graczy - potrzeba min. ${manifest.minPlayers}.`);
     if (count > manifest.maxPlayers)
-      throw new ApiError(409, `Za dużo graczy — max ${manifest.maxPlayers}.`);
+      throw new ApiError(409, `Za dużo graczy - max ${manifest.maxPlayers}.`);
 
     const settings = manifest.settingsSchema.parse(rawSettings ?? manifest.defaultSettings);
     const seed = randomSeed();

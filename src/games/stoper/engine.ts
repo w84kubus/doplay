@@ -178,7 +178,7 @@ function applyScoring(state: StoperState): { scores: Record<string, number>; eve
     // meta.rekord === true → rdzeń dopisuje to do „Rekordów pokoju" (UPGRADE.md §8).
     events.push({
       type: "idealnie",
-      text: `Idealne trafienie — ${fmt(state.results[uid].valueMs)}`,
+      text: `Idealne trafienie - ${fmt(state.results[uid].valueMs)}`,
       key: "feat.stoper.perfect",
       params: { time: fmt(state.results[uid].valueMs) },
       meta: { uid, rekord: true },
@@ -308,7 +308,7 @@ export const stoperEngine: GameEngine<StoperState, StoperAction, StoperSettings>
     if (action.type === "RUN_STOP") {
       if (state.phase !== "bieg") throw new GameError("Nie teraz.");
       if (ctx.uid !== state.runnerUid) throw new GameError("Teraz biegnie kto inny.", 403);
-      if (action.valueMs < MIN_VALID_MS) throw new GameError("Za szybko — to był przypadkowy klik?");
+      if (action.valueMs < MIN_VALID_MS) throw new GameError("Za szybko - to był przypadkowy klik?");
       return {
         ...state,
         phase: "typowanie",
@@ -335,7 +335,7 @@ export const stoperEngine: GameEngine<StoperState, StoperAction, StoperSettings>
     if (state.phase !== "pomiar") throw new GameError("Runda już zamknięta.");
     if (!state.playerUids.includes(ctx.uid)) throw new GameError("Nie jesteś w tej rundzie.", 403);
     if (state.results[ctx.uid]) throw new GameError("Już zatrzymałeś stoper w tej rundzie.");
-    if (action.valueMs < MIN_VALID_MS) throw new GameError("Za szybko — to był przypadkowy klik?");
+    if (action.valueMs < MIN_VALID_MS) throw new GameError("Za szybko - to był przypadkowy klik?");
 
     const value = Math.min(action.valueMs, roundLimitMs(state.target));
     const signedMs = value - state.target;

@@ -350,7 +350,7 @@ export const kasynoEngine: GameEngine<KasynoState, KasynoAction, KasynoSettings>
       if (state.settings.mode !== "sloty") throw new GameError("Ten tryb nie ma maszyny.", 400);
       if (state.phase !== "gra") throw new GameError("Nie teraz.");
       if (!state.playerUids.includes(ctx.uid)) throw new GameError("Nie jesteś w tej grze.", 403);
-      if (state.out.includes(ctx.uid)) throw new GameError("Odpadłeś — możesz tylko patrzeć.", 403);
+      if (state.out.includes(ctx.uid)) throw new GameError("Odpadłeś - możesz tylko patrzeć.", 403);
 
       const saldo = state.chips[ctx.uid] ?? 0;
       if (action.amount > saldo) throw new GameError("Nie masz tylu żetonów.");
@@ -403,7 +403,7 @@ export const kasynoEngine: GameEngine<KasynoState, KasynoAction, KasynoSettings>
     // BET
     if (state.phase !== "zaklady") throw new GameError("Zakłady zamknięte.");
     if (!state.playerUids.includes(ctx.uid)) throw new GameError("Nie jesteś w tej grze.", 403);
-    if (state.out.includes(ctx.uid)) throw new GameError("Odpadłeś — możesz tylko patrzeć.", 403);
+    if (state.out.includes(ctx.uid)) throw new GameError("Odpadłeś - możesz tylko patrzeć.", 403);
     if (state.bets[ctx.uid]) throw new GameError("Zakład już postawiony.");
 
     const mode = state.settings.mode;

@@ -24,3 +24,16 @@ export const GAME_MANIFESTS: Record<string, GameManifest<any>> = {
 
 /** Manifesty do wyboru gry w lobby (kolejność jak w SPEC §1). */
 export const GAME_LIST = Object.values(GAME_MANIFESTS);
+
+/**
+ * Ile osób ma sens w jednym pokoju: tyle, ile znosi najpojemniejsza gra.
+ *
+ * Liczone z rejestru, nie wpisane na sztywno, żeby gra z innym limitem podniosła to
+ * sama. Rdzeń nadal nie zna żadnej konkretnej gry — pyta cały rejestr o maksimum.
+ *
+ * Do Fazy „publiczne pokoje" `join` nie miał żadnego limitu: kontrola `maxPlayers`
+ * siedziała dopiero w `startGame`. Przy pokoju dla znajomych to nie przeszkadzało,
+ * ale publiczny pokój mógłby nazbierać tylu obcych, że żadnej gry nie dałoby się
+ * odpalić, a błąd zobaczyłby dopiero host przy starcie.
+ */
+export const MAX_W_POKOJU = Math.max(...GAME_LIST.map((m) => m.maxPlayers));

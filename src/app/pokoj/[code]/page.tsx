@@ -7,6 +7,7 @@ import { RoomCodeNeon } from "@/components/RoomCodeNeon";
 import { RoomQr } from "@/components/RoomQr";
 import { PlayerList } from "@/components/PlayerList";
 import { Illustration } from "@/components/Illustration";
+import { PublicRoomToggle } from "@/components/PublicRoomToggle";
 import { RoomRecords } from "@/components/RoomRecords";
 import { GameShell } from "@/components/game/GameShell";
 import { LobbyGames } from "@/components/game/LobbyGames";
@@ -208,6 +209,13 @@ export default function LobbyPage() {
           onKick={isHost ? kick : undefined}
           minSlots={zaMaloGraczy ? 0 : 4}
         />
+
+        {/* Otwarcie pokoju dla obcych. Tylko host i tylko w lobby: lista publiczna
+            pokazuje wyłącznie pokoje przed startem, więc w trakcie gry ten przełącznik
+            nie miałby czego zmienić. */}
+        {isHost && room.status === "lobby" && (
+          <PublicRoomToggle code={room.code} isPublic={room.public === true} />
+        )}
 
         {/* Czekamy na ludzi. To jest ekran, na który host patrzy najdłużej ze wszystkich —
             zaraz po założeniu pokoju. Wcześniej była tu jedna linijka tekstu i pustka;

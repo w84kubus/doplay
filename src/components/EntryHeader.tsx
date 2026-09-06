@@ -15,7 +15,7 @@ export function EntryHeader({ mode }: { mode: EntryMode }) {
   const t = useT();
   return (
     <div className="relative flex flex-col items-center">
-      <h1 className="sr-only">{t(mode === "create" ? "entry.newRoom" : "entry.joinRoom")}</h1>
+      <h1 className="sr-only">{t(mode === "create" ? "entry.newRoom" : mode === "public" ? "entry.publicRooms" : "entry.joinRoom")}</h1>
       <Image
         src="/icon-512.png"
         alt=""

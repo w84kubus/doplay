@@ -37,6 +37,7 @@ export function newRoom(code: string, host: Player, now: number): Room {
     hostUid: host.uid,
     narratorUid: null,
     status: "lobby",
+    public: false, // pokój zaczyna prywatnie; host otwiera go świadomie
     gameId: null,
     settings: {},
     players: { [host.uid]: host },

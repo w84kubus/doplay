@@ -8,19 +8,22 @@ import { CodeInput } from "./CodeInput";
 import { AvatarPicker } from "./AvatarPicker";
 import { AvatarIcon, avatarColor } from "./AvatarIcon";
 import { EntryTabs } from "./EntryTabs";
+import { PublicRoomsList } from "./PublicRoomsList";
+import type { PubliczyPokoj } from "@/lib/server/publiczne";
 import { AVATARS } from "@/lib/avatars";
 import { useSession } from "@/lib/store/session";
 import { apiPost } from "@/lib/client/api";
 import { MAX_NICK_LENGTH, sanitizeNick } from "@/lib/schemas/room";
 import { isValidRoomCode, normalizeRoomCode } from "@/lib/room-code";
 
-// Wspólny formularz wejścia (SPEC §4). Tryb "create" zakłada pokój, "join" dołącza kodem.
+// Wspólny formularz wejścia (SPEC §4). Tryb "create" zakłada pokój, "join" dołącza kodem,
+// "public" wybiera pokój z listy otwartych. Wszystkie trzy dzielą nick i awatar z sesji.
 export function EntryForm({
   mode,
   initialCode = "",
   withTabs = false,
 }: {
-  mode: "create" | "join";
+  mode: "create" | "join" | "public";
   initialCode?: string;
   /**
    * Zakładki nad panelem (DESIGN.md §4.3). Wyłączone na /p/[code]: tam kod przyszedł
@@ -34,6 +37,7 @@ export function EntryForm({
   const [code, setCode] = useState(normalizeRoomCode(initialCode));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [publiczne, setPubliczne] = useState<PubliczyPokoj[]>([]);
 
   // Losowanie zawsze zmienia awatar — trafienie w ten sam, który już jest wybrany,
   // wyglądałoby jak zepsuty przycisk.
@@ -43,30 +47,48 @@ export function EntryForm({
   }, [avatar, setAvatar]);
 
   const nickOk = sanitizeNick(nick).length > 0;
-  const codeOk = mode === "create" || isValidRoomCode(code);
-  const canSubmit = nickOk && codeOk && !busy;
+  const codeOk = mode === "join" ? isValidRoomCode(code) : true;
+  // W trybie publicznym przycisk wchodzi do losowego pokoju, więc bez pokoi nie ma co robić.
+  const canSubmit = nickOk && codeOk && !busy && (mode !== "public" || publiczne.length > 0);
 
-  const submit = async () => {
-    if (!canSubmit) return;
+  /** Dołączenie do konkretnego kodu — z wpisanego pola albo z kafelka na liście. */
+  const dolacz = async (kod: string) => {
+    if (busy || !nickOk) return;
     setBusy(true);
     setError(null);
     try {
-      if (mode === "create") {
-        const { code: newCode } = await apiPost<{ code: string }>("/api/rooms", {
-          nick,
-          avatar,
-        });
-        setActiveRoom({ code: newCode, nick });
-        router.push(`/pokoj/${newCode}`);
-      } else {
-        await apiPost(`/api/rooms/${code}/join`, { nick, avatar });
-        setActiveRoom({ code, nick });
-        router.push(`/pokoj/${code}`);
-      }
+      await apiPost(`/api/rooms/${kod}/join`, { nick, avatar });
+      setActiveRoom({ code: kod, nick });
+      router.push(`/pokoj/${kod}`);
     } catch (err) {
+      // Pokój z listy mógł się w międzyczasie zapełnić albo zamknąć — lista odświeża
+      // się sama co kilka sekund, więc wystarczy pokazać powód i zostawić wybór.
       setError(err instanceof Error ? err.message : t("entry.error"));
       setBusy(false);
     }
+  };
+
+  const submit = async () => {
+    if (!canSubmit) return;
+    if (mode === "create") {
+      setBusy(true);
+      setError(null);
+      try {
+        const { code: newCode } = await apiPost<{ code: string }>("/api/rooms", { nick, avatar });
+        setActiveRoom({ code: newCode, nick });
+        router.push(`/pokoj/${newCode}`);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : t("entry.error"));
+        setBusy(false);
+      }
+      return;
+    }
+    if (mode === "public") {
+      const losowy = publiczne[Math.floor(Math.random() * publiczne.length)];
+      if (losowy) await dolacz(losowy.code);
+      return;
+    }
+    await dolacz(code);
   };
 
   return (
@@ -92,6 +114,13 @@ export function EntryForm({
               </label>
               <CodeInput value={code} onChange={setCode} />
             </div>
+          )}
+
+          {mode === "public" && (
+            <>
+              <p className="text-sm leading-relaxed text-ink-muted">{t("publiczne.lead")}</p>
+              <PublicRoomsList onPick={dolacz} busy={busy} onLoaded={setPubliczne} />
+            </>
           )}
 
           <div className="flex flex-col gap-2">
@@ -158,7 +187,15 @@ export function EntryForm({
         className={`btn ${mode === "create" ? "btn-coral" : ""}`}
         disabled={!canSubmit}
       >
-        {busy ? t("common.loading") : t(mode === "create" ? "entry.creating" : "entry.joining")}
+        {busy
+          ? t("common.loading")
+          : t(
+              mode === "create"
+                ? "entry.creating"
+                : mode === "public"
+                  ? "publiczne.joinRandom"
+                  : "entry.joining",
+            )}
       </button>
 
       <Link

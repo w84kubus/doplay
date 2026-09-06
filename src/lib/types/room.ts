@@ -46,6 +46,11 @@ export interface Room {
   hostUid: string;
   narratorUid: string | null;
   status: RoomStatus;
+  /**
+   * Czy pokój jest na publicznej liście. Host przełącza to w lobby, w obie strony:
+   * otwiera, gdy nie ma z kim grać, i zamyka, gdy skład się skompletuje.
+   */
+  public: boolean;
   gameId: string | null;
   settings: Record<string, unknown>;
   players: PlayerMap;

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getAdminDb } from "@/lib/firebase/admin";
 import { ApiError, requireUid } from "@/lib/server/auth";
 import { handleApiError } from "@/lib/server/http";
+import { MAX_W_POKOJU } from "@/games/manifests";
 import { newPlayer } from "@/lib/server/rooms";
 import { codeParamSchema, dedupeAvatar, dedupeNick, joinRoomSchema } from "@/lib/schemas/room";
 import type { Player, Room } from "@/lib/types/room";
@@ -47,6 +48,13 @@ export async function POST(
 
       if (room.status !== "lobby") {
         throw new ApiError(409, "Gra już trwa — poczekaj na koniec rundy.");
+      }
+
+      // Sprawdzane tylko dla NOWEGO gracza: wracający po odświeżeniu ma już swoje
+      // miejsce i nie może się od tego odbić. Bez tego limitu publiczny pokój zbierałby
+      // ludzi ponad pojemność każdej gry, a błąd zobaczyłby dopiero host przy starcie.
+      if (Object.keys(room.players).length >= MAX_W_POKOJU) {
+        throw new ApiError(409, "Pokój jest pełny.");
       }
 
       const finalNick = dedupeNick(nick, nicksExcept(room, uid));

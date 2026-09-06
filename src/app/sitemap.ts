@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: SITE_URL, lastModified: teraz, changeFrequency: "weekly", priority: 1 },
     { url: `${SITE_URL}/nowy`, lastModified: teraz, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/dolacz`, lastModified: teraz, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/publiczne`, lastModified: teraz, changeFrequency: "daily", priority: 0.8 },
     { url: `${SITE_URL}/gry/stoper/trening`, lastModified: teraz, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE_URL}/prywatnosc`, lastModified: teraz, changeFrequency: "yearly", priority: 0.3 },
   ];

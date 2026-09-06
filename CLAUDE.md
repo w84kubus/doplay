@@ -85,6 +85,9 @@ firebase deploy --only firestore:rules
       zrzutów w README, koordynacja pasków przy dolnej krawędzi
 - [x] Faza K — sprzątanie bazy: cron kasujący wygasłe pokoje z podkolekcjami,
       poprawka `leave` (nie zostawia sierot), plan Blaze zamiast Spark
+- [x] Faza L — publiczne pokoje: trzecia zakładka z listą otwartych pokoi,
+      przełącznik hosta w lobby, wejście do losowego, limit graczy w `join`;
+      wcześniej naprawa faz, które czekały na gracza bez terminu
 
 ### Co realnie zostało
 
@@ -191,3 +194,44 @@ przed zdjęciem listy. Oba czasy z zegara Firestore, nigdy z `Date.now()` proces
 
 Bramka crona zamyka się przy braku `CRON_SECRET` (odpowiada 401), zamiast otwierać
 trasę dla wszystkich. Sekret jest w Vercelu i w `.env.local`.
+
+
+### Publiczne pokoje
+
+Pokój z flagą `public` trafia na listę pod `/publiczne`. Host przełącza ją w lobby,
+w obie strony. Rzeczy, które łatwo cofnąć przez nieuwagę:
+
+- **Reguły Firestore zostają zamknięte.** Kuszące „albo pokój jest publiczny" w regule
+  pozwoliłoby każdemu zalogowanemu czytać CAŁY dokument dowolnego publicznego pokoju
+  bez wchodzenia do niego. Listę serwuje `GET /api/rooms/publiczne` przez Admin SDK.
+  Cena: brak realtime, odpytywanie co 10 s.
+- **Na liście nie ma nicków ani żadnego tekstu wpisanego przez gracza.** To jedyny ekran
+  widoczny dla kogoś spoza pokoju. Pilnują tego dwa testy: na dokładny zestaw pól
+  i na nick ze znacznikami HTML. Dokładanie pól do `PubliczyPokoj` wymaga tej samej ostrożności.
+- **Nazwy gry na kafelku nie ma świadomie.** W lobby `gameId` dokumentu jest ZAWSZE null:
+  wybór gry to stan klienta do startu, a `reset` zeruje pole. Kafelek pokazywałby
+  „gra jeszcze niewybrana" na każdej pozycji.
+- **Próg porzucenia to 5 minut, nie 20 s** od kropki „online". Ping milknie już przy
+  przełączeniu na inną aplikację. Obie pomyłki kosztują różnie: pokazany martwy pokój to
+  jedno nieudane dołączenie z czytelnym błędem, ukryty żywy to gracz, którego nikt nie
+  znajdzie — czyli dokładnie to, czemu ta lista ma zapobiec.
+
+`join` ma limit graczy liczony z rejestru manifestów (`MAX_W_POKOJU`), nie wpisany na
+sztywno. Do tej fazy limitu nie było wcale — kontrola `maxPlayers` siedziała dopiero
+w `startGame`, więc publiczny pokój mógłby nazbierać tylu obcych, że żadnej gry nie da
+się odpalić, a błąd zobaczyłby dopiero host przy starcie.
+
+### Faza, która czeka na gracza, musi mieć termin
+
+`phaseEndsAt: null` w fazie, która czeka na akcję konkretnych ludzi, to zakleszczenie.
+Tak było w `rozdaniu` Impostora i Mafii: czekały na `CONFIRM` od wszystkich, a ani
+`PHASE_TIMEOUT`, ani hostowy `NEXT` tej fazy nie obsługiwały. Jeden gracz, któremu padł
+telefon, zawieszał partię reszty bez wyjścia poza przerwanie gry.
+
+- Termin włącza istniejący mechanizm ticków, więc poprawka mieści się w silniku.
+  `ActionContext` nie wie nic o rozłączeniach i nie musi.
+- Limity hojne: mają łapać tych, którzy odeszli od stołu, a nie poganiać grających.
+  Tura podpowiedzi skaluje się z liczbą graczy, bo w trybie „na głos" mówi się po kolei.
+- Kto nie zdążył, **nie wypada z gry** — rola zostaje, po prostu przestajemy czekać.
+- Pułapka pokryta testem: kolejna tura musi dostać ŚWIEŻY termin. Odziedziczony byłby
+  już miniony i wygasałby natychmiast.

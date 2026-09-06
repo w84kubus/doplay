@@ -7,7 +7,7 @@ import { AVATARS } from "@/lib/avatars";
 const COLOR: Record<string, string> = {
   cat: "#E8833A", dog: "#8B6F47", bird: "#3FA9D9", rabbit: "#C9A9A0", panda: "#5B6B7A",
   squirrel: "#B5713C", fish: "#3E86BF", turtle: "#5FA35A", bug: "#C4453C", rat: "#7D8A94",
-  snail: "#A8894F", worm: "#D98CA0", pizza: "#D4762E", beer: "#D9A32B",
+  snail: "#A8894F", worm: "#D98CA0",
   bot: "#6E8CA0", ghost: "#8E8BC7", skull: "#8A8F99",
   // Druga generacja. Kolory dobrane tak, żeby rozjechać się z sąsiadem o podobnej
   // ilustracji: sowa jest ciemniejsza od psa, rekin od rybki, meduza od robaczka.
@@ -16,6 +16,9 @@ const COLOR: Record<string, string> = {
   octopus: "#C43D7E", unicorn: "#B98FD6", dragon: "#2C8A62", owl: "#B0762F",
   bat: "#453F55", shark: "#3E6B96", jellyfish: "#B25FA0", sloth: "#A8906B",
   crab: "#CC5335",
+  // Żyrafa i tygrys dostają kafelki spoza swojej gamy: obie są ciepłe i wpadłyby
+  // w tłok, w którym siedzą już lew, sowa, pies i wiewiórka.
+  giraffe: "#3E8F86", tiger: "#7A4028",
 };
 
 const KNOWN = new Set<string>(AVATARS);

@@ -570,3 +570,20 @@ myślnik pomija blok:
 ```
 python3 scripts/tnij-arkusz.py ARKUSZ.jpg owl,bat,shark,jellyfish,sloth,crab,-,-,-
 ```
+
+### Domknięcie: pizza i piwo zastąpione żyrafą i tygrysem
+
+Partia C nie doczekała się poprawnej generacji — zamiast tego oba przedmioty wypadły
+z pakietu, a ich miejsca zajęły dwie postacie. Od tej pory **wszystkie trzydzieści
+awatarów ma twarz** i nie ma już podziału na zwierzęta i przedmioty.
+
+Uwaga na pułapkę, która o mało nie weszła do zamówienia: proszony o „mysz" model dałby
+duplikat, bo istniejący identyfikator `rat` to właśnie mysz (plik źródłowy `myszka.png`,
+szara głowa z okrągłymi uszami). Przed dopisaniem gatunku do zamówienia sprawdź, co
+ilustracja naprawdę przedstawia, a nie tylko jak nazywa się identyfikator.
+
+Żyrafa i tygrys dostały kafelki spoza własnej gamy — turkus `#3E8F86` i kakao `#7A4028`.
+Oba zwierzęta są ciepłe i pomarańczowo-złote, więc na kafelku w tym samym tonie wpadłyby
+w tłok, w którym siedzą już lew, sowa, pies i wiewiórka.
+
+`pizza` i `beer` przeniesione do `LEGACY_AVATARS`, ich pliki webp usunięte.

@@ -2,15 +2,13 @@
 // wygląd (ikona Lucide + kolor kafelka) żyje w src/components/AvatarIcon.tsx.
 export const AVATARS = [
   // ssaki
-  "cat", "dog", "rabbit", "panda", "squirrel", "rat", "lion", "sloth",
+  "cat", "dog", "rabbit", "panda", "squirrel", "rat", "lion", "tiger", "giraffe", "sloth",
   // ptaki, owady, nietoperz
   "bird", "owl", "penguin", "bee", "bug", "bat",
   // wodne i pełzające
   "fish", "shark", "turtle", "frog", "octopus", "jellyfish", "crab", "snail", "worm",
   // postacie baśniowe i nie-zwierzęce
   "unicorn", "dragon", "ghost", "bot", "skull",
-  // klasyki imprezowe
-  "pizza", "beer",
 ] as const;
 
 export const DEFAULT_AVATAR: string = AVATARS[0];
@@ -26,6 +24,8 @@ const LEGACY_AVATARS = [
   // druga generacja pakietu (ETAP 11) — przedmioty bez twarzy zastąpione postaciami
   "shell", "feather", "egg", "paw", "guitar", "rocket", "flame",
   "gamepad", "crown", "diamond", "anchor", "bike", "zap",
+  // ostatnie dwa przedmioty; po nich pakiet to same postacie z twarzą
+  "pizza", "beer",
   // emoji sprzed przejścia na pakiet ikon
   "🦊", "🐼", "🐧", "🦁", "🐸", "🐙", "🦄", "🐝", "🦉", "🐬",
   "🐢", "🦖", "🦩", "🐯", "🐨", "🐰", "🦇", "🦈", "🐳", "🦭",

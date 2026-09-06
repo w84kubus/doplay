@@ -372,3 +372,169 @@ File name: kolko.png
 > **Jak ocenić wynik w pół sekundy:** zmniejsz obrazek do 40 px i spójrz. Powinieneś
 > widzieć jasną deseczkę i dwie kolorowe plamy. Jeśli widzisz ciemną bryłę — jest źle,
 > niezależnie od tego, jak ładnie wygląda w dużym rozmiarze.
+
+---
+
+## ETAP 11 — wymiana martwych przedmiotów na postacie
+
+### Dlaczego
+
+Pakiet rozjechał się na dwie połowy. Piętnaście awatarów ma twarz i patrzy na gracza,
+piętnaście to martwe przedmioty. Awatar odpowiada na pytanie „kim jestem przy tym stole",
+a na to nie da się odpowiedzieć jajkiem ani kotwicą. Widać to od razu, gdy ustawi się
+je obok siebie: kot, panda i ślimak to postacie, a muszelka i pióro to clipart.
+
+Kryterium jest jedno i twarde: **awatar musi mieć oczy**. Wszystko, co ich nie ma,
+wypada — niezależnie od tego, jak ładnie narysowane.
+
+### Co zostaje (15 — mają twarz)
+
+`cat` `dog` `bird` `rabbit` `panda` `squirrel` `fish` `turtle` `bug` `rat` `snail` `worm`
+oraz trzy postacie nie-zwierzęce, które też patrzą: `bot` `ghost` `skull`.
+
+### Co wypada (13 — brak twarzy)
+
+`shell` `feather` `egg` `paw` `guitar` `rocket` `flame` `gamepad` `crown` `diamond`
+`anchor` `bike` `zap`
+
+`paw` wypada podwójnie: łapka to nie postać, a przy kocie i psie w tym samym zestawie
+jest wręcz myląca.
+
+### Dwa przypadki do decyzji: `pizza` i `beer`
+
+Nie są postaciami, ale są **tematyczne** — to imprezowa gra. Zamiast wyrzucać, można
+je przerysować z twarzą: kawałek pizzy z oczami i uśmiechem jest postacią i zostaje
+w klimacie. Prompt na to jest w partii C niżej. Jeśli wolisz czystość pakietu,
+pomiń partię C i zamów dwie dodatkowe postacie z listy rezerwowej.
+
+### Kolizje, których trzeba pilnować
+
+Przy trzydziestu okrągłych awatarach po 40 px sylwetka to za mało — decyduje **kolor**.
+Zajęte pola: pomarańcz (kot, wiewiórka), brąz (pies), błękit (ptaszek, rybka, robot),
+zieleń (żółw), czerwień (biedronka), szarość (myszka, czaszka), biel (duszek, panda),
+róż (robaczek), beż (królik, ślimak).
+
+Wolne i warte zajęcia: **żółto-czarne pasy, limonka, magenta, złoto, turkus, grafit**.
+
+Dlatego w promptach niżej kolor jest podany sztywno dla każdej postaci, a nie zostawiony
+modelowi. Drugą linią obrony jest kolor kafelka pod awatarem (`avatarColor`
+w `AvatarIcon.tsx`) — dwa szare zwierzaki na różnych kafelkach czytają się jako różne.
+
+---
+
+### Partia A — 7 postaci (wklej razem z obrazkiem z ETAPU 1)
+
+```
+To jest kontynuacja pakietu awatarów. Załączam ikonę z pierwszej partii jako wzór stylu.
+Trzymaj się jej dokładnie: ten sam gruby ciemnofioletowy kontur (#2A1758) o tej samej
+grubości, ten sam kreskówkowy 3D, ta sama bąbelkowa miękkość, to samo światło z lewej góry,
+ta sama skala kadru (pyszczek zajmuje tyle samo miejsca co w załączonym wzorze).
+
+Wszystkie zwierzęta: SAMA GŁOWA en face, bez ciała, przyjazna, uśmiechnięta, oczy
+skierowane na patrzącego. Tło całkowicie przezroczyste, kwadrat 1:1, margines ok. 10%.
+Bez tekstu, bez ramek, bez cienia rzuconego na tło.
+
+Kolor każdej postaci jest PODANY i obowiązkowy — te ikony będą leżeć obok trzydziestu
+innych i kolor jest jedyną rzeczą, która je odróżni po zmniejszeniu do 40 px.
+Nie zmieniaj go „dla ładniejszej kompozycji".
+
+Wygeneruj 7 osobnych obrazków:
+1. frog — głowa żaby, JASKRAWA LIMONKA (#7CC93F), szeroki uśmiech, wypukłe oczy
+   na czubku głowy. Ma być wyraźnie jaśniejsza i bardziej kwaśna niż zieleń żółwia.
+2. bee — głowa pszczoły, ŻÓŁTO-CZARNE PASY (#F2C23E + czerń), okrągłe czułki,
+   maleńkie skrzydełka po bokach głowy.
+3. penguin — głowa pingwina, CZARNA z BIAŁYM PYSZCZKIEM i POMARAŃCZOWYM DZIOBEM (#F08A2E).
+   Uwaga: w pakiecie jest już panda (biała głowa, czarne uszy) — pingwin ma być jej
+   odwrotnością, czyli ciemna głowa z jasnym środkiem.
+4. lion — głowa lwa, ZŁOTA GRZYWA (#E0A02E) wokół jaśniejszego pyszczka. Grzywa jako
+   pełny pierścień, bo to ona tworzy rozpoznawalną sylwetkę.
+5. octopus — głowa ośmiornicy, MAGENTA (#D9418C), duże oczy, kilka krótkich macek
+   podwiniętych pod spodem. Macki grube i miękkie, nie cienkie nitki.
+6. unicorn — głowa jednorożca, BIAŁA z TĘCZOWĄ GRZYWĄ i ZŁOTYM ROGIEM. Grzywa
+   wielobarwna, bo w pakiecie jest już biały duszek — tęcza ma je rozróżnić.
+7. dragon — głowa smoka, GŁĘBOKI SZMARAGD (#2F9E6E), dwa rogi, mały pyszczek,
+   przyjazny nie groźny. Rogi są tu najważniejsze: odróżniają go od żółwia i żaby.
+
+Nazwij pliki dokładnie: frog.png, bee.png, penguin.png, lion.png, octopus.png,
+unicorn.png, dragon.png
+```
+
+### Partia B — 6 postaci (znowu z obrazkiem wzorcowym)
+
+```
+Kolejna partia tego samego pakietu. Ten sam wzór stylu w załączniku, te same zasady:
+sama głowa en face, gruby kontur #2A1758, światło z lewej góry, przezroczyste tło,
+kwadrat 1:1, margines 10%, podany kolor obowiązkowy.
+
+1. owl — głowa sowy, CIEPŁY BURSZTYN (#C98A3C) z OGROMNYMI ŻÓŁTYMI OCZAMI.
+   Oczy mają zajmować dobrą jedną trzecią głowy — to one odróżniają sowę od psa
+   i wiewiórki, które są w podobnym brązie.
+2. bat — głowa nietoperza, GRAFIT Z FIOLETOWYM ODCIENIEM (#4A4358), duże spiczaste
+   uszy, dwa malutkie kły w uśmiechu. Ma być ciemna, ale nie czarna.
+3. shark — głowa rekina, STALOWY BŁĘKIT (#4A7BA8), szeroki zębaty uśmiech, płetwa
+   na czubku głowy. W pakiecie jest już turkusowa rybka — rekin ma być wyraźnie
+   ciemniejszy, a zęby i płetwa mają robić różnicę.
+4. jellyfish — głowa meduzy, PÓŁPRZEZROCZYSTY LILIOWY RÓŻ (#C86FB0), kopułka z kilkoma
+   falującymi nitkami pod spodem. W pakiecie jest różowy robaczek — meduzę ma odróżnić
+   kopuła i nitki.
+5. sloth — głowa leniwca, CIEPŁY BEŻ (#C4A882) z CIEMNĄ MASKĄ wokół oczu i sennym
+   półuśmiechem. Maska jest obowiązkowa: bez niej zlewa się z królikiem i ślimakiem.
+6. crab — głowa kraba, KORALOWA CZERWIEŃ (#E2603F), dwa szczypce uniesione po bokach
+   głowy, oczy na krótkich słupkach. W pakiecie jest czerwona biedronka (okrągła kopuła
+   w kropki) — kraba mają odróżnić szczypce i oczy na słupkach.
+
+Nazwij pliki dokładnie: owl.png, bat.png, shark.png, jellyfish.png, sloth.png, crab.png
+```
+
+### Partia C — dwa przedmioty, które dostają twarz (opcjonalna)
+
+```
+Ten sam styl i te same zasady techniczne co poprzednio.
+
+Te dwie ikony JUŻ istnieją w pakiecie jako martwe przedmioty. Przerysuj je jako postacie:
+dodaj duże przyjazne oczy i uśmiech, zachowując kształt i kolor, żeby dalej były
+rozpoznawalne jako pizza i kufel.
+
+1. pizza — kawałek pizzy z twarzą. Ser i pepperoni zostają, oczy i uśmiech na serze.
+2. beer — kufel piwa z twarzą. Piana i złoty płyn zostają, twarz na szkle.
+
+Nie rób z nich ludzików: żadnych rąk, nóg ani czapek. To ma być pizza, która patrzy,
+a nie postać trzymająca pizzę.
+
+Nazwij pliki dokładnie: pizza.png, beer.png
+```
+
+### Lista rezerwowa
+
+Gdyby któraś postać nie wyszła albo gdybyś wolał pominąć partię C:
+**koala** (popielaty, ogromne puchate uszy), **szop** (popielaty z czarną maską bandyty),
+**kameleon** (turkus przechodzący w limonkę, oko na obrotowej wieżyczce),
+**jeż** (brązowe kolce, jasny pyszczek), **wieloryb** (granat, mała fontanna).
+
+Każda z nich wchodzi w wolne pole kolorystyczne, ale wymaga sprawdzenia przy sąsiadach:
+koala i szop dokładają szarości do myszki i czaszki, jeż dokłada brązu do psa.
+
+### Co po wygenerowaniu
+
+1. Pliki do `emoji-pack/` pod nazwami jak wyżej.
+2. W `scripts/build-avatars.mjs` dopisać do `MAP` wpisy `frog: "frog"` itd. — nowe
+   pliki mają angielskie nazwy, więc mapowanie jest tożsamościowe.
+3. `node scripts/build-avatars.mjs` — przytnie, wyrówna skalę i zapisze WebP 192×192.
+4. W `src/lib/avatars.ts`: wstawić nowe identyfikatory do `AVATARS` w miejsce starych.
+   **Wycofane identyfikatory przenieść do `LEGACY_AVATARS`, nie kasować.** Bez tego
+   gracz, który siedzi teraz w pokoju z awatarem `egg`, po odświeżeniu strony dostanie
+   z `/join` błąd „Nieznany awatar" i nie wróci do własnej partii. Pokoje żyją 8 h,
+   więc okno jest krótkie, ale realne.
+5. W `src/components/AvatarIcon.tsx` dopisać kolory kafelków. Propozycja, dobrana tak,
+   by rozjechać się z sąsiadami:
+
+   ```
+   frog: "#5FA33C", bee: "#D9A81F", penguin: "#3D4A5C", lion: "#D98E2B",
+   octopus: "#C43D7E", unicorn: "#B98FD6", dragon: "#2C8A62", owl: "#B0762F",
+   bat: "#453F55", shark: "#3E6B96", jellyfish: "#B25FA0", sloth: "#A8906B",
+   crab: "#CC5335",
+   ```
+
+6. Sprawdzian końcowy: złóż wszystkie trzydzieści w jeden arkusz i zmniejsz do 40 px.
+   Jeśli dwa awatary da się pomylić, zmień **kolor kafelka**, nie ilustrację — to tańsza
+   i skuteczniejsza poprawka.

@@ -5,10 +5,13 @@ import { mkdir, readdir } from "node:fs/promises";
 const MAP = {
   cat: "kot", dog: "pies", bird: "ptaszek", rabbit: "krolik", panda: "panda",
   squirrel: "wiewiorka", fish: "rybka", turtle: "zolw", bug: "biedronka-1", rat: "myszka",
-  snail: "slimak", worm: "robaczek", shell: "muszla", feather: "pioro", egg: "jajko",
-  paw: "lapka", pizza: "pizza", beer: "piwo", guitar: "gitara", rocket: "rakieta",
-  bot: "robot", ghost: "duszek", skull: "czaszka", flame: "ogien", gamepad: "pad",
-  crown: "korona", diamond: "diament", anchor: "kotwica-2", bike: "rower", zap: "blyskawica",
+  snail: "slimak", worm: "robaczek", pizza: "pizza", beer: "piwo",
+  bot: "robot", ghost: "duszek", skull: "czaszka",
+  // Druga generacja (ETAP 11): pliki wychodzą z `tnij-arkusz.py` już pod nazwą
+  // identyfikatora, więc mapowanie jest tożsamościowe.
+  frog: "frog", bee: "bee", penguin: "penguin", lion: "lion", octopus: "octopus",
+  unicorn: "unicorn", dragon: "dragon", owl: "owl", bat: "bat", shark: "shark",
+  jellyfish: "jellyfish", sloth: "sloth", crab: "crab",
 };
 
 // identyfikator gry (z registry) -> plik w emotki-gry/

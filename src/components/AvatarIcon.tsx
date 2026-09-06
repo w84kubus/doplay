@@ -7,10 +7,15 @@ import { AVATARS } from "@/lib/avatars";
 const COLOR: Record<string, string> = {
   cat: "#E8833A", dog: "#8B6F47", bird: "#3FA9D9", rabbit: "#C9A9A0", panda: "#5B6B7A",
   squirrel: "#B5713C", fish: "#3E86BF", turtle: "#5FA35A", bug: "#C4453C", rat: "#7D8A94",
-  snail: "#A8894F", worm: "#D98CA0", shell: "#D9A05B", feather: "#7FB2D4", egg: "#C7A574",
-  paw: "#9B7BFF", pizza: "#D4762E", beer: "#D9A32B", guitar: "#B5443C", rocket: "#8A6FD1",
-  bot: "#6E8CA0", ghost: "#8E8BC7", skull: "#8A8F99", flame: "#E05C2E", gamepad: "#6BA86B",
-  crown: "#E0A02E", diamond: "#4FB3C7", anchor: "#4A7BA8", bike: "#4FA8A0", zap: "#E4B429",
+  snail: "#A8894F", worm: "#D98CA0", pizza: "#D4762E", beer: "#D9A32B",
+  bot: "#6E8CA0", ghost: "#8E8BC7", skull: "#8A8F99",
+  // Druga generacja. Kolory dobrane tak, żeby rozjechać się z sąsiadem o podobnej
+  // ilustracji: sowa jest ciemniejsza od psa, rekin od rybki, meduza od robaczka.
+  // Przy 40 px to kafelek, a nie kształt, decyduje o rozróżnieniu.
+  frog: "#5FA33C", bee: "#D9A81F", penguin: "#3D4A5C", lion: "#D98E2B",
+  octopus: "#C43D7E", unicorn: "#B98FD6", dragon: "#2C8A62", owl: "#B0762F",
+  bat: "#453F55", shark: "#3E6B96", jellyfish: "#B25FA0", sloth: "#A8906B",
+  crab: "#CC5335",
 };
 
 const KNOWN = new Set<string>(AVATARS);

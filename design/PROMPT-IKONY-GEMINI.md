@@ -546,3 +546,27 @@ koala i szop dokładają szarości do myszki i czaszki, jeż dokłada brązu do 
 6. Sprawdzian końcowy: złóż wszystkie trzydzieści w jeden arkusz i zmniejsz do 40 px.
    Jeśli dwa awatary da się pomylić, zmień **kolor kafelka**, nie ilustrację — to tańsza
    i skuteczniejsza poprawka.
+
+### Co wyszło z tej generacji (zapis wykonania)
+
+Partie A i B: **13 postaci przyjętych bez poprawek**. Gemini dorzucił w partii B trzeci
+rząd — duplikat leniwca, duplikat kraba i niebieskiego stwora, którego nie było
+w zamówieniu. Stwór odrzucony: mamy już rybkę i rekina w błękicie, a on nie miał żadnej
+cechy odróżniającej (ani płetwy, ani fontanny). Duplikaty odrzucone na rzecz pierwszego
+wystąpienia, bo trzymało skalę z resztą rzędu.
+
+Partia C (pizza i piwo z twarzą): **odrzucona, w innym stylu.** Kontur brązowy zamiast
+ciemnofioletowego #2A1758, miękkie cieniowanie zamiast płaskich wypełnień, realistyczne
+tęczówki z brwiami, do tego wmalowany beżowy prostokąt i cień rzucony pod kuflem.
+Obok pakietu wygląda jak wklejka z innego zestawu. Stara pizza i stare piwo zostają
+bez zmian do czasu ponowienia — przy ponowieniu **koniecznie załącz ikonę z pakietu
+jako wzór**, bo bez niej model wraca do swojego domyślnego stylu maskotki.
+
+Do cięcia arkuszy powstał `scripts/tnij-arkusz.py`. Rozpoznaje szachownicę wmalowaną
+w JPEG (Gemini oddaje „przezroczyste tło" jako piksele), wycina ją zalewaniem od
+krawędzi i rozdziela ikony na osobne pliki. Nazwy podaje się w kolejności czytania,
+myślnik pomija blok:
+
+```
+python3 scripts/tnij-arkusz.py ARKUSZ.jpg owl,bat,shark,jellyfish,sloth,crab,-,-,-
+```

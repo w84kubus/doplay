@@ -1,5 +1,10 @@
 # Prompt do Gemini (Nano Banana) — pakiet ikon dla Domówki
 
+> **UWAGA na kolejność czytania.** Etapy 1-10 to zapis tego, JAK pakiet powstał,
+> a nie lista obowiązująca dziś. **ETAP 11 wycofuje 13 awatarów** (w tym `flame`,
+> `egg`, `anchor`, `guitar`) i zastępuje je postaciami. Zanim cokolwiek wygenerujesz,
+> przeczytaj najpierw ETAP 11 — inaczej odtworzysz ikony, które właśnie wyrzucamy.
+>
 > **Jak tego użyć:** wklejaj do Gemini **etap po etapie**, nie wszystko naraz.
 > Etap 1 ustala styl. Etapy 2–6 dogrywają resztę, **odwołując się do obrazka z etapu 1**
 > (załącz go w rozmowie) — bez tego każda partia wyjdzie w innym stylu i pakiet się rozjedzie.
@@ -40,7 +45,7 @@ Wygeneruj 6 osobnych ikon, każdą jako oddzielny obrazek:
 3. panda — pyszczek pandy, biało-czarny
 4. rabbit — pyszczek królika, kremowy
 5. fish — rybka, turkusowo-niebieska
-6. flame — płomień, pomarańczowo-czerwony
+6. flame — płomień, pomarańczowo-czerwony   ← WYCOFANY w ETAPIE 11, nie generuj ponownie
 
 Nazwij pliki dokładnie: cat.png, dog.png, panda.png, rabbit.png, fish.png, flame.png
 ```
@@ -248,7 +253,10 @@ Nazwa pliku: `wkrotce.png`, do `assets/zrodla/`.
 
 **37 plików PNG** o dokładnie tych nazwach (to są identyfikatory z kodu — nie zmieniaj ich):
 
-**Awatary (30):**
+> Spis poniżej to **stan sprzed ETAPU 11**. Trzynaście z tych awatarów jest wycofanych,
+> aktualna lista jest w ETAPIE 11.
+
+**Awatary (30, stan historyczny):**
 `cat` `dog` `bird` `rabbit` `panda` `squirrel` `fish` `turtle` `bug` `rat`
 `snail` `worm` `shell` `feather` `egg` `paw` `pizza` `beer` `guitar` `rocket`
 `bot` `ghost` `skull` `flame` `gamepad` `crown` `diamond` `anchor` `bike` `zap`

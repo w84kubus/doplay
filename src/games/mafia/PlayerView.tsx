@@ -71,7 +71,7 @@ export function MafiaPlayerView({ room, publicState, privateState, meUid, isHost
         {narrator}
         <RoleCard priv={priv} nickOf={nickOf} accent={accent} />
         {me?.confirmed || sent
-          ? <p className="text-[var(--color-ink-muted)]">Czekamy… ({pub.players.filter((p) => p.confirmed).length}/{pub.players.length})</p>
+          ? <p className="text-[var(--color-ink-muted)]">{t("common.waitingCount", { ilu: pub.players.filter((p) => p.confirmed).length, ze: pub.players.length })}</p>
           : <button className="btn btn-accent" style={{ ["--accent" as string]: accent }} onClick={() => { markSent(); dispatch({ type: "CONFIRM" }); }}>{t("mafia.remembered")}</button>}
       </div>
     );

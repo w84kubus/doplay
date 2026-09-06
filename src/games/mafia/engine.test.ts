@@ -267,3 +267,30 @@ describe("mafia — kamikadze i zakochani", () => {
     expect(ilu).toBe(2);
   });
 });
+
+describe("mafia — nikt nie zawiesza partii", () => {
+  it("rozdanie ma termin, a nie czeka w nieskończoność", () => {
+    expect(game().phaseEndsAt).not.toBeNull();
+  });
+
+  it("rusza do nocy, choć jeden gracz nigdy nie potwierdził roli", () => {
+    // d wychodzi zaraz po rozdaniu i nigdy nie klika potwierdzenia
+    let s = game();
+    for (const u of ["host", "a", "b", "c"]) s = mafiaEngine.reduce(s, { type: "CONFIRM" }, ctx(u));
+    expect(s.phase).toBe("rozdanie"); // bez piątego stoi
+
+    s = mafiaEngine.reduce(s, { type: "PHASE_TIMEOUT" }, ctx("host", 999_999));
+    expect(s.phase).toBe("noc");
+    expect(s.phaseEndsAt).not.toBeNull();
+  });
+
+  it("gracz, na którego nie czekano, NIE wypada z gry", () => {
+    // Przestajemy czekać, ale rola zostaje: d wciąż żyje i ma swoją rolę.
+    let s = game();
+    s = mafiaEngine.reduce(s, { type: "CONFIRM" }, ctx("host"));
+    s = mafiaEngine.reduce(s, { type: "PHASE_TIMEOUT" }, ctx("host", 999_999));
+    expect(s.alive.d).toBe(true);
+    expect(s.playerUids).toContain("d");
+    expect(s.roles.d).toBeTruthy();
+  });
+});

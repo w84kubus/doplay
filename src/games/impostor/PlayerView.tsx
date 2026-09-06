@@ -48,7 +48,7 @@ export function ImpostorPlayerView({ room, publicState, privateState, meUid, isH
         {header}
         <RoleCard priv={priv} accent={accent} />
         {me?.confirmed || sent ? (
-          <p className="text-[var(--color-ink-muted)]">Czekamy na resztę… ({pub.players.filter((p) => p.confirmed).length}/{pub.players.length})</p>
+          <p className="text-[var(--color-ink-muted)]">{t("common.waitingCount", { ilu: pub.players.filter((p) => p.confirmed).length, ze: pub.players.length })}</p>
         ) : (
           <button className="btn btn-accent" style={{ ["--accent" as string]: accent }} onClick={() => { markSent(); dispatch({ type: "CONFIRM" }); }}>{t("impostor.remembered")}</button>
         )}

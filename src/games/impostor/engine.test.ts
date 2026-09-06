@@ -144,3 +144,61 @@ describe("impostor — przebieg i punktacja", () => {
     expect(impostorEngine.isFinished(s)).toBe(true);
   });
 });
+
+describe("impostor — nikt nie zawiesza partii", () => {
+  const timeout = (s: ImpostorState, now: number) =>
+    impostorEngine.reduce(s, { type: "PHASE_TIMEOUT" }, ctx("host", now));
+
+  it("rozdanie ma termin, a nie czeka w nieskończoność", () => {
+    expect(init().phaseEndsAt).not.toBeNull();
+  });
+
+  it("rusza z rozdania, choć jeden gracz nigdy nie potwierdził", () => {
+    // c wychodzi zaraz po starcie i nigdy nie klika „zapamiętałem"
+    let s = init();
+    for (const u of ["host", "a", "b"]) s = impostorEngine.reduce(s, { type: "CONFIRM" }, ctx(u));
+    expect(s.phase).toBe("rozdanie"); // bez czwartego stoi
+
+    s = timeout(s, 999_999);
+    expect(s.phase).toBe("podpowiedzi");
+  });
+
+  it("termin tury podpowiedzi domyka ją pasami nieobecnych", () => {
+    let s = confirmAll(init({ clueRounds: 2 }));
+    s = impostorEngine.reduce(s, { type: "CLUE", word: "kot" }, ctx("host"));
+    s = impostorEngine.reduce(s, { type: "CLUE", word: "pies" }, ctx("a"));
+
+    s = timeout(s, 999_999);
+    expect(s.clueRound).toBe(2); // tura zamknięta, gra idzie dalej
+    const pierwsza = s.clues.filter((c) => c.round === 1);
+    expect(pierwsza).toHaveLength(4); // każdy ma ślad
+    expect(pierwsza.filter((c) => c.word === "")).toHaveLength(2); // b i c spasowali
+  });
+
+  it("kolejna tura dostaje ŚWIEŻY termin, nie odziedziczony", () => {
+    // Bez tego druga tura startowałaby z minionym terminem i wygasała natychmiast.
+    let s = confirmAll(init({ clueRounds: 2 }));
+    const pierwszyTermin = s.phaseEndsAt;
+    s = timeout(s, 500_000);
+    expect(s.clueRound).toBe(2);
+    expect(s.phaseEndsAt).not.toBe(pierwszyTermin);
+    expect(s.phaseEndsAt!).toBeGreaterThan(500_000);
+  });
+
+  it("termin ostatniej tury prowadzi do dyskusji", () => {
+    let s = confirmAll(init({ clueRounds: 1 }));
+    s = timeout(s, 999_999);
+    expect(s.phase).toBe("dyskusja");
+  });
+
+  it("termin tury dłuższy przy większym stole", () => {
+    const maly = confirmAll(init());
+    const duzyPlayers: PlayerMap = { ...players };
+    const duzySeat = [...seat];
+    for (const u of ["d", "e", "f", "g"]) { duzyPlayers[u] = player(u); duzySeat.push(u); }
+    const settings = { ...impostorSettingsSchema.parse({}), rounds: 1 } as ImpostorSettings;
+    let duzy = impostorEngine.init({ players: duzyPlayers, seatOrder: duzySeat, settings, now: 1000, rng: mulberry32(3), seed: 3 });
+    duzy = duzySeat.reduce((st, u) => impostorEngine.reduce(st, { type: "CONFIRM" }, ctx(u)), duzy);
+    expect(duzy.phaseEndsAt!).toBeGreaterThan(maly.phaseEndsAt!);
+  });
+});

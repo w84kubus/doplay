@@ -11,6 +11,19 @@ import type { ImpostorSettings } from "./manifest";
 const REVEAL_MS = 12000;
 const GUESS_MS = 30000;
 
+// Fazy, które czekają na konkretnych ludzi, muszą mieć termin — inaczej jeden gracz,
+// któremu padł telefon, zawiesza partię reszty na zawsze. Limity są celowo hojne:
+// mają łapać wyłącznie tych, którzy odeszli od stołu, a nie poganiać grających.
+const ROZDANIE_MS = 90000;
+// Tura podpowiedzi rośnie z liczbą graczy: w trybie „na głos" mówią po kolei,
+// więc stały limit ucinałby normalną partię przy pełnym stole.
+const PODPOWIEDZI_BAZA_MS = 30000;
+const PODPOWIEDZI_NA_GRACZA_MS = 15000;
+
+function turaKonczySie(state: ImpostorState, now: number): number {
+  return now + PODPOWIEDZI_BAZA_MS + PODPOWIEDZI_NA_GRACZA_MS * state.playerUids.length;
+}
+
 type Phase = "rozdanie" | "podpowiedzi" | "dyskusja" | "glosowanie" | "zgadywanie" | "wynik" | "koniec";
 
 export interface ImpostorState extends WithEvents {
@@ -74,7 +87,7 @@ function assignRoles(state: ImpostorState, now: number, rng: () => number): Impo
   return {
     ...state,
     phase: "rozdanie",
-    phaseEndsAt: null,
+    phaseEndsAt: now + ROZDANIE_MS,
     word: entry.slowo,
     category: entry.kategoria,
     podpowiedz: entry.podpowiedz,
@@ -97,8 +110,27 @@ function beginRound(state: ImpostorState, round: number, now: number, rng: () =>
   return assignRoles({ ...state, round }, now, rng);
 }
 
-function startClues(state: ImpostorState): ImpostorState {
-  return { ...state, phase: "podpowiedzi", clueRound: 1, clues: [], phaseEndsAt: null, pendingEvents: [{ type: "podpowiedzi", text: "Podpowiedzi — po jednym słowie" }] };
+function startClues(state: ImpostorState, now: number): ImpostorState {
+  return { ...state, phase: "podpowiedzi", clueRound: 1, clues: [], phaseEndsAt: turaKonczySie(state, now), pendingEvents: [{ type: "podpowiedzi", text: "Podpowiedzi — po jednym słowie" }] };
+}
+
+/** Tura podpowiedzi domknięta: albo kolejna tura, albo dyskusja. */
+function poTurze(state: ImpostorState, clues: ImpostorState["clues"], now: number): ImpostorState {
+  if (state.clueRound >= state.settings.clueRounds) return startDiscussion({ ...state, clues }, now);
+  return {
+    ...state,
+    clues,
+    clueRound: state.clueRound + 1,
+    phaseEndsAt: turaKonczySie(state, now), // bez tego kolejna tura dziedziczyłaby minięty termin
+    pendingEvents: [{ type: "tura", text: `Tura podpowiedzi ${state.clueRound + 1}` }],
+  };
+}
+
+/** Termin tury minął: kto nie zdążył, pasuje z pustym słowem. */
+function domknijTurePoCzasie(state: ImpostorState, now: number): ImpostorState {
+  const mowili = new Set(state.clues.filter((c) => c.round === state.clueRound).map((c) => c.uid));
+  const pasy = state.playerUids.filter((u) => !mowili.has(u)).map((u) => ({ uid: u, round: state.clueRound, word: "" }));
+  return poTurze(state, [...state.clues, ...pasy], now);
 }
 function startDiscussion(state: ImpostorState, now: number): ImpostorState {
   const ms = state.settings.discussionMs;
@@ -208,6 +240,10 @@ export const impostorEngine: GameEngine<ImpostorState, ImpostorAction, ImpostorS
       if (state.phase === "glosowanie") return resolveVote(state, ctx.now);
       if (state.phase === "zgadywanie") return toResult(state, ctx.now, "cywile", false); // impostor nie zdążył
       if (state.phase === "wynik") return advance(state, ctx.now, ctx.rng);
+      // Fazy czekające na ludzi: ruszamy dalej z tym, kto jest. Bez tego jeden
+      // gracz, który zniknął przed potwierdzeniem roli, zawiesza partię reszty.
+      if (state.phase === "rozdanie") return startClues(state, ctx.now);
+      if (state.phase === "podpowiedzi") return domknijTurePoCzasie(state, ctx.now);
       return state;
     }
 
@@ -246,7 +282,7 @@ export const impostorEngine: GameEngine<ImpostorState, ImpostorAction, ImpostorS
       if (state.phase !== "rozdanie") throw new GameError("Nie ta faza.");
       if (state.confirmed.includes(ctx.uid)) return state;
       const confirmed = [...state.confirmed, ctx.uid];
-      if (confirmed.length >= state.playerUids.length) return startClues({ ...state, confirmed });
+      if (confirmed.length >= state.playerUids.length) return startClues({ ...state, confirmed }, ctx.now);
       return { ...state, confirmed, pendingEvents: [] };
     }
 
@@ -257,10 +293,7 @@ export const impostorEngine: GameEngine<ImpostorState, ImpostorAction, ImpostorS
       if (state.clues.some((c) => c.uid === ctx.uid && c.round === state.clueRound)) throw new GameError("Już podałeś słowo w tej turze.");
       const clues = [...state.clues, { uid: ctx.uid, round: state.clueRound, word: action.word.trim().slice(0, 30) }];
       const thisRound = clues.filter((c) => c.round === state.clueRound).length;
-      if (thisRound >= state.playerUids.length) {
-        if (state.clueRound >= state.settings.clueRounds) return startDiscussion({ ...state, clues }, ctx.now);
-        return { ...state, clues, clueRound: state.clueRound + 1, pendingEvents: [{ type: "tura", text: `Tura podpowiedzi ${state.clueRound + 1}` }] };
-      }
+      if (thisRound >= state.playerUids.length) return poTurze(state, clues, ctx.now);
       return { ...state, clues, pendingEvents: [] };
     }
 
@@ -272,10 +305,7 @@ export const impostorEngine: GameEngine<ImpostorState, ImpostorAction, ImpostorS
       if (ctx.uid !== speaker && ctx.uid !== state.hostUid) throw new GameError("Nie twoja kolej.");
       const clues = [...state.clues, { uid: speaker, round: state.clueRound, word: "" }];
       const thisRound = clues.filter((c) => c.round === state.clueRound).length;
-      if (thisRound >= state.playerUids.length) {
-        if (state.clueRound >= state.settings.clueRounds) return startDiscussion({ ...state, clues }, ctx.now);
-        return { ...state, clues, clueRound: state.clueRound + 1, pendingEvents: [] };
-      }
+      if (thisRound >= state.playerUids.length) return poTurze(state, clues, ctx.now);
       return { ...state, clues, pendingEvents: [] };
     }
 

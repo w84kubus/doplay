@@ -14,6 +14,10 @@ import { leftNeighbour, neighbourOnSide, OPTIONAL_ROLES, ROLE_SPECS, type Role }
 export type { Role };
 type Phase = "rozdanie" | "noc" | "switt" | "dzien" | "glosowanie" | "koniec";
 
+// Rozdanie czeka na potwierdzenie roli od wszystkich. Bez terminu jeden gracz,
+// któremu padł telefon, zawiesza partię na zawsze — ani PHASE_TIMEOUT, ani hostowy
+// NEXT tej fazy wcześniej nie obsługiwały. Limit hojny: to jedno dotknięcie ekranu.
+const ROZDANIE_MS = 90000;
 const NIGHT_MS = 30000;
 const VOTE_MS = 60000;
 const SWITT_MS = 7000;
@@ -359,7 +363,7 @@ export const mafiaEngine: GameEngine<MafiaState, MafiaAction, MafiaSettings> = {
     for (const u of playerUids) alive[u] = true;
     return {
       settings: ctx.settings, hostUid, playerUids, roles, alive,
-      phase: "rozdanie", phaseEndsAt: null, night: 0, confirmed: [], narratorKey: null,
+      phase: "rozdanie", phaseEndsAt: ctx.now + ROZDANIE_MS, night: 0, confirmed: [], narratorKey: null,
       mafiaVotes: {}, doctorSave: null, detectiveCheck: null, lastDoctorSave: null,
       barmanTarget: null, sheriffTarget: null, sheriffUsed: false, sniperTarget: null, sniperActed: false,
       detectiveHistory: {}, votes: {}, deaths: [], revealed: {}, afterReveal: "dzien",
@@ -374,6 +378,9 @@ export const mafiaEngine: GameEngine<MafiaState, MafiaAction, MafiaSettings> = {
       if (state.phase === "switt") return state.afterReveal === "dzien" ? toDay(state, ctx.now, ctx.rng) : startNight(state, ctx.now, ctx.rng);
       if (state.phase === "dzien") return toVoting(state, ctx.now, ctx.rng);
       if (state.phase === "glosowanie") return resolveVote(state, ctx.now, ctx.rng);
+      // Ruszamy dalej z tymi, którzy potwierdzili. Kto nie zdążył, dostaje swoją rolę
+      // w private/{uid} i tak — nie tracimy go z gry, tylko przestajemy na niego czekać.
+      if (state.phase === "rozdanie") return startNight(state, ctx.now, ctx.rng);
       return state;
     }
 

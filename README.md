@@ -38,17 +38,17 @@
 
 ### How it works
 
-1. 🏠 **Host creates a room** — gets a 4-letter code + QR
-2. 📱 **Players join** — type the code on their phone (or scan the QR)
-3. 🎮 **Host picks a game** — settings, start, play!
-4. 🔄 **Next round** — when it ends you're back in the lobby to pick another
+1. 🏠 **Host creates a room** - gets a 4-letter code + QR
+2. 📱 **Players join** - type the code on their phone (or scan the QR)
+3. 🎮 **Host picks a game** - settings, start, play!
+4. 🔄 **Next round** - when it ends you're back in the lobby to pick another
 
 Nobody around to play with? The **Public** tab lists rooms that are open to everyone,
 with how many people are already waiting. Pick one, or jump into a random one.
 
 ## Screenshots
 
-Four screens — landing, joining, lobby, and a round in progress — in both languages.
+Four screens - landing, joining, lobby, and a round in progress - in both languages.
 The interface switches whole: nothing is left half-translated.
 
 **Polski**

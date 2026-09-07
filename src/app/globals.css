@@ -113,13 +113,28 @@
   /* === Arcade Party — tło (DESIGN.md §3) === */
   .arcade-bg {
     background: linear-gradient(135deg, var(--color-bg-1) 0%, var(--color-bg-2) 45%, var(--color-bg-3) 100%);
+    /* Tworzy kontekst układania dla `.halftone` w środku. Bez tego ujemny z-index
+       tekstury szuka kontekstu wyżej i wypada AŻ ZA to tło, czyli znika. Samo
+       `position: relative` nie wystarcza: z `z-index: auto` nie tworzy kontekstu. */
+    isolation: isolate;
   }
 
-  /* Tekstura halftone */
+  /* Tekstura halftone — warstwa TŁA, nie nakładka na treść.
+     
+     `z-index: -1` jest tu konieczne, nie kosmetyczne. Element jest `absolute`
+     wewnątrz rodzica, a element pozycjonowany maluje się NAD treścią
+     niepozycjonowaną niezależnie od kolejności w DOM. Bez tego białe kropki
+     lądowały na awatarach: na jasnym króliku niewidoczne, na ciemnym pingwinie
+     i nietoperzu wyglądały jak dziury w ikonie.
+     
+     Działa TYLKO w parze z `isolation: isolate` na `.arcade-bg` — patrz wyżej.
+     Bez tamtego kontekstu ujemny z-index nie zatrzymuje się nad gradientem
+     rodzica, tylko wypada za niego i tekstura znika z całej strony. */
   .halftone {
     background-image: radial-gradient(rgb(255 255 255 / 0.5) 1px, transparent 1px);
     background-size: 6px 6px;
     opacity: 0.10;
+    z-index: -1;
   }
 
   /* Timer pulsuje gdy <5 s — kolor przechodzi w czerwień */

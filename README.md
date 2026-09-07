@@ -26,15 +26,15 @@
 
 ---
 
-> **Note:** the app ships in **Polish and English** — there's a switcher in the corner.
+> **Note:** the app ships in **Polish and English** - there's a switcher in the corner.
 > Both are complete: the shell, every in-game screen, the host screen and the rules cards.
 > Directory and route names stay Polish throughout, because that's the app's home language,
-> and so does the game *content* — the word lists for Hangman and Categories are Polish,
+> and so does the game *content* - the word lists for Hangman and Categories are Polish,
 > and so is the Hangman keyboard, since the phrases it spells are.
 
 ## About
 
-**Doplay** is a set of multiplayer party games you play in a single sitting — everyone on their own phone. No accounts, no downloads, no explaining the rules. One person creates a room, everyone else types a 4-character code, and **you're playing in 15 seconds**.
+**Doplay** is a set of multiplayer party games you play in a single sitting - everyone on their own phone. No accounts, no downloads, no explaining the rules. One person creates a room, everyone else types a 4-character code, and **you're playing in 15 seconds**.
 
 ### How it works
 
@@ -61,7 +61,7 @@ The interface switches whole: nothing is left half-translated.
 
 ### Host screen (TV)
 
-A separate landscape layout for a laptop or TV — huge room code, QR to scan, and who's already in.
+A separate landscape layout for a laptop or TV - huge room code, QR to scan, and who's already in.
 Open it from the lobby; players keep their own phones.
 
 ![Host screen on a TV: room code M2R5, QR code and five players](docs/screenshots/ekran-tv.webp)
@@ -80,70 +80,70 @@ Open it from the lobby; players keep their own phones.
 | **Tic-tac-toe** | Three in a row. The winner keeps the table, the rest queue up to take it. | 2–16 |
 
 > **Stopwatch has two modes.** In **TARGET**, everyone gets the same time to hit and stops the
-> clock on their own device — the digits are masked, so you count in your head. In **GUESS THE
+> clock on their own device - the digits are masked, so you count in your head. In **GUESS THE
 > TIME**, one player is the Runner (rotating each round): they start and stop whenever they want,
-> and **nobody sees the digits — not even them**. START and STOP are broadcast as sound to every
+> and **nobody sees the digits - not even them**. START and STOP are broadcast as sound to every
 > phone, so the rest estimate by ear and type in their guess.
 
 > **The Stopwatch also trains alone.** A separate page, no room required: set your own target,
 > and after a few attempts you get the error on each one, the spread, your current streak and a
-> read on the thing that actually costs you points — whether you are consistently early or late,
+> read on the thing that actually costs you points - whether you are consistently early or late,
 > which is a habit you can correct, or simply erratic, which you can't.
 
 ## Features
 
 ### Room and lobby
-- **4-character room code** — chunky letters, click to copy
-- **QR code** — scan from a phone, no typing
-- **Deep link** — `doplay.pl/?kod=XYZW` goes straight into the room
-- **Sharing** — Share button (native share / clipboard fallback)
-- **Host screen (TV)** — separate landscape layout for a laptop/TV, readable from the couch
-- **Avatars** — 30 illustrated characters on colored tiles, every one a face that looks back at you; no two people in a room get the same one
-- **Spectator mode** — `?widz=1` gets you into the room to watch without taking a seat, in any game
-- **Public rooms** — the host opens the room to strangers with one switch in the lobby, and closes it again once the group is complete. The list shows how many are waiting and how long the room has been open, and drops rooms that are full, mid-game or abandoned
-- **Game rules** — modal with steps for each game
-- **Room records** — who won how many times plus a list of feats, persistent for the room's lifetime
-- **Empty slots** — the lobby shows free seats, so a host waiting alone isn't staring at one row and a void
-- **Folder tabs** — creating and joining are two tabs of one form; nickname and avatar survive the switch
+- **4-character room code** - chunky letters, click to copy
+- **QR code** - scan from a phone, no typing
+- **Deep link** - `doplay.pl/?kod=XYZW` goes straight into the room
+- **Sharing** - Share button (native share / clipboard fallback)
+- **Host screen (TV)** - separate landscape layout for a laptop/TV, readable from the couch
+- **Avatars** - 30 illustrated characters on colored tiles, every one a face that looks back at you; no two people in a room get the same one
+- **Spectator mode** - `?widz=1` gets you into the room to watch without taking a seat, in any game
+- **Public rooms** - the host opens the room to strangers with one switch in the lobby, and closes it again once the group is complete. The list shows how many are waiting and how long the room has been open, and drops rooms that are full, mid-game or abandoned
+- **Game rules** - modal with steps for each game
+- **Room records** - who won how many times plus a list of feats, persistent for the room's lifetime
+- **Empty slots** - the lobby shows free seats, so a host waiting alone isn't staring at one row and a void
+- **Folder tabs** - creating and joining are two tabs of one form; nickname and avatar survive the switch
 
 ### Realtime multiplayer
-- **Anonymous auth** — Firebase Anonymous Auth, zero sign-up
-- **Presence** — green/grey dot showing who's online
-- **Reconnect** — return to the room after a refresh or close (localStorage)
-- **Host migration** — if the host disappears for >30s, another player takes over
-- **Idempotency** — actionId (UUID) prevents duplicate actions
-- **Connection bar** — red "no connection", green "connected"
-- **Exponential backoff** — 500ms → 1s → 2s → … → 16s max
+- **Anonymous auth** - Firebase Anonymous Auth, zero sign-up
+- **Presence** - green/grey dot showing who's online
+- **Reconnect** - return to the room after a refresh or close (localStorage)
+- **Host migration** - if the host disappears for >30s, another player takes over
+- **Idempotency** - actionId (UUID) prevents duplicate actions
+- **Connection bar** - red "no connection", green "connected"
+- **Exponential backoff** - 500ms → 1s → 2s → … → 16s max
 
 ### Language
-- **Polish and English** — a switcher in the corner, no language prefix in the URL (room codes live there); covers every screen, including the games and the TV layout
-- **Cookie-based** — the server reads it before the first render, so nothing flashes in the wrong language
-- **Link card** — `og:image` plus a title and description in the reader's language, because the room link gets pasted into group chats
+- **Polish and English** - a switcher in the corner, no language prefix in the URL (room codes live there); covers every screen, including the games and the TV layout
+- **Cookie-based** - the server reads it before the first render, so nothing flashes in the wrong language
+- **Link card** - `og:image` plus a title and description in the reader's language, because the room link gets pasted into group chats
 
 ### Security
-- **The client NEVER writes game state** — every write goes through Route Handlers + `firebase-admin`
-- **Roles and passwords are secret** — they live in `rooms/{code}/secret/state` (Firestore: `allow read: if false`)
-- **Per-player private data** — `rooms/{code}/private/{uid}` (yours only)
-- **No leaks in DevTools** — Mafia roles and the Impostor password are invisible client-side
+- **The client NEVER writes game state** - every write goes through Route Handlers + `firebase-admin`
+- **Roles and passwords are secret** - they live in `rooms/{code}/secret/state` (Firestore: `allow read: if false`)
+- **Per-player private data** - `rooms/{code}/private/{uid}` (yours only)
+- **No leaks in DevTools** - Mafia roles and the Impostor password are invisible client-side
 
 ### PWA and mobile
-- **Installable** — manifest + Service Worker (Serwist), install prompt, iOS hint
-- **Offline** — dedicated offline page, NetworkOnly for the API and Firebase
-- **Wake Lock** — the screen doesn't dim mid-game
-- **Vibration** — haptic feedback on actions (with an opt-out)
-- **Visual Viewport** — `--vvh` for mobile keyboards
-- **Safe areas** — `env(safe-area-inset-*)` for notch/dynamic island
+- **Installable** - manifest + Service Worker (Serwist), install prompt, iOS hint
+- **Offline** - dedicated offline page, NetworkOnly for the API and Firebase
+- **Wake Lock** - the screen doesn't dim mid-game
+- **Vibration** - haptic feedback on actions (with an opt-out)
+- **Visual Viewport** - `--vvh` for mobile keyboards
+- **Safe areas** - `env(safe-area-inset-*)` for notch/dynamic island
 
 ### Look and UX
-- **"Arcade Party" style** — purple-to-pink gradient, chunky buttons with hard shadows, sticker-like panels. Full spec in [`DESIGN.md`](DESIGN.md)
-- **Button press** — the signature detail: every button sinks 4px when clicked
-- **Animations** — slideIn, fadeIn, timer pulse, arcade-pop
-- **SFX** — Web Audio: join, phase change, urgent tick, fanfare, defeat, neon buzz
-- **Confetti** — canvas-confetti on a win, in the game's colors
-- **Skeleton loader** — placeholder shaped like the lobby that's coming, so nothing jumps once it loads
-- **Illustration set** — three recurring characters: on the landing page, waiting in an empty lobby, shrugging on error screens, celebrating on the podium
-- **App frame** — the app is a rounded card set into a dark bezel, not a full-bleed page
-- **prefers-reduced-motion** — fully respected
+- **"Arcade Party" style** - purple-to-pink gradient, chunky buttons with hard shadows, sticker-like panels. Full spec in [`DESIGN.md`](DESIGN.md)
+- **Button press** - the signature detail: every button sinks 4px when clicked
+- **Animations** - slideIn, fadeIn, timer pulse, arcade-pop
+- **SFX** - Web Audio: join, phase change, urgent tick, fanfare, defeat, neon buzz
+- **Confetti** - canvas-confetti on a win, in the game's colors
+- **Skeleton loader** - placeholder shaped like the lobby that's coming, so nothing jumps once it loads
+- **Illustration set** - three recurring characters: on the landing page, waiting in an empty lobby, shrugging on error screens, celebrating on the podium
+- **App frame** - the app is a rounded card set into a dark bezel, not a full-bleed page
+- **prefers-reduced-motion** - fully respected
 
 ## Tech stack
 
@@ -156,18 +156,18 @@ Open it from the lobby; players keep their own phones.
 | Auth | Firebase Anonymous Auth |
 | Server | Route Handlers + `firebase-admin` |
 | PWA | Serwist (Service Worker, manifest, offline) |
-| Tests | Vitest (307 tests — full playthroughs, security, core contracts) |
+| Tests | Vitest (307 tests - full playthroughs, security, core contracts) |
 | Deploy | Vercel (auto-deploy from GitHub) |
 | Sound | Web Audio API (zero audio files) |
 | QR | `qrcode` (SVG generation) |
-| i18n | Own dictionary (~500 keys per language, no library — next-intl would force a language prefix in the URL) |
+| i18n | Own dictionary (~500 keys per language, no library - next-intl would force a language prefix in the URL) |
 | Fonts | Baloo 2 (display), Nunito (body), JetBrains Mono (numbers) |
 | Icons | Lucide (interface) + a custom illustration pack (30 avatars, 8 game icons, characters) |
-| Image pipeline | `scripts/process-assets.py` — Pillow + NumPy, cuts the background off generated art |
+| Image pipeline | `scripts/process-assets.py` - Pillow + NumPy, cuts the background off generated art |
 
 ## Architecture
 
-Directory and route names are in Polish, matching the app's language — `nowy` = new,
+Directory and route names are in Polish, matching the app's language - `nowy` = new,
 `dolacz` = join, `pokoj` = room, `ekran` = screen.
 
 ```
@@ -190,8 +190,8 @@ src/
 │   └── api/                    # Route Handlers (the ONLY place that writes!)
 │       ├── cron/cleanup/       # nightly: expired rooms + orphan sweep
 │       └── rooms/
-│           ├── route.ts        # POST — create room
-│           ├── publiczne/      # GET — public room list (no nicknames)
+│           ├── route.ts        # POST - create room
+│           ├── publiczne/      # GET - public room list (no nicknames)
 │           └── [code]/
 │               ├── join/       # joining
 │               ├── publiczny/  # host opens/closes the room to strangers
@@ -205,9 +205,9 @@ src/
 │
 ├── games/                      # Game engines and UI (plugin architecture)
 │   ├── registry.ts             # engine registry (server)
-│   ├── manifests.ts            # game manifests (client — without engines)
+│   ├── manifests.ts            # game manifests (client - without engines)
 │   ├── icons.tsx               # fallback game icons (Lucide)
-│   ├── rules.ts                # "How to play?" cards — PL and EN separately
+│   ├── rules.ts                # "How to play?" cards - PL and EN separately
 │   ├── finish.test.ts          # "end game" contract across the whole registry
 │   ├── components.tsx          # game UI (dynamic imports)
 │   ├── types.ts                # GameEngine, GameManifest interfaces
@@ -288,20 +288,20 @@ src/
 
 ### Key design decisions
 
-- **Read-only client** — the client NEVER writes to Firestore. Everything goes through Route Handlers + `firebase-admin`. Breaking this rule leaks roles in DevTools.
-- **Engines are pure functions** — zero `Date.now()`, zero `Math.random()`. Time and randomness arrive via `ctx.now` and `ctx.rng`. Fully deterministic, fully testable.
-- **Plugin architecture** — adding a game = a new folder in `src/games/` plus an entry in **six registries** (engine, client manifest, views, icon, rules card, dictionary). Zero changes to the core. The six are worth naming, because missing one **doesn't break the build**: the game just quietly stops working in one place, which is far harder to spot than a red build. Verified while adding Tic-tac-toe — the contract tests passed straight away, without touching `GameShell` or `game-runner`.
-- **Dynamic imports** — game components load on demand (`next/dynamic`). A player downloads only the current game's code, not all eight.
-- **Secrets in three layers** — `publicState` (everyone sees), `secret/state` (nobody reads, `allow read: if false`), `private/{uid}` (yours only).
-- **Timers without cron** — the server writes `phaseEndsAt`, clients count down, and once it passes **only the host** nudges the server. The rest step in as a fallback after 3s, in case the host drops. Previously everyone nudged at once, which with 8 players meant ~6.6 transactions/s against a single document versus Firestore's ~1/s limit — transactions collided, retried, and phase changes ran several seconds late.
-- **The public room list never carries player-written text** — it is the only screen in the app visible to someone outside a room, so it shows a code, avatars and a headcount, and no nicknames. Firestore rules stay closed too: adding "or the room is public" to them would let any signed-in user read the *whole* document of any public room without entering it, so the list is served by a Route Handler through the Admin SDK instead. The cost is no realtime on the list, which a ten-second refresh covers.
-- **Deleting a room always means `recursiveDelete`** — a plain `delete()` on a Firestore document leaves its subcollections behind, and `secret/state` and `private/{uid}` are exactly where the roles live. The room would vanish from the list while every player's role stayed in the database, parentless and invisible in the console. Firestore's own TTL policies are out for the same reason: they only delete the parent. Hence a nightly cron of our own, which also sweeps orphans as a second line of defence. The sweeper's hard part isn't deleting — it's the race: a room created *after* the cron read the room list has no parent on that list, though it is very much alive. So the cutoff is the query's `readTime`, not an age threshold, and both timestamps come from Firestore's clock rather than the process's.
-- **Polish first, English alongside** — code, routes and directory names stay Polish; the interface reads from a dictionary. No i18n library: next-intl would force a language prefix into the URL, and room codes live there. The language sits in a cookie the server reads before the first render, so nothing flashes in the wrong language.
-- **Fonts with `latin-ext`** (Ą Ć Ę Ł Ń Ó Ś Ź Ż) — having the glyphs isn't enough though: Fredoka has them, but draws the ogonek in Ą/Ę as a thin hairline detached from the letter. Hence Baloo 2 — details in [`DESIGN.md`](DESIGN.md).
-- **Component rules live in `@layer components`** — Tailwind orders the cascade theme → base → components → utilities. Outside a layer these rules land *after* the utilities and win every tie, so `px-4` next to `.card` silently did nothing. About forty such spots existed before the fix.
-- **The core knows no game** — two features work through engine opt-in rather than core knowledge. A game without the opt-in simply works, just without that feature:
-  - **Records** — an engine tags its event with `meta: { uid, rekord: true }`; the core collects it into the room's feats.
-  - **Ending a game** — an engine exposes `canFinish` in `publicView`, and `GameShell` then shows "End game" instead of the emergency abort. Ending gives you a podium and saves records; aborting doesn't.
+- **Read-only client** - the client NEVER writes to Firestore. Everything goes through Route Handlers + `firebase-admin`. Breaking this rule leaks roles in DevTools.
+- **Engines are pure functions** - zero `Date.now()`, zero `Math.random()`. Time and randomness arrive via `ctx.now` and `ctx.rng`. Fully deterministic, fully testable.
+- **Plugin architecture** - adding a game = a new folder in `src/games/` plus an entry in **six registries** (engine, client manifest, views, icon, rules card, dictionary). Zero changes to the core. The six are worth naming, because missing one **doesn't break the build**: the game just quietly stops working in one place, which is far harder to spot than a red build. Verified while adding Tic-tac-toe — the contract tests passed straight away, without touching `GameShell` or `game-runner`.
+- **Dynamic imports** - game components load on demand (`next/dynamic`). A player downloads only the current game's code, not all eight.
+- **Secrets in three layers** - `publicState` (everyone sees), `secret/state` (nobody reads, `allow read: if false`), `private/{uid}` (yours only).
+- **Timers without cron** - the server writes `phaseEndsAt`, clients count down, and once it passes **only the host** nudges the server. The rest step in as a fallback after 3s, in case the host drops. Previously everyone nudged at once, which with 8 players meant ~6.6 transactions/s against a single document versus Firestore's ~1/s limit - transactions collided, retried, and phase changes ran several seconds late.
+- **The public room list never carries player-written text** - it is the only screen in the app visible to someone outside a room, so it shows a code, avatars and a headcount, and no nicknames. Firestore rules stay closed too: adding "or the room is public" to them would let any signed-in user read the *whole* document of any public room without entering it, so the list is served by a Route Handler through the Admin SDK instead. The cost is no realtime on the list, which a ten-second refresh covers.
+- **Deleting a room always means `recursiveDelete`** - a plain `delete()` on a Firestore document leaves its subcollections behind, and `secret/state` and `private/{uid}` are exactly where the roles live. The room would vanish from the list while every player's role stayed in the database, parentless and invisible in the console. Firestore's own TTL policies are out for the same reason: they only delete the parent. Hence a nightly cron of our own, which also sweeps orphans as a second line of defence. The sweeper's hard part isn't deleting — it's the race: a room created *after* the cron read the room list has no parent on that list, though it is very much alive. So the cutoff is the query's `readTime`, not an age threshold, and both timestamps come from Firestore's clock rather than the process's.
+- **Polish first, English alongside** - code, routes and directory names stay Polish; the interface reads from a dictionary. No i18n library: next-intl would force a language prefix into the URL, and room codes live there. The language sits in a cookie the server reads before the first render, so nothing flashes in the wrong language.
+- **Fonts with `latin-ext`** (Ą Ć Ę Ł Ń Ó Ś Ź Ż) - having the glyphs isn't enough though: Fredoka has them, but draws the ogonek in Ą/Ę as a thin hairline detached from the letter. Hence Baloo 2 - details in [`DESIGN.md`](DESIGN.md).
+- **Component rules live in `@layer components`** - Tailwind orders the cascade theme → base → components → utilities. Outside a layer these rules land *after* the utilities and win every tie, so `px-4` next to `.card` silently did nothing. About forty such spots existed before the fix.
+- **The core knows no game** - two features work through engine opt-in rather than core knowledge. A game without the opt-in simply works, just without that feature:
+  - **Records** - an engine tags its event with `meta: { uid, rekord: true }`; the core collects it into the room's feats.
+  - **Ending a game** - an engine exposes `canFinish` in `publicView`, and `GameShell` then shows "End game" instead of the emergency abort. Ending gives you a podium and saves records; aborting doesn't.
 
 ## Running locally
 
@@ -330,7 +330,7 @@ NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 
-# firebase-admin (Route Handlers) — the whole service account JSON, base64-encoded:
+# firebase-admin (Route Handlers) - the whole service account JSON, base64-encoded:
 #   base64 -i path/to/key.json | tr -d '\n'
 FIREBASE_SERVICE_ACCOUNT_KEY=your_base64_encoded_service_account_json
 
@@ -363,7 +363,7 @@ Once installed it runs full-screen with its own icon. The host screen (TV) stays
 
 ## License
 
-**All rights reserved** — see [LICENSE](LICENSE).
+**All rights reserved** - see [LICENSE](LICENSE).
 
 The source is public **for reference only**: to be read, studied and reviewed.
 This is not open source. Copying, reusing it in another project or running it as

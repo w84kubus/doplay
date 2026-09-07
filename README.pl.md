@@ -1,8 +1,6 @@
 <p align="center">
-  <img src="public/icon-512.png" width="96" height="96" alt="Doplay logo" style="border-radius: 20px" />
+  <img src="public/logo-doplay.webp" width="420" alt="Doplay" />
 </p>
-
-<h1 align="center">Doplay</h1>
 
 <p align="center">
   <a href="README.md">English</a> · <b>Polski</b>
@@ -92,7 +90,7 @@ Otwierasz go z lobby; gracze zostają przy swoich telefonach.
 - **Deep link** — `doplay.pl/?kod=XYZW` wchodzi prosto do pokoju
 - **Udostępnianie** — przycisk Share (native share / clipboard fallback)
 - **Ekran hosta (TV)** — osobny układ poziomy na laptop/TV, czytelny z kanapy
-- **Awatary** — 30 ilustrowanych ikon w kolorowych kafelkach; w jednym pokoju nikt nie dostaje tego samego
+- **Awatary** — 30 ilustrowanych postaci w kolorowych kafelkach, każda z twarzą patrzącą na gracza; w jednym pokoju nikt nie dostaje tego samego
 - **Tryb widza** — `?widz=1` wpuszcza do pokoju na podgląd, bez zajmowania miejsca, w każdej grze
 - **Pokoje publiczne** — host otwiera pokój dla obcych jednym przełącznikiem w lobby i zamyka go, gdy skład się skompletuje. Lista pokazuje, ilu czeka i jak dawno pokój stoi otwarty, a odsiewa pokoje pełne, w trakcie gry i porzucone
 - **Zasady gier** — modal z krokami dla każdej gry

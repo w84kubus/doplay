@@ -235,3 +235,42 @@ telefon, zawieszał partię reszty bez wyjścia poza przerwanie gry.
 - Kto nie zdążył, **nie wypada z gry** — rola zostaje, po prostu przestajemy czekać.
 - Pułapka pokryta testem: kolejna tura musi dostać ŚWIEŻY termin. Odziedziczony byłby
   już miniony i wygasałby natychmiast.
+
+### Service worker potrafi udawać błąd aplikacji
+
+`next.config.ts` wyłącza Serwista w dev, ale `public/sw.js` z ostatniego builda
+produkcyjnego **dalej leży na dysku i jest serwowany**. `ServiceWorkerRegister`
+rejestrował go bezwarunkowo, więc sesja deweloperska chodziła pod workerem
+zbudowanym z INNEGO bundla i dostawała od niego chunki tamtej wersji.
+
+Objawy nie wyglądają na problem z cache i o to w nich najgorsze:
+
+- `Invalid or unexpected token` w konsoli, choć `npm run build` przechodzi czysto,
+- ekran zawieszony na skeletonie, mimo że reguły i token są w porządku,
+- surowe klucze słownika (`stoper.gameOver`) zamiast tekstów.
+
+Komponent nie rejestruje już workera poza produkcją i **wyrejestrowuje ten, który
+został**. To drugie jest ważniejsze: `unregister()` działa dopiero, gdy zamkną się
+wszystkie kontrolowane karty, a twarde odświeżenie go nie rusza. Kto już ma workera
+w przeglądarce, odzyska normalne działanie dopiero po tej poprawce.
+
+Diagnostyka na przyszłość: `navigator.serviceWorker.controller` w konsoli. Jeśli nie
+jest `null` na `localhost`, to najpierw podejrzewaj jego, a nie własny kod. Origin
+obejmuje port, więc drugi port to czysta przeglądarka — ale **dwa serwery dev naraz
+rozjeżdżają wspólny `.next`** i sypią `Expected clientReferenceManifest to be defined`.
+Wtedy jeden serwer, `rm -rf .next` i od nowa.
+
+### Pakiet awatarów to same postacie
+
+Po wymianie w ETAP-ie 11 wszystkie 30 awatarów ma twarz. Kryterium jest twarde:
+awatar odpowiada na pytanie „kim jestem przy tym stole" i na to nie da się odpowiedzieć
+jajkiem ani kotwicą. Trzynaście martwych przedmiotów wypadło, pizza i piwo poszły za nimi.
+
+Wycofane identyfikatory **zostają w `LEGACY_AVATARS`**, nigdy nie znikają. Gracz siedzący
+w pokoju ze starym awatarem inaczej dostałby z `/join` „Nieznany awatar" i nie wróciłby
+do własnej partii. Drugą warstwą jest migracja sesji w `store/session.ts`: podmienia
+zapisany awatar na domyślny, zanim formularz zdąży go wysłać.
+
+Kolor kafelka (`avatarColor`) jest ważniejszy niż sylwetka. Przy trzydziestu okrągłych
+ikonach po 40 px to on decyduje, czy da się je odróżnić — dlatego żyrafa dostała turkus,
+a tygrys ciemne kakao, choć obie postacie są ciepłe.

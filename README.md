@@ -1,8 +1,6 @@
 <p align="center">
-  <img src="public/icon-512.png" width="96" height="96" alt="Doplay logo" style="border-radius: 20px" />
+  <img src="public/logo-doplay.webp" width="420" alt="Doplay" />
 </p>
-
-<h1 align="center">Doplay</h1>
 
 <p align="center">
   <b>English</b> · <a href="README.pl.md">Polski</a>
@@ -100,7 +98,7 @@ Open it from the lobby; players keep their own phones.
 - **Deep link** — `doplay.pl/?kod=XYZW` goes straight into the room
 - **Sharing** — Share button (native share / clipboard fallback)
 - **Host screen (TV)** — separate landscape layout for a laptop/TV, readable from the couch
-- **Avatars** — 30 illustrated icons on colored tiles; no two people in a room get the same one
+- **Avatars** — 30 illustrated characters on colored tiles, every one a face that looks back at you; no two people in a room get the same one
 - **Spectator mode** — `?widz=1` gets you into the room to watch without taking a seat, in any game
 - **Public rooms** — the host opens the room to strangers with one switch in the lobby, and closes it again once the group is complete. The list shows how many are waiting and how long the room has been open, and drops rooms that are full, mid-game or abandoned
 - **Game rules** — modal with steps for each game

@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 import { GithubMark } from "@/components/GithubMark";
 import { useI18n } from "@/lib/i18n/provider";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -75,6 +76,31 @@ export default function PrywatnoscPage() {
           </ul>
         </section>
       ))}
+
+      {/* Wsparcie. Osobna sekcja, a nie punkt w „danych na serwerze", bo tu chodzi
+          o coś odwrotnego: co NIE trafia do Doplay. Odnośnik prowadzi do polityki
+          buycoffee.to, bo to oni są administratorem danych przy wpłacie, nie my. */}
+      <section className="relative flex w-full max-w-3xl flex-col gap-3">
+        <h2 className="font-display text-lg font-bold uppercase tracking-[0.06em] text-mint">
+          {c.donationsTitle}
+        </h2>
+        <div className="card flex flex-col gap-3">
+          <ul className="flex list-disc flex-col gap-2 pl-5 text-base font-semibold leading-relaxed text-ink">
+            {c.donations.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <a
+            href="https://buycoffee.to/privacy-policy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-display inline-flex min-h-[44px] w-fit items-center gap-2 rounded-[14px] border-[3px] border-stroke bg-panel px-4 text-sm font-bold uppercase tracking-[0.06em] text-ink shadow-[0_3px_0_rgb(0_0_0/0.35)] transition-transform duration-75 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-mint focus-visible:outline-offset-2 active:translate-y-[3px] active:shadow-none"
+          >
+            <ExternalLink size={16} strokeWidth={2.5} aria-hidden />
+            {c.donationsLink}
+          </a>
+        </div>
+      </section>
 
       <section className="relative flex w-full max-w-3xl flex-col gap-3">
         <h2 className="font-display text-lg font-bold uppercase tracking-[0.06em] text-mint">{c.contactTitle}</h2>

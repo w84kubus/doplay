@@ -26,6 +26,9 @@ export interface PrivacyContent {
   data: string[];
   rightsTitle: string;
   rights: string[];
+  donationsTitle: string;
+  donations: string[];
+  donationsLink: string;
   contactTitle: string;
   contact: string;
   back: string;
@@ -33,7 +36,7 @@ export interface PrivacyContent {
 
 const pl: PrivacyContent = {
   title: "Prywatność i dane",
-  updated: "Ostatnia aktualizacja: 20 sierpnia 2026",
+  updated: "Ostatnia aktualizacja: 7 września 2026",
   intro:
     "Doplay nie ma kont, nie prosi o e-mail i nie zbiera danych do celów marketingowych. Poniżej dokładnie to, co aplikacja zapisuje na Twoim urządzeniu i po co.",
   noTrackingTitle: "Bez śledzenia",
@@ -62,6 +65,14 @@ const pl: PrivacyContent = {
     "Możesz opuścić pokój, co usuwa Cię z listy graczy.",
     "Dane pokoju znikają same po 8 godzinach - nie trzeba o nic prosić.",
   ],
+  donationsTitle: "Wsparcie i płatności",
+  donations: [
+    "Doplay nie przyjmuje płatności. Na stronie nie ma żadnego formularza płatniczego ani koszyka - odnośnik „Wesprzyj twórcę\" w stopce prowadzi do zewnętrznego serwisu buycoffee.to.",
+    "Numery kart, dane bankowe i adresy rozliczeniowe nie trafiają do Doplay w żadnej formie. Obsługuje je wyłącznie buycoffee.to i to tam obowiązuje ich własna polityka prywatności.",
+    "Samo kliknięcie odnośnika nie zapisuje niczego na Twoim urządzeniu. Nie ma przy nim piksela śledzącego ani przekierowania zliczającego.",
+    "Jeśli zdecydujesz się wesprzeć, zobaczę tylko to, co pokaże mi buycoffee.to: nazwę podaną przy wpłacie i wiadomość, jeśli ją dopiszesz. Wpłatę można tam zostawić anonimowo.",
+  ],
+  donationsLink: "Polityka prywatności buycoffee.to",
   contactTitle: "Kontakt",
   contact: "Pytania o dane? Napisz do mnie przez GitHub.",
   back: "← Wróć do gry",
@@ -69,7 +80,7 @@ const pl: PrivacyContent = {
 
 const en: PrivacyContent = {
   title: "Privacy and data",
-  updated: "Last updated: 20 August 2026",
+  updated: "Last updated: 7 September 2026",
   intro:
     "Doplay has no accounts, never asks for your email, and collects nothing for marketing. Below is exactly what the app stores on your device and why.",
   noTrackingTitle: "No tracking",
@@ -98,6 +109,14 @@ const en: PrivacyContent = {
     "You can leave a room, which removes you from the player list.",
     "Room data disappears on its own after 8 hours - you don't need to ask for anything.",
   ],
+  donationsTitle: "Support and payments",
+  donations: [
+    "Doplay does not take payments. There is no payment form and no checkout on the site - the \"Support the creator\" link in the footer goes to buycoffee.to, a separate service.",
+    "Card numbers, bank details and billing addresses never reach Doplay in any form. They are handled solely by buycoffee.to, under their own privacy policy.",
+    "Clicking the link stores nothing on your device. There is no tracking pixel and no counting redirect behind it.",
+    "If you do decide to support the project, all I see is what buycoffee.to shows me: the name given with the payment and your message, if you leave one. Payments there can be anonymous.",
+  ],
+  donationsLink: "buycoffee.to privacy policy",
   contactTitle: "Contact",
   contact: "Questions about data? Reach me on GitHub.",
   back: "← Back to the game",

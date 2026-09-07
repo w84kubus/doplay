@@ -25,7 +25,7 @@ import { useT } from "@/lib/i18n/provider";
  * samej liście „przetwarzanie płatności od odwiedzających" komercyjne JEST. Link nie
  * wchodzi w tę szarą strefę, a kosztuje tyle samo.
  */
-const BUYCOFFEE = "";
+const BUYCOFFEE = "https://buycoffee.to/w84kubus";
 
 export function LandingContent() {
   const t = useT();

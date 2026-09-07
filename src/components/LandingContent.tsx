@@ -30,18 +30,21 @@ export function LandingContent() {
           przyciskami: obietnicę produktu opowiada obrazek, ale kliknięcie ma być pierwsze. */}
       <header className="relative grid w-full max-w-5xl items-center gap-6 lg:grid-cols-2 lg:gap-10">
         <div className="flex flex-col items-center gap-4 text-center lg:items-start lg:text-left">
+          {/* Logotyp zastępuje ikonę i napis naraz — nazwa jest częścią ilustracji.
+              Nagłówek zostaje w drzewie jako `sr-only`: bez niego strona główna straciłaby
+              jedyne <h1>, czyli to, po czym wyszukiwarka rozpoznaje temat strony,
+              a czytnik ekranu dostałby w tym miejscu pustkę. */}
+          <h1 className="sr-only">Doplay</h1>
           <Image
-            src="/icon-512.png"
+            src="/logo-doplay.webp"
             alt=""
-            width={132}
-            height={132}
+            width={1200}
+            height={619}
             priority
-            className="size-20 drop-shadow-[0_6px_0_rgb(0_0_0/0.28)] sm:size-24"
+            sizes="(min-width: 1024px) 460px, 80vw"
+            className="w-full max-w-[340px] drop-shadow-[0_6px_0_rgb(0_0_0/0.28)] sm:max-w-[420px] lg:max-w-[460px]"
             aria-hidden
           />
-          <h1 className="font-display text-5xl font-bold uppercase tracking-wide text-ink drop-shadow-[0_4px_0_rgb(0_0_0/0.35)] sm:text-6xl">
-            Doplay
-          </h1>
           <p className="max-w-md text-lg font-semibold leading-relaxed text-ink-muted">
             {t("landing.tagline")}
           </p>

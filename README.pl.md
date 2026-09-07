@@ -27,21 +27,21 @@
 
 ## O aplikacji
 
-**Doplay** to zestaw imprezowych gier multiplayer, w które gracie na jednym spotkaniu — każdy na swoim telefonie. Bez kont, bez pobierania, bez tłumaczenia zasad. Jedna osoba zakłada pokój, reszta wpisuje 4-znakowy kod i za **15 sekund gracie**.
+**Doplay** to zestaw imprezowych gier multiplayer, w które gracie na jednym spotkaniu - każdy na swoim telefonie. Bez kont, bez pobierania, bez tłumaczenia zasad. Jedna osoba zakłada pokój, reszta wpisuje 4-znakowy kod i za **15 sekund gracie**.
 
 ### Jak to działa?
 
-1. 🏠 **Host zakłada pokój** — dostaje 4-literowy kod + QR
-2. 📱 **Gracze dołączają** — wpisują kod na swoim telefonie (lub skanują QR)
-3. 🎮 **Host wybiera grę** — ustawienia, start, gramy!
-4. 🔄 **Kolejna runda** — po zakończeniu wracasz do lobby i wybierasz następną
+1. 🏠 **Host zakłada pokój** - dostaje 4-literowy kod + QR
+2. 📱 **Gracze dołączają** - wpisują kod na swoim telefonie (lub skanują QR)
+3. 🎮 **Host wybiera grę** - ustawienia, start, gramy!
+4. 🔄 **Kolejna runda** - po zakończeniu wracasz do lobby i wybierasz następną
 
 Nie masz z kim grać? Zakładka **Publiczne** pokazuje pokoje otwarte dla wszystkich
 wraz z liczbą osób, które już czekają. Wybierasz jeden albo wskakujesz do losowego.
 
 ## Zrzuty ekranu
 
-Cztery ekrany — strona główna, dołączanie, lobby i runda w trakcie — w obu językach.
+Cztery ekrany - strona główna, dołączanie, lobby i runda w trakcie - w obu językach.
 Interfejs przełącza się w całości: nic nie zostaje przetłumaczone do połowy.
 
 **Polski**
@@ -54,7 +54,7 @@ Interfejs przełącza się w całości: nic nie zostaje przetłumaczone do poło
 
 ### Ekran hosta (TV)
 
-Osobny układ poziomy na laptopa albo telewizor — wielki kod pokoju, QR do zeskanowania i kto już jest.
+Osobny układ poziomy na laptopa albo telewizor - wielki kod pokoju, QR do zeskanowania i kto już jest.
 Otwierasz go z lobby; gracze zostają przy swoich telefonach.
 
 ![Ekran hosta na telewizorze: kod pokoju M2R5, kod QR i pięcioro graczy](docs/screenshots/ekran-tv.webp)
@@ -73,69 +73,69 @@ Otwierasz go z lobby; gracze zostają przy swoich telefonach.
 | **Kółko i krzyżyk** | Klasyk na trzy w rzędzie. Wygrany zostaje przy stole, reszta czeka w kolejce. | 2–16 |
 
 > **Stoper ma dwa tryby.** W **CEL** wszyscy dostają ten sam czas do trafienia i zatrzymują stoper
-> u siebie — cyfry są zamaskowane, liczysz w głowie. W **ZGADNIJ CZAS** jeden gracz jest Biegaczem
-> (rotacja co rundę): startuje i zatrzymuje kiedy chce, a **nikt nie widzi cyfr — łącznie z nim**.
+> u siebie - cyfry są zamaskowane, liczysz w głowie. W **ZGADNIJ CZAS** jeden gracz jest Biegaczem
+> (rotacja co rundę): startuje i zatrzymuje kiedy chce, a **nikt nie widzi cyfr - łącznie z nim**.
 > START i STOP lecą do wszystkich telefonów jako dźwięk, więc reszta szacuje ze słuchu i wpisuje typ.
 
 > **Stoper trenuje się też solo.** Osobna strona, bez pokoju: ustawiasz własny czas do trafienia,
 > a po kilku próbach dostajesz błąd każdej z nich, rozrzut, aktualną serię i diagnozę tego, co
-> naprawdę kosztuje punkty — czy stale spóźniasz się albo śpieszysz, bo to nawyk do poprawienia,
+> naprawdę kosztuje punkty - czy stale spóźniasz się albo śpieszysz, bo to nawyk do poprawienia,
 > czy po prostu rzuca tobą na wszystkie strony, czego poprawić się nie da.
 
 ## Funkcje
 
 ### Pokój i lobby
-- **4-znakowy kod pokoju** — klocowate litery, kliknij żeby skopiować
-- **QR code** — skan z telefonu, zero wpisywania
-- **Deep link** — `doplay.pl/?kod=XYZW` wchodzi prosto do pokoju
-- **Udostępnianie** — przycisk Share (native share / clipboard fallback)
-- **Ekran hosta (TV)** — osobny układ poziomy na laptop/TV, czytelny z kanapy
-- **Awatary** — 30 ilustrowanych postaci w kolorowych kafelkach, każda z twarzą patrzącą na gracza; w jednym pokoju nikt nie dostaje tego samego
-- **Tryb widza** — `?widz=1` wpuszcza do pokoju na podgląd, bez zajmowania miejsca, w każdej grze
-- **Pokoje publiczne** — host otwiera pokój dla obcych jednym przełącznikiem w lobby i zamyka go, gdy skład się skompletuje. Lista pokazuje, ilu czeka i jak dawno pokój stoi otwarty, a odsiewa pokoje pełne, w trakcie gry i porzucone
-- **Zasady gier** — modal z krokami dla każdej gry
-- **Rekordy pokoju** — kto ile wygrał i lista wyczynów, trwałe przez cały czas życia pokoju
-- **Wolne miejsca** — lobby pokazuje puste sloty, żeby czekający host nie patrzył na jeden wiersz i pustkę
-- **Zakładki teczkowe** — zakładanie i dołączanie to dwie zakładki jednego formularza; nick i awatar przeżywają przełączenie
+- **4-znakowy kod pokoju** - klocowate litery, kliknij żeby skopiować
+- **QR code** - skan z telefonu, zero wpisywania
+- **Deep link** - `doplay.pl/?kod=XYZW` wchodzi prosto do pokoju
+- **Udostępnianie** - przycisk Share (native share / clipboard fallback)
+- **Ekran hosta (TV)** - osobny układ poziomy na laptop/TV, czytelny z kanapy
+- **Awatary** - 30 ilustrowanych postaci w kolorowych kafelkach, każda z twarzą patrzącą na gracza; w jednym pokoju nikt nie dostaje tego samego
+- **Tryb widza** - `?widz=1` wpuszcza do pokoju na podgląd, bez zajmowania miejsca, w każdej grze
+- **Pokoje publiczne** - host otwiera pokój dla obcych jednym przełącznikiem w lobby i zamyka go, gdy skład się skompletuje. Lista pokazuje, ilu czeka i jak dawno pokój stoi otwarty, a odsiewa pokoje pełne, w trakcie gry i porzucone
+- **Zasady gier** - modal z krokami dla każdej gry
+- **Rekordy pokoju** - kto ile wygrał i lista wyczynów, trwałe przez cały czas życia pokoju
+- **Wolne miejsca** - lobby pokazuje puste sloty, żeby czekający host nie patrzył na jeden wiersz i pustkę
+- **Zakładki teczkowe** - zakładanie i dołączanie to dwie zakładki jednego formularza; nick i awatar przeżywają przełączenie
 
 ### Realtime multiplayer
-- **Anonimowa autoryzacja** — Firebase Anonymous Auth, zero rejestracji
-- **Presence** — zielona/szara kropka, kto jest online
-- **Reconnect** — powrót do pokoju po odświeżeniu/zamknięciu (localStorage)
-- **Migracja hosta** — gdy host zniknie na >30s, inny gracz przejmuje
-- **Idempotencja** — actionId (UUID) zapobiega podwójnym akcjom
-- **Pasek połączenia** — czerwony "Brak połączenia", zielony "✓ Połączono"
-- **Wykładniczy backoff** — 500ms → 1s → 2s → ... → 16s max
+- **Anonimowa autoryzacja** - Firebase Anonymous Auth, zero rejestracji
+- **Presence** - zielona/szara kropka, kto jest online
+- **Reconnect** - powrót do pokoju po odświeżeniu/zamknięciu (localStorage)
+- **Migracja hosta** - gdy host zniknie na >30s, inny gracz przejmuje
+- **Idempotencja** - actionId (UUID) zapobiega podwójnym akcjom
+- **Pasek połączenia** - czerwony "Brak połączenia", zielony "✓ Połączono"
+- **Wykładniczy backoff** - 500ms → 1s → 2s → ... → 16s max
 
 ### Język
-- **Polski i angielski** — przełącznik w rogu, bez prefiksu języka w adresie (tam siedzą kody pokoi); obejmuje wszystkie ekrany, także gry i układ na TV
-- **Przez ciasteczko** — serwer czyta je przed pierwszym renderem, więc nic nie miga w złym języku
-- **Karta linku** — `og:image` plus tytuł i opis w języku czytelnika, bo link do pokoju ląduje w czatach grupowych
+- **Polski i angielski** - przełącznik w rogu, bez prefiksu języka w adresie (tam siedzą kody pokoi); obejmuje wszystkie ekrany, także gry i układ na TV
+- **Przez ciasteczko** - serwer czyta je przed pierwszym renderem, więc nic nie miga w złym języku
+- **Karta linku** - `og:image` plus tytuł i opis w języku czytelnika, bo link do pokoju ląduje w czatach grupowych
 
 ### Bezpieczeństwo
-- **Klient NIGDY nie zapisuje stanu gry** — wszystkie zapisy przez Route Handlery + `firebase-admin`
-- **Role i hasła tajne** — żyją w `rooms/{kod}/secret/state` (Firestore: `allow read: if false`)
-- **Dane prywatne per gracz** — `rooms/{kod}/private/{uid}` (tylko Twoje)
-- **Zero wycieków w DevToolsach** — role Mafii i hasło Impostora niewidoczne po stronie klienta
+- **Klient NIGDY nie zapisuje stanu gry** - wszystkie zapisy przez Route Handlery + `firebase-admin`
+- **Role i hasła tajne** - żyją w `rooms/{kod}/secret/state` (Firestore: `allow read: if false`)
+- **Dane prywatne per gracz** - `rooms/{kod}/private/{uid}` (tylko Twoje)
+- **Zero wycieków w DevToolsach** - role Mafii i hasło Impostora niewidoczne po stronie klienta
 
 ### PWA i mobile
-- **Instalowalna** — manifest + Service Worker (Serwist), prompt instalacji, iOS hint
-- **Offline** — dedykowana strona offline, NetworkOnly dla API i Firebase
-- **Wake Lock** — ekran nie gaśnie w trakcie gry
-- **Wibracje** — haptic feedback na akcjach (z opcją wyłączenia)
-- **Visual Viewport** — `--vvh` dla klawiatur mobilnych
-- **Safe areas** — `env(safe-area-inset-*)` na notch/dynamic island
+- **Instalowalna** - manifest + Service Worker (Serwist), prompt instalacji, iOS hint
+- **Offline** - dedykowana strona offline, NetworkOnly dla API i Firebase
+- **Wake Lock** - ekran nie gaśnie w trakcie gry
+- **Wibracje** - haptic feedback na akcjach (z opcją wyłączenia)
+- **Visual Viewport** - `--vvh` dla klawiatur mobilnych
+- **Safe areas** - `env(safe-area-inset-*)` na notch/dynamic island
 
 ### Wygląd i UX
-- **Styl „Arcade Party"** — fioletowo-różowy gradient, klocowate przyciski z twardym cieniem, panele jak naklejki. Pełna specyfikacja w [`DESIGN.md`](DESIGN.md)
-- **Wciśnięcie przycisku** — element sygnaturowy: każdy przycisk zapada się o 4 px przy kliknięciu
-- **Animacje** — slideIn, fadeIn, timer pulse, arcade-pop
-- **SFX** — WebAudio: join, phase change, urgent tick, fanfara, defeat, neon buzz
-- **Konfetti** — canvas-confetti na wygraną z kolorami gry
-- **Skeleton loader** — placeholder w kształcie lobby, które za chwilę przyjdzie, więc nic nie podskakuje po załadowaniu
-- **Pakiet ilustracji** — trzy powracające postacie: na stronie głównej, czekające w pustym lobby, wzruszające ramionami na ekranach błędu, świętujące na podium
-- **Rama aplikacji** — aplikacja jest zaokrągloną kartą wpuszczoną w ciemną ramę, nie stroną na pełnej szerokości
-- **prefers-reduced-motion** — pełne wsparcie
+- **Styl „Arcade Party"** - fioletowo-różowy gradient, klocowate przyciski z twardym cieniem, panele jak naklejki. Pełna specyfikacja w [`DESIGN.md`](DESIGN.md)
+- **Wciśnięcie przycisku** - element sygnaturowy: każdy przycisk zapada się o 4 px przy kliknięciu
+- **Animacje** - slideIn, fadeIn, timer pulse, arcade-pop
+- **SFX** - WebAudio: join, phase change, urgent tick, fanfara, defeat, neon buzz
+- **Konfetti** - canvas-confetti na wygraną z kolorami gry
+- **Skeleton loader** - placeholder w kształcie lobby, które za chwilę przyjdzie, więc nic nie podskakuje po załadowaniu
+- **Pakiet ilustracji** - trzy powracające postacie: na stronie głównej, czekające w pustym lobby, wzruszające ramionami na ekranach błędu, świętujące na podium
+- **Rama aplikacji** - aplikacja jest zaokrągloną kartą wpuszczoną w ciemną ramę, nie stroną na pełnej szerokości
+- **prefers-reduced-motion** - pełne wsparcie
 
 ## Stack technologiczny
 
@@ -148,14 +148,14 @@ Otwierasz go z lobby; gracze zostają przy swoich telefonach.
 | Autoryzacja | Firebase Anonymous Auth |
 | Serwer | Route Handlers + `firebase-admin` |
 | PWA | Serwist (Service Worker, manifest, offline) |
-| Testy | Vitest (307 testów — pełne partie, bezpieczeństwo, kontrakty rdzenia) |
+| Testy | Vitest (307 testów - pełne partie, bezpieczeństwo, kontrakty rdzenia) |
 | Deploy | Vercel (auto-deploy z GitHub) |
 | Dźwięki | Web Audio API (zero plików audio) |
 | QR | `qrcode` (generowanie SVG) |
 | Czcionki | Baloo 2 (display), Nunito (body), JetBrains Mono (liczby) |
-| Języki | Własny słownik (~500 kluczy na język, bez biblioteki — next-intl wymusiłby prefiks języka w adresie) |
+| Języki | Własny słownik (~500 kluczy na język, bez biblioteki - next-intl wymusiłby prefiks języka w adresie) |
 | Ikony | Lucide (interfejs) + własny pakiet ilustracji (30 awatarów, 8 ikon gier, postacie) |
-| Obróbka grafik | `scripts/process-assets.py` — Pillow + NumPy, wycina tło z wygenerowanych ilustracji |
+| Obróbka grafik | `scripts/process-assets.py` - Pillow + NumPy, wycina tło z wygenerowanych ilustracji |
 
 ## Architektura
 
@@ -179,8 +179,8 @@ src/
 │   └── api/                    # Route Handlers (jedyne miejsce zapisu!)
 │       ├── cron/cleanup/       # co noc: wygasłe pokoje + zamiatarka sierot
 │       └── rooms/
-│           ├── route.ts        # POST — tworzenie pokoju
-│           ├── publiczne/      # GET — lista publiczna (bez nicków)
+│           ├── route.ts        # POST - tworzenie pokoju
+│           ├── publiczne/      # GET - lista publiczna (bez nicków)
 │           └── [code]/
 │               ├── join/       # dołączanie
 │               ├── publiczny/  # host otwiera/zamyka pokój dla obcych
@@ -194,9 +194,9 @@ src/
 │
 ├── games/                      # Silniki i UI gier (plugin architecture)
 │   ├── registry.ts             # rejestr silników (serwer)
-│   ├── manifests.ts            # manifesty gier (klient — bez silników)
+│   ├── manifests.ts            # manifesty gier (klient - bez silników)
 │   ├── icons.tsx               # ikony zapasowe gier (Lucide)
-│   ├── rules.ts                # karty „Jak grać?" — PL i EN osobno
+│   ├── rules.ts                # karty „Jak grać?" - PL i EN osobno
 │   ├── finish.test.ts          # kontrakt „Zakończ grę" dla całego rejestru
 │   ├── components.tsx          # UI gier (dynamic imports)
 │   ├── types.ts                # interfejsy GameEngine, GameManifest
@@ -277,20 +277,20 @@ src/
 
 ### Kluczowe decyzje projektowe
 
-- **Klient read-only** — klient NIGDY nie zapisuje do Firestore. Wszystko przez Route Handlery + `firebase-admin`. Złamanie tej zasady wycieka role w DevToolsach.
-- **Silniki to czyste funkcje** — zero `Date.now()`, zero `Math.random()`. Czas i losowość wchodzą przez `ctx.now` i `ctx.rng`. W pełni deterministyczne, w pełni testowalne.
-- **Plugin architecture** — dodanie nowej gry = nowy folder w `src/games/` plus wpis w **sześciu rejestrach** (silnik, manifest kliencki, widoki, ikona, karta zasad, słownik). Zero zmian w rdzeniu. Warto je wyliczyć, bo pominięcie któregokolwiek **nie wywoła błędu budowania**: gra po prostu przestaje działać w jednym miejscu, co jest dużo trudniejsze do zauważenia niż czerwony build. Sprawdzone przy dodawaniu Kółka i krzyżyka — testy kontraktu przeszły od razu, bez dotykania `GameShell` ani `game-runner`.
-- **Dynamic imports** — komponenty gier ładowane dynamicznie (`next/dynamic`). Gracz pobiera tylko kod aktualnej gry, nie wszystkich ośmiu.
-- **Tajne dane w trzech warstwach** — `publicState` (wszyscy widzą), `secret/state` (nikt nie czyta, `allow read: if false`), `private/{uid}` (tylko Twoje).
-- **Timer bez crona** — serwer pisze `phaseEndsAt`, klienci odliczają, a po upływie czasu ponagla serwer **wyłącznie host**. Reszta wchodzi jako zapas dopiero po 3 s, gdyby host wypadł. Wcześniej ponaglali wszyscy naraz, co przy 8 graczach dawało ~6,6 transakcji/s na jednym dokumencie przy limicie Firestore ~1/s — transakcje wchodziły w konflikt i faza spóźniała się o kilka sekund.
-- **Lista publiczna nie niesie żadnego tekstu wpisanego przez gracza** — to jedyny ekran w aplikacji widoczny dla kogoś spoza pokoju, więc pokazuje kod, awatary i liczbę osób, a nicków nie. Reguły Firestore też zostają zamknięte: dopisanie do nich „albo pokój jest publiczny" pozwoliłoby każdemu zalogowanemu czytać CAŁY dokument dowolnego publicznego pokoju bez wchodzenia do niego. Zamiast tego listę serwuje Route Handler przez Admin SDK. Cena to brak realtime na liście, co załatwia odświeżanie co 10 s.
-- **Kasowanie pokoju zawsze przez `recursiveDelete`** — zwykłe `delete()` na dokumencie Firestore zostawia jego podkolekcje, a `secret/state` i `private/{uid}` to dokładnie te miejsca, w których siedzą role. Pokój znikałby z listy, a role wszystkich graczy zostawały w bazie: bez rodzica i niewidoczne w konsoli. Natywne TTL Firestore odpada z tego samego powodu — kasuje wyłącznie rodzica. Stąd własny nocny cron, który przy okazji zamiata sieroty jako druga linia obrony. Trudne jest w nim nie kasowanie, tylko wyścig: pokój założony *po* odczycie listy pokoi nie ma na niej rodzica, choć żyje. Dlatego progiem jest `readTime` zapytania, a nie wiek dokumentu, a oba czasy pochodzą z zegara Firestore, nie procesu.
-- **Polski jako pierwszy, angielski obok** — kod, trasy i nazwy katalogów zostają po polsku, podobnie jak TREŚĆ gier: listy haseł do Wisielca i Państw-miast są polskie, a klawiatura Wisielca razem z nimi. Interfejs czyta ze słownika. Bez biblioteki i18n: next-intl wymusiłby prefiks języka w adresie, a tam siedzą kody pokoi. Język trzyma ciasteczko, które serwer czyta przed pierwszym renderem, więc nic nie miga w złym języku.
-- **Fonty z `latin-ext`** (Ą Ć Ę Ł Ń Ó Ś Ź Ż) — sama obecność glifów to jednak za mało: Fredoka je ma, ale rysuje ogonek w Ą/Ę cienkim włosem oderwanym od litery. Stąd Baloo 2 — szczegóły w [`DESIGN.md`](DESIGN.md).
-- **Reguły komponentów w `@layer components`** — Tailwind układa kaskadę theme → base → components → utilities. Poza warstwą te reguły lądują *po* utility i wygrywają każdy remis, więc `px-4` obok `.card` po cichu nic nie robiło. Przed poprawką takich miejsc było około czterdziestu.
-- **Rdzeń nie zna żadnej gry** — dwie funkcje działają przez opt-in silnika, nie przez wiedzę rdzenia. Gra bez opt-inu po prostu działa, tylko bez danej funkcji:
-  - **Rekordy** — silnik oznacza zdarzenie `meta: { uid, rekord: true }`, rdzeń zbiera i dopisuje do wyróżnień pokoju.
-  - **Zakończenie gry** — silnik wystawia `canFinish` w `publicView`, a `GameShell` pokazuje wtedy „Zakończ grę" zamiast awaryjnego przerwania. Zakończenie daje podium i zapisuje rekordy, przerwanie nie.
+- **Klient read-only** - klient NIGDY nie zapisuje do Firestore. Wszystko przez Route Handlery + `firebase-admin`. Złamanie tej zasady wycieka role w DevToolsach.
+- **Silniki to czyste funkcje** - zero `Date.now()`, zero `Math.random()`. Czas i losowość wchodzą przez `ctx.now` i `ctx.rng`. W pełni deterministyczne, w pełni testowalne.
+- **Plugin architecture** - dodanie nowej gry = nowy folder w `src/games/` plus wpis w **sześciu rejestrach** (silnik, manifest kliencki, widoki, ikona, karta zasad, słownik). Zero zmian w rdzeniu. Warto je wyliczyć, bo pominięcie któregokolwiek **nie wywoła błędu budowania**: gra po prostu przestaje działać w jednym miejscu, co jest dużo trudniejsze do zauważenia niż czerwony build. Sprawdzone przy dodawaniu Kółka i krzyżyka - testy kontraktu przeszły od razu, bez dotykania `GameShell` ani `game-runner`.
+- **Dynamic imports** - komponenty gier ładowane dynamicznie (`next/dynamic`). Gracz pobiera tylko kod aktualnej gry, nie wszystkich ośmiu.
+- **Tajne dane w trzech warstwach** - `publicState` (wszyscy widzą), `secret/state` (nikt nie czyta, `allow read: if false`), `private/{uid}` (tylko Twoje).
+- **Timer bez crona** - serwer pisze `phaseEndsAt`, klienci odliczają, a po upływie czasu ponagla serwer **wyłącznie host**. Reszta wchodzi jako zapas dopiero po 3 s, gdyby host wypadł. Wcześniej ponaglali wszyscy naraz, co przy 8 graczach dawało ~6,6 transakcji/s na jednym dokumencie przy limicie Firestore ~1/s - transakcje wchodziły w konflikt i faza spóźniała się o kilka sekund.
+- **Lista publiczna nie niesie żadnego tekstu wpisanego przez gracza** - to jedyny ekran w aplikacji widoczny dla kogoś spoza pokoju, więc pokazuje kod, awatary i liczbę osób, a nicków nie. Reguły Firestore też zostają zamknięte: dopisanie do nich „albo pokój jest publiczny" pozwoliłoby każdemu zalogowanemu czytać CAŁY dokument dowolnego publicznego pokoju bez wchodzenia do niego. Zamiast tego listę serwuje Route Handler przez Admin SDK. Cena to brak realtime na liście, co załatwia odświeżanie co 10 s.
+- **Kasowanie pokoju zawsze przez `recursiveDelete`** - zwykłe `delete()` na dokumencie Firestore zostawia jego podkolekcje, a `secret/state` i `private/{uid}` to dokładnie te miejsca, w których siedzą role. Pokój znikałby z listy, a role wszystkich graczy zostawały w bazie: bez rodzica i niewidoczne w konsoli. Natywne TTL Firestore odpada z tego samego powodu - kasuje wyłącznie rodzica. Stąd własny nocny cron, który przy okazji zamiata sieroty jako druga linia obrony. Trudne jest w nim nie kasowanie, tylko wyścig: pokój założony *po* odczycie listy pokoi nie ma na niej rodzica, choć żyje. Dlatego progiem jest `readTime` zapytania, a nie wiek dokumentu, a oba czasy pochodzą z zegara Firestore, nie procesu.
+- **Polski jako pierwszy, angielski obok** - kod, trasy i nazwy katalogów zostają po polsku, podobnie jak TREŚĆ gier: listy haseł do Wisielca i Państw-miast są polskie, a klawiatura Wisielca razem z nimi. Interfejs czyta ze słownika. Bez biblioteki i18n: next-intl wymusiłby prefiks języka w adresie, a tam siedzą kody pokoi. Język trzyma ciasteczko, które serwer czyta przed pierwszym renderem, więc nic nie miga w złym języku.
+- **Fonty z `latin-ext`** (Ą Ć Ę Ł Ń Ó Ś Ź Ż) - sama obecność glifów to jednak za mało: Fredoka je ma, ale rysuje ogonek w Ą/Ę cienkim włosem oderwanym od litery. Stąd Baloo 2 - szczegóły w [`DESIGN.md`](DESIGN.md).
+- **Reguły komponentów w `@layer components`** - Tailwind układa kaskadę theme → base → components → utilities. Poza warstwą te reguły lądują *po* utility i wygrywają każdy remis, więc `px-4` obok `.card` po cichu nic nie robiło. Przed poprawką takich miejsc było około czterdziestu.
+- **Rdzeń nie zna żadnej gry** - dwie funkcje działają przez opt-in silnika, nie przez wiedzę rdzenia. Gra bez opt-inu po prostu działa, tylko bez danej funkcji:
+  - **Rekordy** - silnik oznacza zdarzenie `meta: { uid, rekord: true }`, rdzeń zbiera i dopisuje do wyróżnień pokoju.
+  - **Zakończenie gry** - silnik wystawia `canFinish` w `publicView`, a `GameShell` pokazuje wtedy „Zakończ grę" zamiast awaryjnego przerwania. Zakończenie daje podium i zapisuje rekordy, przerwanie nie.
 
 ## Uruchomienie lokalne
 
@@ -319,7 +319,7 @@ NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 
-# firebase-admin (Route Handlery) — cały JSON konta serwisowego zakodowany base64:
+# firebase-admin (Route Handlery) - cały JSON konta serwisowego zakodowany base64:
 #   base64 -i sciezka/do/klucza.json | tr -d '\n'
 FIREBASE_SERVICE_ACCOUNT_KEY=your_base64_encoded_service_account_json
 
@@ -352,7 +352,7 @@ Po instalacji działa w pełnym ekranie z własną ikoną. Ekran hosta (TV) utrz
 
 ## Licencja
 
-**Wszelkie prawa zastrzeżone** — patrz [LICENSE](LICENSE).
+**Wszelkie prawa zastrzeżone** - patrz [LICENSE](LICENSE).
 
 Kod jest publiczny **wyłącznie do wglądu**: do czytania, nauki i oceny warsztatu.
 To nie jest open source. Kopiowanie, użycie w innym projekcie czy uruchomienie

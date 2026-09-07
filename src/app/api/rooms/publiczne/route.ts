@@ -26,14 +26,18 @@ export async function GET() {
       snap.docs.map((d) => d.data() as Kandydat),
       Date.now(),
     );
-    // Krótki cache na krawędzi. Od kiedy zachęta na stronie głównej odpytuje tę
-    // trasę przy każdym wejściu, bez tego każdy gość kosztowałby odczyt Firestore.
-    // 10 s zgadza się z tempem odświeżania listy w zakładce, więc nikt nie zobaczy
-    // nic bardziej nieaktualnego, niż zobaczyłby i tak.
-    return NextResponse.json(
-      { pokoje },
-      { headers: { "cache-control": "public, s-maxage=10, stale-while-revalidate=20" } },
-    );
+    // Bufor na krawędzi zostaje, bo zachęta na stronie głównej odpytuje tę trasę przy
+    // każdym wejściu i bez niego każdy gość kosztowałby odczyt Firestore. Ale 2 s,
+    // nie 10, i BEZ `stale-while-revalidate`.
+    //
+    // Zmierzone na produkcji przy poprzednich ustawieniach: pokój zamknięty przez hosta
+    // znikał z odpowiedzi API dopiero po 10 s, a `stale-while-revalidate=20` pozwalał
+    // podawać nieaktualną listę jeszcze dłużej, gdy ruch był rzadki. Do tego dochodziło
+    // odpytywanie u klienta, więc na drugim komputerze pokój wisiał do 20 s po zamknięciu.
+    //
+    // Dwie sekundy nadal odcinają liczbę oglądających od kosztu zapytań: przy stu osobach
+    // baza dostaje pytanie co 2 s, a nie sto razy.
+    return NextResponse.json({ pokoje }, { headers: { "cache-control": "public, s-maxage=2" } });
   } catch (err) {
     return handleApiError(err);
   }

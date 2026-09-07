@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { RefreshCw, Users } from "lucide-react";
 import { useT } from "@/lib/i18n/provider";
 import { AvatarIcon, avatarColor } from "@/components/AvatarIcon";
@@ -12,9 +12,16 @@ import type { PubliczyPokoj } from "@/lib/server/publiczne";
 // widać po awatarach, a te są identyfikatorami z zamkniętej listy, nie tekstem.
 //
 // Odświeżanie odpytywaniem, nie onSnapshot: lista idzie z Route Handlera, żeby reguły
-// Firestore zostały zamknięte. Kilka sekund opóźnienia jest tu nieszkodliwe, a wejście
-// do pokoju, który właśnie zniknął, i tak obsługuje błąd z /join.
-const ODSWIEZANIE_MS = 10000;
+// Firestore zostały zamknięte. Wejście do pokoju, który właśnie zniknął, i tak obsługuje
+// błąd z /join.
+const ODSWIEZANIE_MS = 5000;
+
+/**
+ * Nie odpytuj częściej niż co tyle. Zabezpieczenie przed lawiną przy powrocie do karty:
+ * przełączenie okna potrafi wystrzelić `visibilitychange` i `focus` jedno po drugim,
+ * a przeglądarka dokłada do tego zaległy tik interwału.
+ */
+const MIN_ODSTEP_MS = 1500;
 
 /**
  * Jak dawno pokój stoi otwarty. To jedyny sygnał, po którym obcy pozna, czy ktoś tam
@@ -38,8 +45,10 @@ export function PublicRoomsList({
   const t = useT();
   const [pokoje, setPokoje] = useState<PubliczyPokoj[] | null>(null);
   const [odswieza, setOdswieza] = useState(false);
+  const ostatnie = useRef(0);
 
   const pobierz = useCallback(async () => {
+    ostatnie.current = Date.now();
     setOdswieza(true);
     try {
       const r = await fetch("/api/rooms/publiczne", { cache: "no-store" });
@@ -58,7 +67,22 @@ export function PublicRoomsList({
   useEffect(() => {
     pobierz();
     const id = setInterval(pobierz, ODSWIEZANIE_MS);
-    return () => clearInterval(id);
+
+    // Powrót do karty odświeża natychmiast. To jest ta poprawka, którą widać najbardziej:
+    // przeglądarka usypia interwały w tle, więc po przełączeniu okna lista potrafiła być
+    // stara o kilkadziesiąt sekund, a użytkownik patrzył na nią od razu po powrocie.
+    const naPowrot = () => {
+      if (document.visibilityState !== "visible") return;
+      if (Date.now() - ostatnie.current < MIN_ODSTEP_MS) return;
+      pobierz();
+    };
+    document.addEventListener("visibilitychange", naPowrot);
+    window.addEventListener("focus", naPowrot);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", naPowrot);
+      window.removeEventListener("focus", naPowrot);
+    };
   }, [pobierz]);
 
   return (

@@ -41,6 +41,11 @@ export function LandingContent() {
             width={1200}
             height={619}
             priority
+            // Domyślne 75 na już stratnym źródle dawało podwójną kompresję i widoczne
+            // artefakty wokół konturu. Źródło trzymamy więc w jakości 95 (do przeglądarki
+            // nigdy nie trafia — Next serwuje własne warianty), a tu podnosimy próg,
+            // bo logo to twarde krawędzie, na których WebP łatwo zostawia obwódki.
+            quality={85}
             sizes="(min-width: 1024px) 460px, 80vw"
             className="w-full max-w-[340px] drop-shadow-[0_6px_0_rgb(0_0_0/0.28)] sm:max-w-[420px] lg:max-w-[460px]"
             aria-hidden

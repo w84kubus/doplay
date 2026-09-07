@@ -200,8 +200,16 @@ export default function TreningStoperaPage() {
             Inaczej „Jeszcze raz" od razu startuje pomiar i celu nie da się już
             zmienić bez przeładowania strony — a cały sens treningu to próbowanie
             różnych czasów. */}
-        {faza !== "mierzy" && (
-          <>
+        {/* Ustawienia ZOSTAJĄ w układzie także podczas pomiaru, tylko znikają z widoku.
+            Odmontowanie ich zabierało 106 px wysokości w trybie stałym i 151 px
+            w losowym (dochodzi podpowiedź), więc STOP pojawiał się wyżej, niż stał
+            START. Przy celu rzędu sekundy to wystarczy, żeby chybić przycisk. */}
+        <div
+          className={`flex flex-col items-center gap-3 ${faza === "mierzy" ? "invisible" : ""}`}
+          aria-hidden={faza === "mierzy"}
+        >
+          {
+            <>
             <div className="flex flex-wrap justify-center gap-2">
               {SZYBKIE_CELE.map((s) => (
                 <button
@@ -266,23 +274,18 @@ export default function TreningStoperaPage() {
                 {t("trening.randomHint")}
               </p>
             )}
-          </>
-        )}
+            </>
+          }
+        </div>
       </div>
 
-      {/* —— POMIAR —— */}
-      {faza === "mierzy" ? (
-        <>
-          <p className="tabular relative text-4xl text-ink-muted">●●:●●.●●</p>
-          <button
-            type="button"
-            onClick={stop}
-            className="font-display relative flex size-40 items-center justify-center gap-2 rounded-full border-[5px] border-bursztyn bg-panel-hi text-3xl font-bold uppercase tracking-[0.06em] text-bursztyn shadow-[0_6px_0_color-mix(in_srgb,var(--color-bursztyn)_45%,black)] transition-transform duration-75 active:translate-y-[6px] active:shadow-none"
-          >
-            <Square size={28} strokeWidth={3} aria-hidden /> {t("stoper.stop")}
-          </button>
-        </>
-      ) : faza === "uniewazniona" ? (
+      {/* —— POMIAR ——
+          „gotowy" i „mierzy" mają IDENTYCZNY układ: cyfry nad przyciskiem i podpowiedź
+          pod nim są ZAWSZE wyrenderowane, tylko jedna z nich jest niewidoczna. Wysokość
+          zgadza się wtedy z definicji, bez wpisywania jej na sztywno — a podpowiedź
+          zawija się na różną liczbę linii zależnie od języka i szerokości ekranu.
+          Sam przycisk to jeden element zmieniający rolę, więc React go nie przemontowuje. */}
+      {faza === "uniewazniona" ? (
         <>
           <p className="relative max-w-xs text-base font-semibold text-czerwien">{t("stoper.busted")}</p>
           <button type="button" onClick={nowaProba} className="btn relative">
@@ -303,14 +306,34 @@ export default function TreningStoperaPage() {
         </>
       ) : (
         <>
+          <p className={`tabular relative text-4xl text-ink-muted ${faza === "mierzy" ? "" : "invisible"}`}>
+            ●●:●●.●●
+          </p>
           <button
             type="button"
-            onClick={start}
-            className="font-display relative flex size-40 items-center justify-center gap-2 rounded-full border-[5px] border-white bg-bursztyn text-3xl font-bold uppercase tracking-[0.06em] text-black shadow-[0_6px_0_color-mix(in_srgb,var(--color-bursztyn)_55%,black)] transition-transform duration-75 active:translate-y-[6px] active:shadow-none"
+            onClick={faza === "mierzy" ? stop : start}
+            className={`font-display relative flex size-40 items-center justify-center gap-2 rounded-full border-[5px] text-3xl font-bold uppercase tracking-[0.06em] transition-transform duration-75 active:translate-y-[6px] active:shadow-none ${
+              faza === "mierzy"
+                ? "border-bursztyn bg-panel-hi text-bursztyn shadow-[0_6px_0_color-mix(in_srgb,var(--color-bursztyn)_45%,black)]"
+                : "border-white bg-bursztyn text-black shadow-[0_6px_0_color-mix(in_srgb,var(--color-bursztyn)_55%,black)]"
+            }`}
           >
-            <Play size={30} strokeWidth={3} aria-hidden /> {t("stoper.start")}
+            {faza === "mierzy" ? (
+              <>
+                <Square size={28} strokeWidth={3} aria-hidden /> {t("stoper.stop")}
+              </>
+            ) : (
+              <>
+                <Play size={30} strokeWidth={3} aria-hidden /> {t("stoper.start")}
+              </>
+            )}
           </button>
-          <p className="relative max-w-xs text-sm font-semibold text-ink-muted">{t("stoper.hint")}</p>
+          <p
+            className={`relative max-w-xs text-sm font-semibold text-ink-muted ${faza === "mierzy" ? "invisible" : ""}`}
+            aria-hidden={faza === "mierzy"}
+          >
+            {t("stoper.hint")}
+          </p>
         </>
       )}
 

@@ -378,6 +378,7 @@ const pl = {
 
   // — stopka —
   "footer.madeBy": "zrobił {name}",
+  "footer.support": "Wesprzyj twórcę",
   "set.odcien.show": "Czas pokazu koloru",
   "set.odcien.space": "Suwaki",
   "hint.odcien.space": "HSL (barwa/nasycenie/jasność) jest znacznie łatwiejszy niż RGB.",
@@ -925,6 +926,7 @@ const en: Record<Key, string> = {
 
   // — footer —
   "footer.madeBy": "made by {name}",
+  "footer.support": "Support the creator",
   "set.odcien.show": "Colour display time",
   "set.odcien.space": "Sliders",
   "hint.odcien.space": "HSL (hue/saturation/lightness) is much easier than RGB.",

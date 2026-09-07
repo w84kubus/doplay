@@ -6,6 +6,7 @@ import { GameCard } from "@/components/GameCard";
 import { ComingSoonCard } from "@/components/ComingSoonCard";
 import { HowToPlay } from "@/components/HowToPlay";
 import { PublicRoomsHint } from "@/components/PublicRoomsHint";
+import { Coffee } from "lucide-react";
 import { GithubMark } from "@/components/GithubMark";
 import { Illustration } from "@/components/Illustration";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -15,6 +16,17 @@ import { useT } from "@/lib/i18n/provider";
 // Treść landingu wyjęta z page.tsx do komponentu klienckiego: przełącznik języka
 // musi natychmiast przerenderować teksty, a page.tsx zostaje serwerowy, bo trzyma
 // logikę deep linku (/?kod= → redirect), która musi wykonać się przed renderem.
+/**
+ * Profil na buycoffee.to. Pusty ciąg CHOWA odnośnik — lepiej brak przycisku niż przycisk
+ * prowadzący donikąd.
+ *
+ * Świadomie odnośnik na zewnątrz, a nie formularz płatności u nas. Vercel wyłącza prośby
+ * o darowiznę z definicji użycia komercyjnego, więc plan darmowy wystarcza, ale na tej
+ * samej liście „przetwarzanie płatności od odwiedzających" komercyjne JEST. Link nie
+ * wchodzi w tę szarą strefę, a kosztuje tyle samo.
+ */
+const BUYCOFFEE = "";
+
 export function LandingContent() {
   const t = useT();
   return (
@@ -105,6 +117,17 @@ export function LandingContent() {
           <GithubMark />
           {t("footer.madeBy", { name: "Jakub Bondel" })}
         </a>
+        {BUYCOFFEE && (
+          <a
+            href={BUYCOFFEE}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 underline underline-offset-2 hover:text-ink"
+          >
+            <Coffee size={13} strokeWidth={2.5} aria-hidden />
+            {t("footer.support")}
+          </a>
+        )}
         <span className="opacity-70">doplay.pl</span>
       </footer>
     </main>

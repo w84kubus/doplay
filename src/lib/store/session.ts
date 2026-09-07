@@ -31,11 +31,15 @@ export const useSession = create<SessionState>()(
       // Nazwa sprzed rebrandingu na Doplay — patrz LOCALE_COOKIE w i18n/types.ts.
       // Zmiana odcięłaby wracających graczy od zapisanego nicku, awatara i pokoju.
       name: "domowka-session",
-      // v1: awatary z emoji na identyfikatory ikon. Bez migracji wracający gracz
-      // ma w localStorage np. "🦊", nic nie jest zaznaczone w siatce i wybór
-      // wygląda na pusty. Serwer takie wartości nadal przyjmuje (isValidAvatar),
-      // ale UI musi pokazywać to, co faktycznie wyśle.
-      version: 1,
+      // Migracja zamienia nieznany awatar na domyślny. Numer wersji trzeba PODBIĆ
+      // przy każdej wymianie pakietu, bo migracja odpala się tylko przy przejściu
+      // na wyższą wersję — inaczej dotknie wyłącznie graczy sprzed poprzedniej.
+      //
+      // v1: emoji („🦊") na identyfikatory ikon.
+      // v2: wycofanie przedmiotów bez twarzy („pizza", „egg", „anchor"). Serwer
+      //     nie przyjmuje ich już wcale, więc bez tego podbicia wracający gracz
+      //     wysłałby zapisaną wartość i dostał „Nieznany awatar" zamiast wejść.
+      version: 2,
       migrate: (persisted) => {
         const prev = (persisted ?? {}) as Partial<SessionState>;
         const known = (AVATARS as readonly string[]).includes(prev.avatar ?? "");

@@ -20,8 +20,9 @@ const nickSchema = z
 
 const avatarSchema = z
   .string()
-  // isValidAvatar, nie AVATARS.includes — przepuszcza też awatary sprzed przejścia
-  // na ikony, żeby gracz z aktywnego pokoju nie został odrzucony przy powrocie.
+  // Przyjmujemy wyłącznie awatary z bieżącego pakietu. Klient nie ma jak wysłać
+  // wycofanego: migracja sesji podmienia nieznaną wartość na domyślną, zanim
+  // formularz zdąży ją wysłać (patrz store/session.ts).
   .refine(isValidAvatar, { message: "Nieznany awatar." });
 
 export const createRoomSchema = z.object({

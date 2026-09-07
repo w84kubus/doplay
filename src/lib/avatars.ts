@@ -1,5 +1,9 @@
 // Awatary graczy (SPEC §4). Wartości to stabilne identyfikatory, nie emoji —
-// wygląd (ikona Lucide + kolor kafelka) żyje w src/components/AvatarIcon.tsx.
+// wygląd (ilustracja + kolor kafelka) żyje w src/components/AvatarIcon.tsx.
+//
+// Wszystkie trzydzieści to postacie z twarzą. To nie jest kaprys estetyczny:
+// awatar odpowiada na pytanie „kim jestem przy tym stole", a na to nie da się
+// odpowiedzieć kotwicą ani jajkiem. Przy dokładaniu nowego trzymaj tę zasadę.
 export const AVATARS = [
   // ssaki
   "cat", "dog", "rabbit", "panda", "squirrel", "rat", "lion", "tiger", "giraffe", "sloth",
@@ -13,25 +17,18 @@ export const AVATARS = [
 
 export const DEFAULT_AVATAR: string = AVATARS[0];
 
-// Awatary wycofane. Gracze siedzący w pokojach mają je zapisane w Firestore —
-// akceptujemy je przy walidacji, żeby nikogo nie wyrzucić w trakcie gry. Nie ma ich
-// w AVATARS, więc nie da się ich wybrać na nowo, a AvatarIcon pokazuje dla nich
-// zapasową ikonę zamiast pustego miejsca.
-//
-// Skasowanie wpisu stąd nie jest kosmetyką: gracz z takim awatarem dostałby przy
-// powrocie do pokoju błąd „Nieznany awatar" i nie wróciłby do własnej partii.
-const LEGACY_AVATARS = [
-  // druga generacja pakietu (ETAP 11) — przedmioty bez twarzy zastąpione postaciami
-  "shell", "feather", "egg", "paw", "guitar", "rocket", "flame",
-  "gamepad", "crown", "diamond", "anchor", "bike", "zap",
-  // ostatnie dwa przedmioty; po nich pakiet to same postacie z twarzą
-  "pizza", "beer",
-  // emoji sprzed przejścia na pakiet ikon
-  "🦊", "🐼", "🐧", "🦁", "🐸", "🐙", "🦄", "🐝", "🦉", "🐬",
-  "🐢", "🦖", "🦩", "🐯", "🐨", "🐰", "🦇", "🦈", "🐳", "🦭",
-  "🍕", "🍺", "🎸", "🚀", "👽", "🤖", "👾", "🎃", "💀", "🔥",
-];
-
+/**
+ * Czy identyfikator awatara jest jednym z obsługiwanych.
+ *
+ * Nie ma tu już listy wycofanych. Poprzednie pokolenia awatarów (emoji sprzed
+ * przejścia na pakiet ikon i przedmioty bez twarzy) były tu akceptowane, żeby nie
+ * wyrzucić gracza, który ma je zapisane w otwartym pokoju. Lista zniknęła po
+ * sprawdzeniu, że w żadnym żywym pokoju nikt takiego awatara nie ma.
+ *
+ * Jeśli kiedyś znów będziesz wycofywać awatar, zrób to samo: sprawdź bazę PRZED
+ * usunięciem. Gracz z nieobsługiwanym awatarem dostaje z `/join` błąd „Nieznany
+ * awatar" i nie wraca do własnej partii, dopóki nie wybierze nowego.
+ */
 export function isValidAvatar(a: string): boolean {
-  return (AVATARS as readonly string[]).includes(a) || LEGACY_AVATARS.includes(a);
+  return (AVATARS as readonly string[]).includes(a);
 }

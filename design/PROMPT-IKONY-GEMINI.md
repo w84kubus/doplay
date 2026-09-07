@@ -1,22 +1,21 @@
-# Prompt do Gemini (Nano Banana) — pakiet ikon dla Domówki
+# Prompt do Gemini (Nano Banana) — ikony gier dla Doplay
 
-> **UWAGA na kolejność czytania.** Etapy 1-10 to zapis tego, JAK pakiet powstał,
-> a nie lista obowiązująca dziś. **ETAP 11 wycofuje 13 awatarów** (w tym `flame`,
-> `egg`, `anchor`, `guitar`) i zastępuje je postaciami. Zanim cokolwiek wygenerujesz,
-> przeczytaj najpierw ETAP 11 — inaczej odtworzysz ikony, które właśnie wyrzucamy.
+> **Pakiet awatarów jest zamknięty** — trzydzieści postaci, wszystkie z twarzą.
+> Prompty, którymi powstały, zostały stąd usunięte, bo nie będą już potrzebne.
+> Zostaje klucz stylu i etapy od ikon GIER: to one przydadzą się przy dziewiątej grze.
 >
-> **Jak tego użyć:** wklejaj do Gemini **etap po etapie**, nie wszystko naraz.
-> Etap 1 ustala styl. Etapy 2–6 dogrywają resztę, **odwołując się do obrazka z etapu 1**
-> (załącz go w rozmowie) — bez tego każda partia wyjdzie w innym stylu i pakiet się rozjedzie.
+> **Jak tego użyć:** wklejaj do Gemini etap po etapie, nie wszystko naraz, i za każdym
+> razem **załączaj gotową ikonę z `public/avatars/` jako wzór** — bez niej model wraca
+> do swojego domyślnego stylu maskotki i pakiet się rozjeżdża.
 
 ---
 
-## ETAP 1 — klucz stylu (6 awatarów)
+## Klucz stylu — obowiązuje KAŻDĄ ikonę w pakiecie
+
+To jest kontrakt, do którego odwołują się wszystkie etapy niżej. Wklej go razem
+z zadaniem i z załączoną ikoną wzorcową.
 
 ```
-Jesteś ilustratorem UI. Tworzysz pakiet ikon-awatarów do imprezowej gry mobilnej
-w stylu "arcade party": soczysty, kreskówkowy, radosny.
-
 STYL — trzymaj się go rygorystycznie, to jest klucz dla całego pakietu:
 - Kreskówkowy 3D, bąbelkowy, pucołowaty. Miękkie zaokrąglone kształty, zero ostrych kantów.
 - Gruby, jednolity kontur w kolorze ciemnego fioletu (#2A1758), grubość identyczna
@@ -37,89 +36,6 @@ WYMAGANIA TECHNICZNE:
 - Wszystkie ikony w tej samej skali wizualnej — pyszczek kota ma zajmować tyle samo
   kadru co pyszczek pandy.
 - Bez tekstu, bez podpisów, bez ramek, bez numeracji.
-
-ZADANIE:
-Wygeneruj 6 osobnych ikon, każdą jako oddzielny obrazek:
-1. cat — pyszczek kota, pomarańczowo-rudy
-2. dog — pyszczek psa, jasnobrązowy
-3. panda — pyszczek pandy, biało-czarny
-4. rabbit — pyszczek królika, kremowy
-5. fish — rybka, turkusowo-niebieska
-6. flame — płomień, pomarańczowo-czerwony   ← WYCOFANY w ETAPIE 11, nie generuj ponownie
-
-Nazwij pliki dokładnie: cat.png, dog.png, panda.png, rabbit.png, fish.png, flame.png
-```
-
----
-
-## ETAP 2 — zwierzęta, część 1
-
-```
-Załączam ikony z poprzedniego etapu jako wzorzec stylu.
-Wygeneruj kolejne 6 ikon w DOKŁADNIE tym samym stylu, konturze, skali i oświetleniu.
-Te same wymagania techniczne (1:1, tło przezroczyste, margines 10%, bez tekstu).
-
-1. bird — ptaszek, żółto-niebieski
-2. squirrel — wiewiórka, rudobrązowa
-3. turtle — żółw, zielony
-4. bug — biedronka/żuczek, czerwono-czarny
-5. rat — myszka, szara
-6. snail — ślimak, beżowo-brązowy
-
-Nazwy: bird.png, squirrel.png, turtle.png, bug.png, rat.png, snail.png
-```
-
----
-
-## ETAP 3 — zwierzęta, część 2
-
-```
-Ten sam styl co poprzednio (załączam wzorzec). Te same wymagania techniczne.
-
-1. worm — robaczek, różowy
-2. shell — muszla, kremowo-różowa
-3. feather — piórko, jasnoniebieskie
-4. egg — jajko, kremowe
-5. paw — odcisk łapy, fioletowo-liliowy
-6. ghost — duszek, biało-błękitny
-
-Nazwy: worm.png, shell.png, feather.png, egg.png, paw.png, ghost.png
-```
-
----
-
-## ETAP 4 — przedmioty, część 1
-
-```
-Ten sam styl co poprzednio (załączam wzorzec). Te same wymagania techniczne.
-Przedmioty rysuj jako proste, pucołowate bryły — ta sama bąbelkowa stylistyka
-co zwierzęta, ten sam gruby kontur.
-
-1. pizza — kawałek pizzy
-2. beer — kufel piwa z pianką
-3. guitar — gitara elektryczna, czerwona
-4. rocket — rakieta, biało-czerwona
-5. bot — głowa robota, srebrno-niebieska
-6. gamepad — pad do gier, ciemnoszary z kolorowymi przyciskami
-
-Nazwy: pizza.png, beer.png, guitar.png, rocket.png, bot.png, gamepad.png
-```
-
----
-
-## ETAP 5 — przedmioty, część 2
-
-```
-Ten sam styl co poprzednio (załączam wzorzec). Te same wymagania techniczne.
-
-1. skull — czaszka, kremowo-biała, wesoła nie straszna
-2. crown — korona, złota
-3. diamond — diament, jasnoniebieski
-4. anchor — kotwica, granatowo-srebrna
-5. bike — rower, turkusowy
-6. zap — błyskawica, żółta
-
-Nazwy: skull.png, crown.png, diamond.png, anchor.png, bike.png, zap.png
 ```
 
 ---
@@ -251,22 +167,10 @@ Nazwa pliku: `wkrotce.png`, do `assets/zrodla/`.
 
 ## Czego potrzebuję od Ciebie na końcu
 
-**37 plików PNG** o dokładnie tych nazwach (to są identyfikatory z kodu — nie zmieniaj ich):
+Pliki PNG o dokładnie tych nazwach (to są identyfikatory z `registry.ts` — nie zmieniaj ich):
 
-> Spis poniżej to **stan sprzed ETAPU 11**. Trzynaście z tych awatarów jest wycofanych,
-> aktualna lista jest w ETAPIE 11.
-
-**Awatary (30, stan historyczny):**
-`cat` `dog` `bird` `rabbit` `panda` `squirrel` `fish` `turtle` `bug` `rat`
-`snail` `worm` `shell` `feather` `egg` `paw` `pizza` `beer` `guitar` `rocket`
-`bot` `ghost` `skull` `flame` `gamepad` `crown` `diamond` `anchor` `bike` `zap`
-
-**Gry (7):**
-`stoper` `panstwa-miasta` `wisielec` `impostor` `mafia` `odcien` `kasyno`
-
-> **Uwaga o nazwach:** nazwy plików są wygodne, ale nie krytyczne — przy poprzednim
-> pakiecie przyszły po polsku (`budzik.png`, `karty-2.png`) i po prostu je zmapowałem.
-> Ważniejsze, żeby styl się zgadzał.
+**Gry (8):**
+`stoper` `panstwa-miasta` `wisielec` `impostor` `mafia` `odcien` `kasyno` `kolko`
 
 ### Jeśli coś nie wyjdzie idealnie — nie szkodzi
 
@@ -297,7 +201,7 @@ nie lepsza.
 >    gra. Para znaków bez planszy nie niesie znaczenia.
 > 2. **Latający hasztag `#`** wyszedł ciężki i brzydki, z dwóch powodów, oba wynikały
 >    z błędu w prompcie:
->    - Kazano zrobić belki ciemnofioletowe, a **ETAP 1 zakazuje fioletu jako koloru
+>    - Kazano zrobić belki ciemnofioletowe, a **klucz stylu zakazuje fioletu jako koloru
 >      dominującego ikony** — bo ikony leżą też na fioletowo-różowym tle. Największy
 >      element w kolorze tła daje ciemną plamę.
 >    - Hasztag to **znak pisarski, nie przedmiot**. Wszystkie pozostałe ikony pakietu są
@@ -382,208 +286,3 @@ File name: kolko.png
 > niezależnie od tego, jak ładnie wygląda w dużym rozmiarze.
 
 ---
-
-## ETAP 11 — wymiana martwych przedmiotów na postacie
-
-### Dlaczego
-
-Pakiet rozjechał się na dwie połowy. Piętnaście awatarów ma twarz i patrzy na gracza,
-piętnaście to martwe przedmioty. Awatar odpowiada na pytanie „kim jestem przy tym stole",
-a na to nie da się odpowiedzieć jajkiem ani kotwicą. Widać to od razu, gdy ustawi się
-je obok siebie: kot, panda i ślimak to postacie, a muszelka i pióro to clipart.
-
-Kryterium jest jedno i twarde: **awatar musi mieć oczy**. Wszystko, co ich nie ma,
-wypada — niezależnie od tego, jak ładnie narysowane.
-
-### Co zostaje (15 — mają twarz)
-
-`cat` `dog` `bird` `rabbit` `panda` `squirrel` `fish` `turtle` `bug` `rat` `snail` `worm`
-oraz trzy postacie nie-zwierzęce, które też patrzą: `bot` `ghost` `skull`.
-
-### Co wypada (13 — brak twarzy)
-
-`shell` `feather` `egg` `paw` `guitar` `rocket` `flame` `gamepad` `crown` `diamond`
-`anchor` `bike` `zap`
-
-`paw` wypada podwójnie: łapka to nie postać, a przy kocie i psie w tym samym zestawie
-jest wręcz myląca.
-
-### Dwa przypadki do decyzji: `pizza` i `beer`
-
-Nie są postaciami, ale są **tematyczne** — to imprezowa gra. Zamiast wyrzucać, można
-je przerysować z twarzą: kawałek pizzy z oczami i uśmiechem jest postacią i zostaje
-w klimacie. Prompt na to jest w partii C niżej. Jeśli wolisz czystość pakietu,
-pomiń partię C i zamów dwie dodatkowe postacie z listy rezerwowej.
-
-### Kolizje, których trzeba pilnować
-
-Przy trzydziestu okrągłych awatarach po 40 px sylwetka to za mało — decyduje **kolor**.
-Zajęte pola: pomarańcz (kot, wiewiórka), brąz (pies), błękit (ptaszek, rybka, robot),
-zieleń (żółw), czerwień (biedronka), szarość (myszka, czaszka), biel (duszek, panda),
-róż (robaczek), beż (królik, ślimak).
-
-Wolne i warte zajęcia: **żółto-czarne pasy, limonka, magenta, złoto, turkus, grafit**.
-
-Dlatego w promptach niżej kolor jest podany sztywno dla każdej postaci, a nie zostawiony
-modelowi. Drugą linią obrony jest kolor kafelka pod awatarem (`avatarColor`
-w `AvatarIcon.tsx`) — dwa szare zwierzaki na różnych kafelkach czytają się jako różne.
-
----
-
-### Partia A — 7 postaci (wklej razem z obrazkiem z ETAPU 1)
-
-```
-To jest kontynuacja pakietu awatarów. Załączam ikonę z pierwszej partii jako wzór stylu.
-Trzymaj się jej dokładnie: ten sam gruby ciemnofioletowy kontur (#2A1758) o tej samej
-grubości, ten sam kreskówkowy 3D, ta sama bąbelkowa miękkość, to samo światło z lewej góry,
-ta sama skala kadru (pyszczek zajmuje tyle samo miejsca co w załączonym wzorze).
-
-Wszystkie zwierzęta: SAMA GŁOWA en face, bez ciała, przyjazna, uśmiechnięta, oczy
-skierowane na patrzącego. Tło całkowicie przezroczyste, kwadrat 1:1, margines ok. 10%.
-Bez tekstu, bez ramek, bez cienia rzuconego na tło.
-
-Kolor każdej postaci jest PODANY i obowiązkowy — te ikony będą leżeć obok trzydziestu
-innych i kolor jest jedyną rzeczą, która je odróżni po zmniejszeniu do 40 px.
-Nie zmieniaj go „dla ładniejszej kompozycji".
-
-Wygeneruj 7 osobnych obrazków:
-1. frog — głowa żaby, JASKRAWA LIMONKA (#7CC93F), szeroki uśmiech, wypukłe oczy
-   na czubku głowy. Ma być wyraźnie jaśniejsza i bardziej kwaśna niż zieleń żółwia.
-2. bee — głowa pszczoły, ŻÓŁTO-CZARNE PASY (#F2C23E + czerń), okrągłe czułki,
-   maleńkie skrzydełka po bokach głowy.
-3. penguin — głowa pingwina, CZARNA z BIAŁYM PYSZCZKIEM i POMARAŃCZOWYM DZIOBEM (#F08A2E).
-   Uwaga: w pakiecie jest już panda (biała głowa, czarne uszy) — pingwin ma być jej
-   odwrotnością, czyli ciemna głowa z jasnym środkiem.
-4. lion — głowa lwa, ZŁOTA GRZYWA (#E0A02E) wokół jaśniejszego pyszczka. Grzywa jako
-   pełny pierścień, bo to ona tworzy rozpoznawalną sylwetkę.
-5. octopus — głowa ośmiornicy, MAGENTA (#D9418C), duże oczy, kilka krótkich macek
-   podwiniętych pod spodem. Macki grube i miękkie, nie cienkie nitki.
-6. unicorn — głowa jednorożca, BIAŁA z TĘCZOWĄ GRZYWĄ i ZŁOTYM ROGIEM. Grzywa
-   wielobarwna, bo w pakiecie jest już biały duszek — tęcza ma je rozróżnić.
-7. dragon — głowa smoka, GŁĘBOKI SZMARAGD (#2F9E6E), dwa rogi, mały pyszczek,
-   przyjazny nie groźny. Rogi są tu najważniejsze: odróżniają go od żółwia i żaby.
-
-Nazwij pliki dokładnie: frog.png, bee.png, penguin.png, lion.png, octopus.png,
-unicorn.png, dragon.png
-```
-
-### Partia B — 6 postaci (znowu z obrazkiem wzorcowym)
-
-```
-Kolejna partia tego samego pakietu. Ten sam wzór stylu w załączniku, te same zasady:
-sama głowa en face, gruby kontur #2A1758, światło z lewej góry, przezroczyste tło,
-kwadrat 1:1, margines 10%, podany kolor obowiązkowy.
-
-1. owl — głowa sowy, CIEPŁY BURSZTYN (#C98A3C) z OGROMNYMI ŻÓŁTYMI OCZAMI.
-   Oczy mają zajmować dobrą jedną trzecią głowy — to one odróżniają sowę od psa
-   i wiewiórki, które są w podobnym brązie.
-2. bat — głowa nietoperza, GRAFIT Z FIOLETOWYM ODCIENIEM (#4A4358), duże spiczaste
-   uszy, dwa malutkie kły w uśmiechu. Ma być ciemna, ale nie czarna.
-3. shark — głowa rekina, STALOWY BŁĘKIT (#4A7BA8), szeroki zębaty uśmiech, płetwa
-   na czubku głowy. W pakiecie jest już turkusowa rybka — rekin ma być wyraźnie
-   ciemniejszy, a zęby i płetwa mają robić różnicę.
-4. jellyfish — głowa meduzy, PÓŁPRZEZROCZYSTY LILIOWY RÓŻ (#C86FB0), kopułka z kilkoma
-   falującymi nitkami pod spodem. W pakiecie jest różowy robaczek — meduzę ma odróżnić
-   kopuła i nitki.
-5. sloth — głowa leniwca, CIEPŁY BEŻ (#C4A882) z CIEMNĄ MASKĄ wokół oczu i sennym
-   półuśmiechem. Maska jest obowiązkowa: bez niej zlewa się z królikiem i ślimakiem.
-6. crab — głowa kraba, KORALOWA CZERWIEŃ (#E2603F), dwa szczypce uniesione po bokach
-   głowy, oczy na krótkich słupkach. W pakiecie jest czerwona biedronka (okrągła kopuła
-   w kropki) — kraba mają odróżnić szczypce i oczy na słupkach.
-
-Nazwij pliki dokładnie: owl.png, bat.png, shark.png, jellyfish.png, sloth.png, crab.png
-```
-
-### Partia C — dwa przedmioty, które dostają twarz (opcjonalna)
-
-```
-Ten sam styl i te same zasady techniczne co poprzednio.
-
-Te dwie ikony JUŻ istnieją w pakiecie jako martwe przedmioty. Przerysuj je jako postacie:
-dodaj duże przyjazne oczy i uśmiech, zachowując kształt i kolor, żeby dalej były
-rozpoznawalne jako pizza i kufel.
-
-1. pizza — kawałek pizzy z twarzą. Ser i pepperoni zostają, oczy i uśmiech na serze.
-2. beer — kufel piwa z twarzą. Piana i złoty płyn zostają, twarz na szkle.
-
-Nie rób z nich ludzików: żadnych rąk, nóg ani czapek. To ma być pizza, która patrzy,
-a nie postać trzymająca pizzę.
-
-Nazwij pliki dokładnie: pizza.png, beer.png
-```
-
-### Lista rezerwowa
-
-Gdyby któraś postać nie wyszła albo gdybyś wolał pominąć partię C:
-**koala** (popielaty, ogromne puchate uszy), **szop** (popielaty z czarną maską bandyty),
-**kameleon** (turkus przechodzący w limonkę, oko na obrotowej wieżyczce),
-**jeż** (brązowe kolce, jasny pyszczek), **wieloryb** (granat, mała fontanna).
-
-Każda z nich wchodzi w wolne pole kolorystyczne, ale wymaga sprawdzenia przy sąsiadach:
-koala i szop dokładają szarości do myszki i czaszki, jeż dokłada brązu do psa.
-
-### Co po wygenerowaniu
-
-1. Pliki do `emoji-pack/` pod nazwami jak wyżej.
-2. W `scripts/build-avatars.mjs` dopisać do `MAP` wpisy `frog: "frog"` itd. — nowe
-   pliki mają angielskie nazwy, więc mapowanie jest tożsamościowe.
-3. `node scripts/build-avatars.mjs` — przytnie, wyrówna skalę i zapisze WebP 192×192.
-4. W `src/lib/avatars.ts`: wstawić nowe identyfikatory do `AVATARS` w miejsce starych.
-   **Wycofane identyfikatory przenieść do `LEGACY_AVATARS`, nie kasować.** Bez tego
-   gracz, który siedzi teraz w pokoju z awatarem `egg`, po odświeżeniu strony dostanie
-   z `/join` błąd „Nieznany awatar" i nie wróci do własnej partii. Pokoje żyją 8 h,
-   więc okno jest krótkie, ale realne.
-5. W `src/components/AvatarIcon.tsx` dopisać kolory kafelków. Propozycja, dobrana tak,
-   by rozjechać się z sąsiadami:
-
-   ```
-   frog: "#5FA33C", bee: "#D9A81F", penguin: "#3D4A5C", lion: "#D98E2B",
-   octopus: "#C43D7E", unicorn: "#B98FD6", dragon: "#2C8A62", owl: "#B0762F",
-   bat: "#453F55", shark: "#3E6B96", jellyfish: "#B25FA0", sloth: "#A8906B",
-   crab: "#CC5335",
-   ```
-
-6. Sprawdzian końcowy: złóż wszystkie trzydzieści w jeden arkusz i zmniejsz do 40 px.
-   Jeśli dwa awatary da się pomylić, zmień **kolor kafelka**, nie ilustrację — to tańsza
-   i skuteczniejsza poprawka.
-
-### Co wyszło z tej generacji (zapis wykonania)
-
-Partie A i B: **13 postaci przyjętych bez poprawek**. Gemini dorzucił w partii B trzeci
-rząd — duplikat leniwca, duplikat kraba i niebieskiego stwora, którego nie było
-w zamówieniu. Stwór odrzucony: mamy już rybkę i rekina w błękicie, a on nie miał żadnej
-cechy odróżniającej (ani płetwy, ani fontanny). Duplikaty odrzucone na rzecz pierwszego
-wystąpienia, bo trzymało skalę z resztą rzędu.
-
-Partia C (pizza i piwo z twarzą): **odrzucona, w innym stylu.** Kontur brązowy zamiast
-ciemnofioletowego #2A1758, miękkie cieniowanie zamiast płaskich wypełnień, realistyczne
-tęczówki z brwiami, do tego wmalowany beżowy prostokąt i cień rzucony pod kuflem.
-Obok pakietu wygląda jak wklejka z innego zestawu. Stara pizza i stare piwo zostają
-bez zmian do czasu ponowienia — przy ponowieniu **koniecznie załącz ikonę z pakietu
-jako wzór**, bo bez niej model wraca do swojego domyślnego stylu maskotki.
-
-Do cięcia arkuszy powstał `scripts/tnij-arkusz.py`. Rozpoznaje szachownicę wmalowaną
-w JPEG (Gemini oddaje „przezroczyste tło" jako piksele), wycina ją zalewaniem od
-krawędzi i rozdziela ikony na osobne pliki. Nazwy podaje się w kolejności czytania,
-myślnik pomija blok:
-
-```
-python3 scripts/tnij-arkusz.py ARKUSZ.jpg owl,bat,shark,jellyfish,sloth,crab,-,-,-
-```
-
-### Domknięcie: pizza i piwo zastąpione żyrafą i tygrysem
-
-Partia C nie doczekała się poprawnej generacji — zamiast tego oba przedmioty wypadły
-z pakietu, a ich miejsca zajęły dwie postacie. Od tej pory **wszystkie trzydzieści
-awatarów ma twarz** i nie ma już podziału na zwierzęta i przedmioty.
-
-Uwaga na pułapkę, która o mało nie weszła do zamówienia: proszony o „mysz" model dałby
-duplikat, bo istniejący identyfikator `rat` to właśnie mysz (plik źródłowy `myszka.png`,
-szara głowa z okrągłymi uszami). Przed dopisaniem gatunku do zamówienia sprawdź, co
-ilustracja naprawdę przedstawia, a nie tylko jak nazywa się identyfikator.
-
-Żyrafa i tygrys dostały kafelki spoza własnej gamy — turkus `#3E8F86` i kakao `#7A4028`.
-Oba zwierzęta są ciepłe i pomarańczowo-złote, więc na kafelku w tym samym tonie wpadłyby
-w tłok, w którym siedzą już lew, sowa, pies i wiewiórka.
-
-`pizza` i `beer` przeniesione do `LEGACY_AVATARS`, ich pliki webp usunięte.

@@ -112,6 +112,8 @@ MANIFEST: tuple[Asset, ...] = (
     # Ikona gry „Kółko i krzyżyk". 384 px @2x wystarcza: docelowo idzie do
     # public/games/ w 192 px, tyle co pozostałe siedem ikon gier.
     Asset("kolko", "cutout", "ikony", 384, 384, halo=True),
+    # Ikona gry „Chińczyk" — ten sam rozmiar i ten sam styl bąbelkowego 3D co „kolko".
+    Asset("chinczyk", "cutout", "ikony", 384, 384, halo=True),
 )
 
 

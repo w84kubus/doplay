@@ -189,3 +189,48 @@ Przetworzenie to jedna komenda:
 ```bash
 python3 scripts/process-assets.py --all
 ```
+
+---
+
+## Ikony kafelków gier (`public/games/*.webp`)
+
+Osobny styl niż postacie „Ekipy": **bąbelkowe 3D**, jak naklejka albo ikona aplikacji,
+nie płaska kreskówka. Kafelki gier stoją obok siebie w siatce, więc odstająca ikona
+rzuca się w oczy bardziej niż odstająca scena.
+
+**Załącz jako wzorzec `public/games/kolko.webp`** i dopisz na początku wiadomości:
+
+> I am attaching one icon from my existing set. Match its style exactly: same glossy
+> 3D look, same outline weight and colour, same level of gloss and shading, same
+> amount of detail. Do not redesign the style.
+
+Wynik zapisujesz jako `assets/zrodla/{id}.png`, potem:
+
+```
+python3 scripts/process-assets.py --id {id}
+```
+
+Zielone tło jest tu wygodniejsze niż szachownica, ale **wtedy w ikonie nie może być
+zieleni** — chroma key zjadłby ją razem z tłem. Stąd w chińczyku pionki czerwony,
+żółty i niebieski, bez zielonego.
+
+---
+
+## `chinczyk`
+
+```
+A single glossy 3D cartoon icon of a Ludo game: one large white die tilted towards the
+viewer showing five red pips on its top face, and three chunky Ludo pawns standing just
+behind it - one red #E4002B, one golden yellow #FFB627, one blue #3B82F6. The pawns are
+smooth rounded skittles with a ball on top and a wide base. Soft plastic material with
+gentle gradient shading and a small specular highlight on every rounded surface, thick
+dark navy outline around every shape, warm cheerful palette, sticker-like app-icon look.
+One compact object group, centred, nothing else in the frame. Solid flat #00FF00
+background for later cutout. Aspect ratio 1:1, generous margin on every side so the
+outline is never cropped.
+
+avoid: photorealism, cast shadows on the background, a board or a table under the
+pieces, green pieces or any green in the objects, casino chips, playing cards, more
+than three pawns, watermarks, frames or borders, any text, letters, numbers or logos
+other than the pips on the die.
+```

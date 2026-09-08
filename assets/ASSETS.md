@@ -36,6 +36,8 @@ tym, po czym kod będzie sięgał po plik.
 > `#80E8B0` vs `#80F0B0`). Prompt prosił o magentę i pozę stojącą ze wzruszeniem ramion;
 > obraz referencyjny przeważył nad opisem. Do powtórzenia — patrz `PROMPTS.md`.
 
+| `chinczyk` | `public/games/chinczyk.webp` | 384×384 | — | kafelek gry w lobby i na landingu | P1 ⬜ |
+
 **Osiem pozycji.** Limit to 12 — reszta pomysłów wylądowała w kodzie, nie tutaj.
 
 ---

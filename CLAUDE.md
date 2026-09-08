@@ -85,8 +85,8 @@ firebase deploy --only firestore:rules
       zrzutów w README, koordynacja pasków przy dolnej krawędzi
 - [x] Faza K — sprzątanie bazy: cron kasujący wygasłe pokoje z podkolekcjami,
       poprawka `leave` (nie zostawia sierot), plan Blaze zamiast Spark
-- [~] Faza M — Chińczyk: silnik, geometria planszy, widoki, animacje i boty
-      (fazy 1-4 gotowe). Zostało: własna ilustracja kafelka
+- [x] Faza M — Chińczyk: silnik, geometria planszy, widoki, animacje, boty
+      i własna ilustracja kafelka (wszystkie 4 fazy)
 - [x] Faza L — publiczne pokoje: trzecia zakładka z listą otwartych pokoi,
       przełącznik hosta w lobby, wejście do losowego, limit graczy w `join`;
       wcześniej naprawa faz, które czekały na gracza bez terminu

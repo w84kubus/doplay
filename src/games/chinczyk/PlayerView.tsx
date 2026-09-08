@@ -105,31 +105,30 @@ export function ChinczykPlayerView({ publicState, meUid, dispatch, accent }: Gam
       />
 
       {!koniecPartii && (
-        <div className="flex flex-col items-center gap-3">
-          <Kostka wartosc={pub.kostka} kolor={barwaTury} />
+        // Strefa akcji ma STAŁĄ wysokość, mimo że jej zawartość zmienia się co pół tury.
+        // Bez tego plansza podskakiwała w górę i w dół przy każdym rzucie — dokładnie ta
+        // sama irytacja co przycisk STOP w treningu stopera.
+        <div className="flex min-h-[9.5rem] flex-col items-center justify-start gap-3">
+          <Kostka wartosc={pub.kostka} kolor={barwaTury} kreci={busy} />
 
-          {pub.phase === "rzut" && mojaTura && (
-            <button
-              type="button"
-              disabled={busy}
-              onClick={() => wyslij({ type: "RZUC" })}
-              className="btn"
-              style={{ ["--accent" as string]: barwaTury }}
-            >
-              <Dices size={20} strokeWidth={2.5} aria-hidden /> {t("chinczyk.roll")}
-            </button>
-          )}
+          <button
+            type="button"
+            disabled={busy || pub.phase !== "rzut" || !mojaTura}
+            onClick={() => wyslij({ type: "RZUC" })}
+            className={`btn ${pub.phase === "rzut" && mojaTura ? "" : "invisible"}`}
+            style={{ ["--accent" as string]: barwaTury }}
+            aria-hidden={pub.phase === "rzut" && mojaTura ? undefined : true}
+          >
+            <Dices size={20} strokeWidth={2.5} aria-hidden /> {t("chinczyk.roll")}
+          </button>
 
-          {pub.phase === "ruch" && mojaTura && (
-            <p className="text-center text-sm font-semibold text-ink">{t("chinczyk.pickPiece")}</p>
-          )}
-
-          {/* Dwie szóstki pod rząd to informacja, że trzecia przepadnie. */}
-          {mojaTura && pub.szostki > 0 && (
-            <p className="text-xs font-semibold text-bursztyn">
-              {t("chinczyk.sixes", { n: pub.szostki })}
-            </p>
-          )}
+          {/* Jedna linijka na podpowiedź i jedna na szóstki — obie zawsze zajmują miejsce. */}
+          <p className={`text-center text-sm font-semibold text-ink ${pub.phase === "ruch" && mojaTura ? "" : "invisible"}`}>
+            {t("chinczyk.pickPiece")}
+          </p>
+          <p className={`text-xs font-semibold text-bursztyn ${mojaTura && pub.szostki > 0 ? "" : "invisible"}`}>
+            {t("chinczyk.sixes", { n: pub.szostki })}
+          </p>
         </div>
       )}
     </div>

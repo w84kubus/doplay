@@ -1,13 +1,18 @@
 "use client";
 import { useT } from "@/lib/i18n/provider";
 import { BAZY, BOK, KORYTARZE, poleStartowe, polePostepu, SRODEK, TRASA } from "./geometria";
-import { BEZPIECZNE, META, pionkiKoloru, W_BAZIE } from "./engine";
+import { BEZPIECZNE, idxPionka, META, pionkiKoloru, W_BAZIE } from "./engine";
 
 // Plansza rysowana jako SVG w układzie 15x15. Skaluje się do szerokości rodzica, więc
 // ten sam komponent obsługuje telefon i ekran TV bez żadnych progów.
 //
 // Rysowanie jest CZYSTE: komponent dostaje pozycje i oddaje obrazek. Cała wiedza o tym,
-// gdzie pionek stoi, siedzi w silniku (postęp) i w plansza.ts (współrzędne).
+// gdzie pionek stoi, siedzi w silniku (postęp) i w geometria.ts (współrzędne).
+//
+// Wszystkie 16 pionków renderujemy ZAWSZE, w stałej kolejności i pod stałym kluczem —
+// także te w bazie i te w środku. Dzięki temu React nie odmontowuje elementu przy zmianie
+// pola, a przejazd pionka da się oddać zwykłą tranzycją `transform`. Grupowanie po polach
+// (naturalne, bo trzeba je rozsunąć) liczymy osobno i tylko po to, żeby wyliczyć przesunięcie.
 
 export const BARWY = ["#E4002B", "#34D399", "#FFB627", "#3B82F6"] as const;
 /** Przygaszone wersje na wypełnienia baz i korytarzy, żeby pionki się nie zlewały z tłem. */
@@ -34,20 +39,47 @@ function rozsun(ile: number, i: number): { dx: number; dy: number } {
   return { dx: (i - (ile - 1) / 2) * rozrzut, dy: (i % 2 === 0 ? -1 : 1) * rozrzut * 0.6 };
 }
 
+/** Środek planszy, ćwiartka danego koloru: cztery miejsca w rzędzie od strony korytarza. */
+function miejsceWDomu(kolor: number, i: number): { x: number; y: number } {
+  const srodek = SRODEK.od + 1.5; // 7.5
+  const odsun = 0.85; // jak daleko od środka stoi rządek
+  const wzdluz = (i - 1.5) * 0.42;
+  if (kolor === 0) return { x: srodek + wzdluz, y: srodek + odsun };
+  if (kolor === 1) return { x: srodek - odsun, y: srodek + wzdluz };
+  if (kolor === 2) return { x: srodek + wzdluz, y: srodek - odsun };
+  return { x: srodek + odsun, y: srodek + wzdluz };
+}
+
 export function Plansza({ pionki, sloty, tura, ruchy = [], mojKolor = null, onPionek }: Props) {
   const t = useT();
-  // Ile pionków stoi na każdym polu — potrzebne, żeby je rozsunąć.
-  const naPolu = new Map<string, { kolor: number; pionek: number }[]>();
-  [0, 1, 2, 3].forEach((kolor) => {
-    if (!sloty[kolor]) return; // kolor bez gracza nie ma czego pokazywać na trasie
-    pionkiKoloru(pionki, kolor).forEach((postep, pionek) => {
+  // Gdzie stoi każdy z 16 pionków. Najpierw grupujemy po polach (żeby rozsunąć te,
+  // które dzielą pole), potem dopiero wyliczamy współrzędne.
+  const naPolu = new Map<string, number[]>();
+  for (let kolor = 0; kolor < 4; kolor++) {
+    if (!sloty[kolor]) continue;
+    pionkiKoloru(pionki, kolor).forEach((postep, i) => {
       if (postep === W_BAZIE || postep === META) return;
       const p = polePostepu(kolor, postep);
       if (!p) return;
-      const k = `${p.x},${p.y}`;
-      naPolu.set(k, [...(naPolu.get(k) ?? []), { kolor, pionek }]);
+      const klucz = `${p.x},${p.y}`;
+      naPolu.set(klucz, [...(naPolu.get(klucz) ?? []), idxPionka(kolor, i)]);
     });
-  });
+  }
+
+  // Rozmiar zmieniamy SKALĄ grupy, nie promieniem koła: jedna tranzycja `transform`
+  // obsługuje wtedy i przejazd, i zmianę wielkości. Promień w atrybucie nie animuje się
+  // w każdej przeglądarce, a pionek wjeżdżający do środka musi się zmniejszyć płynnie.
+  const gdzie = (kolor: number, i: number): { x: number; y: number; skala: number } | null => {
+    if (!sloty[kolor]) return null;
+    const postep = pionki[idxPionka(kolor, i)];
+    if (postep === W_BAZIE) return { ...BAZY[kolor][i], skala: 1 };
+    if (postep === META) return { ...miejsceWDomu(kolor, i), skala: 0.42 };
+    const p = polePostepu(kolor, postep);
+    if (!p) return null;
+    const lista = naPolu.get(`${p.x},${p.y}`) ?? [];
+    const { dx, dy } = rozsun(lista.length, Math.max(0, lista.indexOf(idxPionka(kolor, i))));
+    return { x: p.x + 0.5 + dx, y: p.y + 0.5 + dy, skala: 0.76 };
+  };
 
   return (
     <svg viewBox={`0 0 ${BOK} ${BOK}`} className="w-full" role="img" aria-label={t("chinczyk.board")}>
@@ -100,61 +132,34 @@ export function Plansza({ pionki, sloty, tura, ruchy = [], mojKolor = null, onPi
       {/* Środek: cel wszystkich czterech korytarzy. */}
       <rect x={SRODEK.od} y={SRODEK.od} width={3} height={3} rx={0.4} fill="#1B1030" stroke="#E3D4F7" strokeWidth={0.08} />
 
-      {/* Pionki w środku: licznik przy każdym kolorze, żeby było widać postęp partii. */}
-      {[0, 1, 2, 3].map((kolor) => {
-        const wDomu = pionkiKoloru(pionki, kolor).filter((p) => p === META).length;
-        if (!wDomu || !sloty[kolor]) return null;
-        const poz = [{ x: 7.5, y: 8.4 }, { x: 6.6, y: 7.5 }, { x: 7.5, y: 6.6 }, { x: 8.4, y: 7.5 }][kolor];
-        return (
-          <g key={`d-${kolor}`}>
-            <circle cx={poz.x} cy={poz.y} r={0.42} fill={BARWY[kolor]} />
-            <text x={poz.x} y={poz.y + 0.2} textAnchor="middle" fontSize={0.55} fontWeight="bold" fill="#1B1030">
-              {wDomu}
-            </text>
-          </g>
-        );
-      })}
-
-      {/* Pionki w bazach. */}
+      {/* Pionki. Stała kolejność i stały klucz — element żyje przez całą partię,
+          więc zmiana pola to płynny przejazd, a nie skok. */}
       {[0, 1, 2, 3].map((kolor) =>
-        pionkiKoloru(pionki, kolor).map((postep, i) => {
-          if (postep !== W_BAZIE || !sloty[kolor]) return null;
-          const m = BAZY[kolor][i];
+        [0, 1, 2, 3].map((i) => {
+          const poz = gdzie(kolor, i);
+          if (!poz) return null;
           const klikalny = kolor === mojKolor && kolor === tura && ruchy.includes(i);
           return (
-            <circle
-              key={`b-${kolor}-${i}`}
-              cx={m.x}
-              cy={m.y}
-              r={0.5}
-              fill={BARWY[kolor]}
-              stroke={klikalny ? "#FFFFFF" : "#1B1030"}
-              strokeWidth={klikalny ? 0.14 : 0.07}
-              className={klikalny ? "cursor-pointer" : undefined}
-              onClick={klikalny ? () => onPionek?.(i) : undefined}
-            />
-          );
-        }),
-      )}
-
-      {/* Pionki na trasie i w korytarzach. */}
-      {[...naPolu.entries()].map(([klucz, lista]) =>
-        lista.map(({ kolor, pionek }, idx) => {
-          const [x, y] = klucz.split(",").map(Number);
-          const { dx, dy } = rozsun(lista.length, idx);
-          const klikalny = kolor === mojKolor && kolor === tura && ruchy.includes(pionek);
-          return (
-            <circle
-              key={`p-${kolor}-${pionek}`}
-              cx={x + 0.5 + dx}
-              cy={y + 0.5 + dy}
-              r={0.38}
-              fill={BARWY[kolor]}
-              stroke={klikalny ? "#FFFFFF" : "#1B1030"}
-              strokeWidth={klikalny ? 0.13 : 0.07}
-              className={klikalny ? "cursor-pointer" : undefined}
-              onClick={klikalny ? () => onPionek?.(pionek) : undefined}
-            />
+            <g
+              key={`p-${kolor}-${i}`}
+              // Globalna reguła `prefers-reduced-motion` wyłącza tę tranzycję sama
+              // (`transition-duration: 0.01ms !important` na `*` w globals.css).
+              style={{
+                transform: `translate(${poz.x}px, ${poz.y}px) scale(${poz.skala})`,
+                transition: "transform 0.4s cubic-bezier(0.34, 1.1, 0.5, 1)",
+              }}
+            >
+              <circle
+                cx={0}
+                cy={0}
+                r={0.5}
+                fill={BARWY[kolor]}
+                stroke={klikalny ? "#FFFFFF" : "#1B1030"}
+                strokeWidth={klikalny ? 0.14 : 0.07}
+                className={klikalny ? "cursor-pointer" : undefined}
+                onClick={klikalny ? () => onPionek?.(i) : undefined}
+              />
+            </g>
           );
         }),
       )}

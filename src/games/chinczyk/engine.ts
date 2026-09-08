@@ -24,10 +24,10 @@ export const START = [0, 13, 26, 39] as const;
  * bezwzględne wyliczamy dopiero przy sprawdzaniu zbić.
  */
 export const W_BAZIE = -1;
-/** 52..56 to pięć pól korytarza domowego. */
-export const DOM_OD = 52;
+/** 51..55 to pięć pól korytarza domowego; 56 to środek. */
+export const DOM_OD = 51;
 /** Środek planszy. Trzeba trafić DOKŁADNIE, nadmiar nie przechodzi. */
-export const META = 57;
+export const META = 56;
 
 /**
  * Osiem pól bezpiecznych: cztery startowe i cztery „globusy" osiem pól za każdym startem.

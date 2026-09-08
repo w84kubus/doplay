@@ -85,8 +85,8 @@ firebase deploy --only firestore:rules
       zrzutów w README, koordynacja pasków przy dolnej krawędzi
 - [x] Faza K — sprzątanie bazy: cron kasujący wygasłe pokoje z podkolekcjami,
       poprawka `leave` (nie zostawia sierot), plan Blaze zamiast Spark
-- [~] Faza M — Chińczyk: silnik, geometria planszy, widoki i animacje (fazy 1-3 gotowe).
-      Zostało: boty (faza 4), własna ilustracja kafelka
+- [~] Faza M — Chińczyk: silnik, geometria planszy, widoki, animacje i boty
+      (fazy 1-4 gotowe). Zostało: własna ilustracja kafelka
 - [x] Faza L — publiczne pokoje: trzecia zakładka z listą otwartych pokoi,
       przełącznik hosta w lobby, wejście do losowego, limit graczy w `join`;
       wcześniej naprawa faz, które czekały na gracza bez terminu
@@ -232,6 +232,34 @@ entity`. Chińczyk trzyma więc pozycje pionków w JEDNEJ płaskiej tablicy 16 p
 
 Mapa z tablicami w wartościach jest dozwolona, ale płaska tablica indeksowana funkcją
 czyta się lepiej niż `{"0": [...], "1": [...]}` wracające z bazy jako obiekt.
+
+### Boty jeżdżą na istniejących tickach
+
+Bot to zwykły wpis w `players` z flagą `bot: true`. Nie ma tokenu, nie pinguje i nigdy
+nie wyśle akcji — jego turę wykonuje ten sam mechanizm, który gra za nieobecnego
+człowieka: termin fazy mija, host ponagla `/tick`, silnik dostaje `PHASE_TIMEOUT`.
+Silnik chińczyka daje slotom botów 1,2 s zamiast ustawionego limitu, więc ten termin
+jest jednocześnie pauzą „na myślenie", a kostka zdąży się doturlać.
+
+Wybrane świadomie zamiast haka `bot?()` w `GameEngine`: tamto oznaczałoby nowe pole
+w kontrakcie wszystkich gier i osobną pętlę odpytywania przez całą partię.
+
+Rdzeń musi znać flagę w czterech miejscach — pominięcie któregokolwiek psuje coś cicho:
+
+- **obecność** (`isConnected`): bot jest zawsze online, inaczej lista wyszarza go po 20 s,
+- **migracja hosta** (`pickNewHost`): bot NIE może zostać hostem, bo nie odpala ticków
+  i partia stanęłaby na pierwszej fazie z terminem,
+- **kasowanie pokoju** (`leave`): pokój z samymi botami jest pusty i idzie do skasowania,
+  inaczej żyłby do wygaśnięcia TTL, zajmując kod,
+- **termin tury**: liczony dla koloru, który PRZEJMUJE ruch, nie dla kończącego —
+  inaczej człowiek po bocie dostaje 1,2 s, a bot po człowieku pełne 20 s.
+
+Mózg (`games/chinczyk/bot.ts`) jest czystą funkcją na liczbach i gra nim także nieobecny
+człowiek. Poziom jest jeden i celowo „rozsądny": bije, kończy pionki, chowa się na pola
+bezpieczne, nie liczy wariantów w głąb.
+
+Przycisk w lobby jest ograniczony limitem WYBRANEJ gry, nie `MAX_W_POKOJU` — inaczej host
+dosadziłby chińczykowi piętnaście botów i dowiedziałby się o tym przy „Zaczynamy".
 
 ### Faza, która czeka na gracza, musi mieć termin
 

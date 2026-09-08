@@ -393,3 +393,71 @@ describe("chińczyk — bezpieczeństwo publicView", () => {
     expect((chinczykEngine.publicView(s, {}) as { ruchy: number[] }).ruchy).toEqual([0, 1, 2, 3]);
   });
 });
+
+describe("chińczyk — boty", () => {
+  /** Partia człowiek + bot. Człowiek wybiera kolor, bot dostaje resztę automatycznie. */
+  function zBotem(over: Partial<ChinczykSettings> = {}) {
+    const players: PlayerMap = {
+      a: gracz("a", true),
+      bot_1: { ...gracz("bot_1"), bot: true },
+    };
+    const settings = { ...chinczykSettingsSchema.parse({}), ...over } as ChinczykSettings;
+    const s0 = chinczykEngine.init({ players, seatOrder: ["a", "bot_1"], settings, now: 1000, rng: mulberry32(1), seed: 1 });
+    return { s0, po: chinczykEngine.reduce(s0, { type: "WYBIERZ", kolor: s0.doWyboru[0] }, ctx("a", 2000)) };
+  }
+
+  it("rozpoznaje bota po fladze w graczach", () => {
+    const { s0 } = zBotem();
+    expect(s0.botUidy).toEqual(["bot_1"]);
+  });
+
+  it("gra rusza, gdy wybrali wszyscy LUDZIE — bot nie klika", () => {
+    const { po } = zBotem();
+    expect(po.phase).toBe("rzut");
+    expect(po.sloty.filter(Boolean)).toHaveLength(2); // bot dostał wolny kolor
+  });
+
+  it("bot dostaje krótki termin tury, człowiek pełny limit", () => {
+    const { po } = zBotem({ turaMs: 30000 });
+    const kolorBota = po.sloty.findIndex((u) => u === "bot_1");
+    const kolorCzlowieka = po.sloty.findIndex((u) => u === "a");
+
+    const turaBota = { ...po, tura: kolorBota };
+    const dalej = chinczykEngine.reduce(turaBota, { type: "PHASE_TIMEOUT" }, ctx("a", 5000, kostka(1)));
+    // Po turze bota ruch wraca do człowieka — i to on ma dostać pełne 30 s.
+    expect(dalej.tura).toBe(kolorCzlowieka);
+    expect(dalej.phaseEndsAt).toBe(5000 + 30000);
+  });
+
+  it("bot ma termin nawet przy ustawieniu „bez limitu”", () => {
+    const { po } = zBotem({ turaMs: 0 });
+    const kolorBota = po.sloty.findIndex((u) => u === "bot_1");
+    const turaBota = { ...po, tura: kolorBota, phase: "rzut" as const };
+    // Zaczynamy od tury człowieka: bez limitu ma nie mieć terminu…
+    expect(chinczykEngine.phase(po).endsAt).toBeNull();
+    // …ale bot musi go mieć, inaczej jego tura nie skończy się nigdy.
+    const dalejBot = chinczykEngine.reduce(
+      { ...turaBota, tura: kolorBota },
+      { type: "PHASE_TIMEOUT" },
+      ctx("a", 7000, kostka(3)),
+    );
+    expect(dalejBot.tura).not.toBe(kolorBota); // bot spasował, tura poszła dalej
+    const znowuBot = { ...dalejBot, tura: kolorBota, phase: "rzut" as const };
+    const termin = chinczykEngine.reduce(znowuBot, { type: "RZUC" }, { uid: "bot_1", now: 9000, rng: kostka(6) });
+    expect(termin.phaseEndsAt).toBe(9000 + 1200);
+  });
+
+  it("termin liczy się dla koloru, KTÓRY PRZEJMUJE ruch, nie dla kończącego", () => {
+    const { po } = zBotem({ turaMs: 30000 });
+    const kolorCzlowieka = po.sloty.findIndex((u) => u === "a");
+    const kolorBota = po.sloty.findIndex((u) => u === "bot_1");
+    // Człowiek rzuca 3 przy pionkach w bazie: brak ruchu, tura idzie do bota.
+    const poTurze = chinczykEngine.reduce(
+      { ...po, tura: kolorCzlowieka },
+      { type: "RZUC" },
+      { uid: "a", now: 4000, rng: kostka(3) },
+    );
+    expect(poTurze.tura).toBe(kolorBota);
+    expect(poTurze.phaseEndsAt).toBe(4000 + 1200); // termin bota, nie 30 s człowieka
+  });
+});

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { newPlayer, pickNewHost } from "./rooms";
-import { DISCONNECT_AFTER_MS, type PlayerMap } from "@/lib/types/room";
+import { isConnected, newPlayer, pickNewHost, samiLudzie } from "./rooms";
+import { DISCONNECT_AFTER_MS, type Player, type PlayerMap } from "@/lib/types/room";
 
 function mkPlayers(now: number): PlayerMap {
   return {
@@ -33,5 +33,32 @@ describe("pickNewHost", () => {
     const players = mkPlayers(now);
     players.b.lastSeenAt = now - DISCONNECT_AFTER_MS - 1; // b rozłączony
     expect(pickNewHost(players, [], "a", now)).toBe("c");
+  });
+});
+
+describe("boty w pokoju", () => {
+  const bot = (uid: string, joinedAt = 0): Player => ({
+    uid, nick: "Bot", avatar: "bot", joinedAt, isHost: false,
+    connected: true, lastSeenAt: 0, totalScore: 0, bot: true,
+  });
+
+  it("bot jest zawsze online — nie pinguje, ale nigdzie się nie wybiera", () => {
+    expect(isConnected(bot("bot_1"), 999_999)).toBe(true);
+  });
+
+  it("bot NIE zostaje hostem, nawet gdy stoi pierwszy w seatOrder", () => {
+    const players: PlayerMap = {
+      host: { uid: "host", nick: "H", avatar: "cat", joinedAt: 0, isHost: true, connected: true, lastSeenAt: 0, totalScore: 0 },
+      bot_1: bot("bot_1", 1),
+      ludzik: { uid: "ludzik", nick: "L", avatar: "dog", joinedAt: 2, isHost: false, connected: true, lastSeenAt: 0, totalScore: 0 },
+    };
+    // Bot pierwszy w kolejce — mimo to host ma trafić na człowieka: to host odpala ticki.
+    expect(pickNewHost(players, ["bot_1", "ludzik", "host"], "host", 100)).toBe("ludzik");
+  });
+
+  it("pokój z samymi botami nie ma już nikogo żywego", () => {
+    const players: PlayerMap = { bot_1: bot("bot_1"), bot_2: bot("bot_2", 1) };
+    expect(samiLudzie(players)).toHaveLength(0);
+    expect(pickNewHost(players, ["bot_1"], "kto-inny", 100)).toBeNull();
   });
 });

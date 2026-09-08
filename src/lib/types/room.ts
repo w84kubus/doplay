@@ -12,6 +12,16 @@ export interface Player {
   connected: boolean; // wyliczane lokalnie z lastSeenAt; w dokumencie trzymamy ostatnią znaną wartość
   lastSeenAt: number; // ms epoch, aktualizowane pingiem co 5 s (SPEC §3.7)
   totalScore: number;
+  /**
+   * Gracz sterowany przez komputer. Pole opcjonalne, więc stare dokumenty pokoi
+   * pozostają poprawne bez migracji.
+   *
+   * Bot nie pinguje i nie ma tokenu, więc rdzeń musi go traktować inaczej w trzech
+   * miejscach: obecność (bot jest zawsze „online"), migracja hosta (bot nie może zostać
+   * hostem, bo nie odpala ticków) i kasowanie pokoju (pokój z samymi botami jest pusty).
+   * Ruchy wykonuje silnik gry przy PHASE_TIMEOUT — patrz `boty` w silniku chińczyka.
+   */
+  bot?: true;
 }
 
 export type PlayerMap = Record<string, Player>;

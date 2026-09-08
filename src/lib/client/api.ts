@@ -10,15 +10,12 @@ export class ApiClientError extends Error {
   }
 }
 
-/** POST do naszego API z dołączonym Firebase ID tokenem. Rzuca ApiClientError z polskim komunikatem. */
-export async function apiPost<T = unknown>(
-  path: string,
-  body?: unknown,
-): Promise<T> {
+/** Wspólna droga do naszego API: token z Firebase Auth + jednolita obsługa błędów. */
+async function apiCall<T>(method: "POST" | "DELETE", path: string, body?: unknown): Promise<T> {
   const user = await ensureAnonAuth();
   const token = await user.getIdToken();
   const res = await fetch(path, {
-    method: "POST",
+    method,
     headers: {
       "content-type": "application/json",
       authorization: `Bearer ${token}`,
@@ -36,4 +33,14 @@ export async function apiPost<T = unknown>(
     );
   }
   return data as T;
+}
+
+/** POST do naszego API z dołączonym Firebase ID tokenem. Rzuca ApiClientError z polskim komunikatem. */
+export function apiPost<T = unknown>(path: string, body?: unknown): Promise<T> {
+  return apiCall<T>("POST", path, body);
+}
+
+/** DELETE do naszego API. Tą samą drogą co POST — różni się tylko metodą. */
+export function apiDelete<T = unknown>(path: string, body?: unknown): Promise<T> {
+  return apiCall<T>("DELETE", path, body);
 }

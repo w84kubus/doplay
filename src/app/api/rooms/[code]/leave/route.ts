@@ -43,8 +43,11 @@ export async function POST(
       if (!room.players[targetUid]) return;
 
       const remaining = Object.keys(room.players).filter((u) => u !== targetUid);
-      if (remaining.length === 0) {
-        t.delete(ref); // ostatni gracz wyszedł — kasujemy pokój
+      // Pokój z samymi botami jest pusty: nikt go nie pinguje, nikt nie odpala ticków
+      // i nikt nigdy nie wróci. Zostawiony żyłby do wygaśnięcia TTL, zajmując kod.
+      const zostalKtos = remaining.some((u) => !room.players[u]?.bot);
+      if (!zostalKtos) {
+        t.delete(ref); // ostatni człowiek wyszedł — kasujemy pokój razem z botami
         pokojSkasowany = true;
         return;
       }

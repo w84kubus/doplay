@@ -6,6 +6,8 @@ import Link from "next/link";
 import { RoomCodeNeon } from "@/components/RoomCodeNeon";
 import { RoomQr } from "@/components/RoomQr";
 import { PlayerList } from "@/components/PlayerList";
+import { BotControls } from "@/components/BotControls";
+import { MAX_W_POKOJU } from "@/games/manifests";
 import { Illustration } from "@/components/Illustration";
 import { PublicRoomToggle } from "@/components/PublicRoomToggle";
 import { RoomRecords } from "@/components/RoomRecords";
@@ -209,6 +211,18 @@ export default function LobbyPage() {
           onKick={isHost ? kick : undefined}
           minSlots={zaMaloGraczy ? 0 : 4}
         />
+
+        {/* Boty. Tylko host i tylko w lobby — po starcie skład jest zamknięty. */}
+        {isHost && room.status === "lobby" && (
+          <BotControls
+            code={room.code}
+            ilu={Object.values(room.players).filter((p) => p.bot).length}
+            // Limit z WYBRANEJ gry, nie z najpojemniejszej w rejestrze. Bez tego host
+            // dosadziłby chińczykowi piętnaście botów i dowiedziałby się o tym dopiero
+            // przy „Zaczynamy". Przy niewybranej grze zostaje limit pokoju.
+            jestMiejsce={playerCount < (wybrana?.maxPlayers ?? MAX_W_POKOJU)}
+          />
+        )}
 
         {/* Otwarcie pokoju dla obcych. Tylko host i tylko w lobby: lista publiczna
             pokazuje wyłącznie pokoje przed startem, więc w trakcie gry ten przełącznik

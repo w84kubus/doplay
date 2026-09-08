@@ -118,7 +118,7 @@ export default function EkranPage() {
           ) : (
             <ul className="grid min-h-0 flex-1 auto-rows-min grid-cols-[repeat(auto-fill,minmax(150px,1fr))] content-start gap-4 overflow-y-auto">
               {players.map((p) => {
-                const connected = now - p.lastSeenAt < DISCONNECT_AFTER_MS;
+                const connected = p.bot === true || now - p.lastSeenAt < DISCONNECT_AFTER_MS;
                 return (
                   <li
                     key={p.uid}

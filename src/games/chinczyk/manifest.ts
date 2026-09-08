@@ -30,9 +30,10 @@ export const chinczykManifest: GameManifest<ChinczykSettings> = {
   // Niebieski — jedyna rodzina odcieni wolna wśród ośmiu istniejących akcentów.
   // Cyjan (#22D3EE) jest wyraźnie zielonkawy, więc przy małym kafelku się nie mylą.
   accentColor: "#3B82F6",
-  // Dolna granica podniesie się do 1 razem z botami (faza 4): dopiero wtedy samotny
-  // gracz ma z kim grać. Dziś dwójka to minimum, przy którym partia ma sens.
-  minPlayers: 2,
+  // Jeden gracz wystarcza, bo resztę stołu mogą stanowić boty. Host dosadza je w lobby;
+  // bez ani jednego bota przycisk „Zaczynamy" i tak nie ruszy, bo silnik potrzebuje
+  // dwóch obsadzonych kolorów.
+  minPlayers: 1,
   maxPlayers: 4,
   supportsHostScreen: true,
   estimatedMinutes: [20, 40],

@@ -2,6 +2,7 @@ import { z } from "zod";
 import { GameError, type GameEngine, type InitContext, type WithEvents } from "@/games/types";
 import type { PlayerMap } from "@/lib/types/room";
 import type { ChinczykSettings } from "./manifest";
+import { wybierzRuch } from "./bot";
 
 // Chińczyk (Ludo). Gra bez tajemnic: pozycje pionków, rzuty i kolejka są jawne dla
 // wszystkich, więc publicView pokazuje po prostu cały stan i `secret/state` nie niesie
@@ -58,6 +59,16 @@ export function pionkiKoloru(pionki: readonly number[], kolor: number): number[]
 const LIMIT_SZOSTEK = 3;
 
 /**
+ * Ile „myśli" bot, zanim wykona ruch.
+ *
+ * Bot nie ma przeglądarki, więc nie klika — jego turę wykonuje ten sam mechanizm,
+ * który gra za nieobecnego człowieka: termin fazy mija, host ponagla `/tick`, silnik
+ * dostaje PHASE_TIMEOUT. Termin jest zatem jednocześnie pauzą na przemyślenie: krócej
+ * i bot gra szybciej, niż da się to zobaczyć (kostka nie zdąży się doturlać).
+ */
+const MYSLENIE_MS = 1200;
+
+/**
  * „wynik" to ekran po wygranej, „koniec" to stan po hostowym FINISH. To NIE jest ta sama
  * faza: kontrakt rdzenia (`finish.test.ts`) wymaga, żeby `canFinish` gasło po zakończeniu,
  * a podium i rekordy zapisuje dopiero przejście do „koniec".
@@ -81,6 +92,8 @@ export interface ChinczykState extends WithEvents {
   szostki: number;
   /** Ile razy każdy kolor wrócił do bazy. Potrzebne tylko do wyróżnienia „bez strat". */
   zbicia: number[];
+  /** uid-y graczy sterowanych przez komputer. Kolory są im przydzielane jak ludziom. */
+  botUidy: string[];
   phase: Faza;
   phaseEndsAt: number | null;
   zwyciezca: number | null;
@@ -133,19 +146,32 @@ function nastepnaTura(s: ChinczykState): number {
   return kolejka[(gdzie + 1) % kolejka.length];
 }
 
+/** Czy kolorem gra bot. */
+function botGra(s: ChinczykState, kolor: number): boolean {
+  const uid = s.sloty[kolor];
+  return uid !== null && s.botUidy.includes(uid);
+}
+
+/**
+ * Termin bieżącej tury. Bot dostaje swój krótki zawsze, także przy ustawieniu „bez
+ * limitu" — inaczej jego tura nie skończyłaby się nigdy i partia stanęłaby na dobre.
+ */
 function terminTury(s: ChinczykState, now: number): number | null {
+  if (botGra(s, s.tura)) return now + MYSLENIE_MS;
   return s.settings.turaMs > 0 ? now + s.settings.turaMs : null;
 }
 
 /** Oddaje ruch następnemu kolorowi i zeruje licznik szóstek. */
 function oddajTure(s: ChinczykState, now: number): ChinczykState {
+  // Termin liczymy dla NASTĘPNEGO koloru, nie dla tego, który właśnie skończył —
+  // inaczej człowiek po bocie dostawałby 1,2 s, a bot po człowieku pełny limit.
+  const po = { ...s, tura: nastepnaTura(s) };
   return {
-    ...s,
-    tura: nastepnaTura(s),
+    ...po,
     kostka: null,
     szostki: 0,
     phase: "rzut",
-    phaseEndsAt: terminTury(s, now),
+    phaseEndsAt: terminTury(po, now),
   };
 }
 
@@ -173,13 +199,13 @@ function rozdajResztę(s: ChinczykState, now: number): ChinczykState {
 
 function zacznijGre(s: ChinczykState, now: number): ChinczykState {
   const kolejka = s.sloty.map((u, i) => (u ? i : -1)).filter((i) => i >= 0);
+  const po = { ...s, tura: kolejka[0] };
   return {
-    ...s,
-    tura: kolejka[0],
+    ...po,
     kostka: null,
     szostki: 0,
     phase: "rzut",
-    phaseEndsAt: s.settings.turaMs > 0 ? now + s.settings.turaMs : null,
+    phaseEndsAt: terminTury(po, now),
     pendingEvents: [{ type: "start", text: "Kolory rozdane. Zaczynamy!", key: "chinczyk.event.start" }],
   };
 }
@@ -296,6 +322,7 @@ export const chinczykEngine: GameEngine<ChinczykState, ChinczykAction, ChinczykS
       sloty: [null, null, null, null],
       doWyboru,
       pionki: Array<number>(4 * PIONKOW).fill(W_BAZIE),
+      botUidy: playerUids.filter((u) => ctx.players[u]?.bot === true),
       tura: doWyboru[0],
       kostka: null,
       szostki: 0,
@@ -311,13 +338,15 @@ export const chinczykEngine: GameEngine<ChinczykState, ChinczykAction, ChinczykS
   reduce(state, action, ctx): ChinczykState {
     if (action.type === "PHASE_TIMEOUT") {
       if (state.phase === "kolory") return rozdajResztę(state, ctx.now);
-      // Termin tury nie oddaje ruchu za darmo, tylko gra za gracza: rzuca, a w fazie
-      // ruchu wybiera pierwszy legalny pionek. Pominięcie tury byłoby dla nieobecnego
-      // łagodniejsze niż dla reszty, która i tak czeka.
+      // Termin tury nie oddaje ruchu za darmo, tylko GRA za gracza. Tą samą drogą
+      // chodzi bot (jego „termin" to 1,2 s) i nieobecny człowiek, któremu padł telefon.
+      // Pominięcie tury byłoby dla nieobecnego łagodniejsze niż dla reszty, która czeka.
       if (state.phase === "rzut") return rzut(state, 1 + Math.floor(ctx.rng() * 6), ctx.now);
       if (state.phase === "ruch") {
-        const ruchy = legalneRuchy(pionkiKoloru(state.pionki, state.tura), state.kostka!);
-        return ruchy.length ? ruch(state, ruchy[0], ctx.now) : oddajTure(state, ctx.now);
+        // Ruch wybiera mózg bota — także dla nieobecnego człowieka. Granie za kogoś
+        // byle jak jest gorsze niż granie za niego rozsądnie: pionki i tak są jego.
+        const pionek = wybierzRuch(state.pionki, state.sloty, state.tura, state.kostka!);
+        return pionek === null ? oddajTure(state, ctx.now) : ruch(state, pionek, ctx.now);
       }
       return state;
     }
@@ -336,9 +365,14 @@ export const chinczykEngine: GameEngine<ChinczykState, ChinczykAction, ChinczykS
 
       const sloty = state.sloty.map((u) => (u === ctx.uid ? null : u)); // zmiana zdania
       sloty[action.kolor] = ctx.uid;
-      const wybrali = sloty.filter(Boolean).length;
       const po = { ...state, sloty, pendingEvents: [] };
-      return wybrali >= state.playerUids.length ? zacznijGre(po, ctx.now) : po;
+
+      // Czekamy wyłącznie na LUDZI. Bot niczego nie klika, więc gdyby wliczał się do
+      // tej sumy, partia z botem stałaby w wyborze kolorów aż do wygaśnięcia terminu.
+      // Kolory botów rozdaje `rozdajResztę` — ta sama droga co dla nieobecnych.
+      const ludzie = state.playerUids.filter((u) => !state.botUidy.includes(u));
+      const wybraliLudzie = ludzie.filter((u) => sloty.includes(u)).length;
+      return wybraliLudzie >= ludzie.length ? rozdajResztę(po, ctx.now) : po;
     }
 
     if (action.type === "RZUC") {

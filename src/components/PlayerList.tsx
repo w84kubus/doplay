@@ -55,7 +55,8 @@ export function PlayerList({
   return (
     <ul className="flex flex-col gap-2">
       {sorted.map((p) => {
-        const connected = now - p.lastSeenAt < DISCONNECT_AFTER_MS;
+        // Bot nie pinguje, ale nigdzie się nie wybiera — wyszarzony wyglądałby na zepsuty.
+        const connected = p.bot === true || now - p.lastSeenAt < DISCONNECT_AFTER_MS;
         const isMe = p.uid === myUid;
         const canKick = onKick && myUid === hostUid && !isMe;
         return (

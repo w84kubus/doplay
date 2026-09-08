@@ -97,6 +97,16 @@ const pl: Record<string, GameRules> = {
     ],
     tip: "Mafia wygrywa, gdy jest ich tyle samo co reszty.",
   },
+  chinczyk: {
+    howTo: "Klasyczny chińczyk. Wyprowadź cztery pionki z bazy, obejdź planszę i wprowadź je do środka. Kto pierwszy zbierze tam komplet, wygrywa.",
+    steps: [
+      "Każdy wybiera kolor; przy dwóch graczach siadacie naprzeciw siebie",
+      "Szóstka wyprowadza pionek z bazy i daje dodatkowy rzut",
+      "Wejście na cudzy pionek odsyła go do bazy; pola z obwódką są bezpieczne",
+      "Do środka trzeba trafić dokładnym rzutem - nadmiar przepada",
+    ],
+    tip: "Trzy szóstki pod rząd kasują trzeci rzut, więc szóstka nie zawsze jest dobrą wiadomością.",
+  },
 };
 
 const en: Record<string, GameRules> = {
@@ -183,6 +193,16 @@ const en: Record<string, GameRules> = {
       "Play until the town or the mafia wins",
     ],
     tip: "The mafia wins once they equal the number of everyone else.",
+  },
+  chinczyk: {
+    howTo: "Classic Ludo. Get four pieces out of your base, walk them round the board and bring them into the centre. First to gather all four there wins.",
+    steps: [
+      "Everyone picks a colour; with two players you sit opposite each other",
+      "A six lets a piece out of the base and grants an extra roll",
+      "Landing on someone else's piece sends it home; outlined squares are safe",
+      "You need an exact roll to enter the centre - anything over is wasted",
+    ],
+    tip: "Three sixes in a row cancel the third roll, so a six is not always good news.",
   },
 };
 

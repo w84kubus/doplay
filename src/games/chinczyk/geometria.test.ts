@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { BAZY, BOK, indeksWejscia, KORYTARZE, poleStartowe, SRODEK, TRASA, type Pole } from "./plansza";
+import { BAZY, BOK, indeksWejscia, KORYTARZE, poleStartowe, SRODEK, TRASA, type Pole } from "./geometria";
 import { POLA, START } from "./engine";
 
 const bokiem = (a: Pole, b: Pole) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y) === 1;

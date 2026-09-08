@@ -23,7 +23,7 @@ const pl = {
 
   // — metadane dla wyszukiwarek; osobne od tekstów na stronie —
   "meta.title": "Gry na domówkę online | Doplay",
-  "meta.description": "Osiem darmowych gier imprezowych w przeglądarce: Mafia, Impostor, Wisielec, Państwa-miasta i inne. Bez kont i bez pobierania, każdy gra na swoim telefonie.",
+  "meta.description": "Dziewięć darmowych gier imprezowych w przeglądarce: Mafia, Impostor, Wisielec, Państwa-miasta i inne. Bez kont i bez pobierania, każdy gra na swoim telefonie.",
   // — landing —
   "landing.tagline": "Imprezowe gry na jeden wieczór. Każdy na swoim telefonie.",
   "landing.create": "Zakładam pokój",
@@ -515,6 +515,34 @@ const pl = {
   "set.kol.stays": "Po rundzie",
   "opt.kol.winner": "Wygrany zostaje",
   "opt.kol.rotate": "Zmiana pary",
+
+  // — Chińczyk —
+  "game.chinczyk.name": "Chińczyk",
+  "game.chinczyk.tagline": "Wyrzuć szóstkę, wyjdź z bazy i zbij kogo się da.",
+  "set.chi.turn": "Czas na turę",
+  "set.chi.pick": "Czas na wybór koloru",
+  "chinczyk.colour.czerwony": "Czerwony",
+  "chinczyk.colour.zielony": "Zielony",
+  "chinczyk.colour.zolty": "Żółty",
+  "chinczyk.colour.niebieski": "Niebieski",
+  "chinczyk.pickColour": "Wybierzcie kolory",
+  "chinczyk.waitingColours": "Czekamy na resztę stołu…",
+  "chinczyk.yourTurn": "Twoja tura",
+  "chinczyk.turnOf": "Tura: {nick}",
+  "chinczyk.roll": "Rzuć kostką",
+  "chinczyk.pickPiece": "Wybierz pionek",
+  "chinczyk.sixes": "Szóstki pod rząd: {n} z 3",
+  "chinczyk.won": "Wygrywa {nick}!",
+  "chinczyk.board": "Plansza chińczyka",
+  "chinczyk.dice": "Kostka",
+  "chinczyk.diceValue": "Kostka: {n}",
+  "chinczyk.event.pickColours": "Wybierzcie kolory",
+  "chinczyk.event.start": "Kolory rozdane. Zaczynamy!",
+  "chinczyk.event.threeSixes": "Trzy szóstki pod rząd - tura przepada.",
+  "chinczyk.event.noMove": "Brak ruchu przy {oczka}.",
+  "chinczyk.event.capture": "Zbicie!",
+  "chinczyk.event.win": "Wszystkie cztery pionki w domu!",
+  "feat.chinczyk.bezStrat": "Wygrał chińczyka bez straty pionka",
   "tv.noRoom": "Nie ma takiego pokoju.",
 
   // — Uzupełnienia widoków gier (dopisane przy tłumaczeniu na EN) —
@@ -562,7 +590,7 @@ export type Key = keyof typeof pl;
 const en: Record<Key, string> = {
   // — metadata for search engines; separate from on-page copy —
   "meta.title": "Party games online | Doplay",
-  "meta.description": "Eight free party games in the browser: Mafia, Impostor, Hangman, Categories and more. No accounts, no downloads, everyone plays on their own phone.",
+  "meta.description": "Nine free party games in the browser: Mafia, Impostor, Hangman, Categories and more. No accounts, no downloads, everyone plays on their own phone.",
   "common.back": "← back",
   "common.cancel": "Cancel",
   "common.close": "Close",
@@ -1060,6 +1088,34 @@ const en: Record<Key, string> = {
   "set.kol.stays": "After a round",
   "opt.kol.winner": "Winner stays",
   "opt.kol.rotate": "Swap the pair",
+
+  // — Ludo —
+  "game.chinczyk.name": "Ludo",
+  "game.chinczyk.tagline": "Roll a six, leave the base and knock the others home.",
+  "set.chi.turn": "Time per turn",
+  "set.chi.pick": "Time to pick a colour",
+  "chinczyk.colour.czerwony": "Red",
+  "chinczyk.colour.zielony": "Green",
+  "chinczyk.colour.zolty": "Yellow",
+  "chinczyk.colour.niebieski": "Blue",
+  "chinczyk.pickColour": "Pick your colours",
+  "chinczyk.waitingColours": "Waiting for the rest of the table…",
+  "chinczyk.yourTurn": "Your turn",
+  "chinczyk.turnOf": "To move: {nick}",
+  "chinczyk.roll": "Roll the dice",
+  "chinczyk.pickPiece": "Pick a piece",
+  "chinczyk.sixes": "Sixes in a row: {n} of 3",
+  "chinczyk.won": "{nick} wins!",
+  "chinczyk.board": "Ludo board",
+  "chinczyk.dice": "Dice",
+  "chinczyk.diceValue": "Dice: {n}",
+  "chinczyk.event.pickColours": "Pick your colours",
+  "chinczyk.event.start": "Colours are set. Here we go!",
+  "chinczyk.event.threeSixes": "Three sixes in a row - the turn is lost.",
+  "chinczyk.event.noMove": "No legal move on a {oczka}.",
+  "chinczyk.event.capture": "Knocked home!",
+  "chinczyk.event.win": "All four pieces are home!",
+  "feat.chinczyk.bezStrat": "Won a game of Ludo without losing a piece",
   "tv.noRoom": "No such room.",
 
   // — Game-view strings added during the EN pass —

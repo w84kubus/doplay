@@ -9,6 +9,7 @@ import { mafiaManifest } from "./mafia/manifest";
 import { odcienManifest } from "./odcien/manifest";
 import { kasynoManifest } from "./kasyno/manifest";
 import { kolkoManifest } from "./kolko/manifest";
+import { chinczykManifest } from "./chinczyk/manifest";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const GAME_MANIFESTS: Record<string, GameManifest<any>> = {
@@ -20,6 +21,7 @@ export const GAME_MANIFESTS: Record<string, GameManifest<any>> = {
   [odcienManifest.id]: odcienManifest,
   [kasynoManifest.id]: kasynoManifest,
   [kolkoManifest.id]: kolkoManifest,
+  [chinczykManifest.id]: chinczykManifest,
 };
 
 /** Manifesty do wyboru gry w lobby (kolejność jak w SPEC §1). */

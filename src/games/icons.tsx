@@ -1,5 +1,5 @@
 import {
-  Grid3x3, Coins, Gamepad2, Palette, PenLine, Skull, Swords, Timer, VenetianMask, type LucideIcon } from "lucide-react";
+  Grid3x3, Coins, Dices, Gamepad2, Palette, PenLine, Skull, Swords, Timer, VenetianMask, type LucideIcon } from "lucide-react";
 
 // Ikony gier (Lucide, ISC). Trzymane osobno od manifestów, bo manifest jest czystymi
 // danymi i importuje go też serwer — komponent Reacta nie ma tam czego szukać.
@@ -15,6 +15,7 @@ const ICONS: Record<string, LucideIcon> = {
   odcien: Palette,
   kasyno: Coins,
   kolko: Grid3x3,
+  chinczyk: Dices,
 };
 
 export function gameIcon(gameId: string): LucideIcon {

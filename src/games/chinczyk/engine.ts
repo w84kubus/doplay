@@ -35,10 +35,34 @@ export const META = 56;
  */
 export const BEZPIECZNE: ReadonlySet<number> = new Set([0, 8, 13, 21, 26, 34, 39, 47]);
 
+/** Ile pionków ma każdy kolor. */
+export const PIONKOW = 4;
+
+/**
+ * Pozycje pionków trzymamy w JEDNEJ płaskiej tablicy 16 pól, nie w tablicy tablic.
+ *
+ * Powód jest twardy: Firestore NIE przyjmuje tablicy wewnątrz tablicy. `number[][]`
+ * w `publicState` kończy się błędem 500 „Property publicState contains an invalid
+ * nested entity" dopiero przy starcie partii, więc typy tego nie złapią.
+ */
+export function idxPionka(kolor: number, pionek: number): number {
+  return kolor * PIONKOW + pionek;
+}
+
+/** Cztery pozycje jednego koloru, do odczytu. */
+export function pionkiKoloru(pionki: readonly number[], kolor: number): number[] {
+  return pionki.slice(kolor * PIONKOW, kolor * PIONKOW + PIONKOW);
+}
+
 /** Trzecia szóstka pod rząd przepada i kończy turę. */
 const LIMIT_SZOSTEK = 3;
 
-type Faza = "kolory" | "rzut" | "ruch" | "koniec";
+/**
+ * „wynik" to ekran po wygranej, „koniec" to stan po hostowym FINISH. To NIE jest ta sama
+ * faza: kontrakt rdzenia (`finish.test.ts`) wymaga, żeby `canFinish` gasło po zakończeniu,
+ * a podium i rekordy zapisuje dopiero przejście do „koniec".
+ */
+type Faza = "kolory" | "rzut" | "ruch" | "wynik" | "koniec";
 
 export interface ChinczykState extends WithEvents {
   settings: ChinczykSettings;
@@ -48,13 +72,15 @@ export interface ChinczykState extends WithEvents {
   sloty: (string | null)[];
   /** Kolory, które wolno wybrać w tej partii. Przy dwóch graczach tylko para naprzeciw siebie. */
   doWyboru: number[];
-  /** [kolor][pionek] = postęp. W_BAZIE, 0..56 albo META. */
-  pionki: number[][];
+  /** Płaska tablica 16 pozycji: `idxPionka(kolor, pionek)` → postęp (W_BAZIE, 0..56). */
+  pionki: number[];
   /** Indeks koloru, którego jest tura. */
   tura: number;
   kostka: number | null;
   /** Ile szóstek pod rząd w bieżącej turze. */
   szostki: number;
+  /** Ile razy każdy kolor wrócił do bazy. Potrzebne tylko do wyróżnienia „bez strat". */
+  zbicia: number[];
   phase: Faza;
   phaseEndsAt: number | null;
   zwyciezca: number | null;
@@ -172,12 +198,16 @@ function rzut(s: ChinczykState, oczka: number, now: number): ChinczykState {
     };
   }
 
-  const ruchy = legalneRuchy(s.pionki[s.tura], oczka);
+  const ruchy = legalneRuchy(pionkiKoloru(s.pionki, s.tura), oczka);
   if (ruchy.length === 0) {
     // Brak ruchu kończy turę także po szóstce. Inaczej gracz, który nie ma czym się
     // ruszyć, rzucałby w kółko i partia stałaby w miejscu.
+    // Wynik ZOSTAJE na kostce, choć tura przechodzi dalej. Bez tego naciśnięcie „rzuć"
+    // przy wszystkich pionkach w bazie wyglądało jak brak reakcji: kostka gasła w tej
+    // samej klatce, w której się zapaliła, i gracz nie wiedział, co wyrzucił.
     return {
-      ...oddajTure({ ...s, kostka: oczka, szostki }, now),
+      ...oddajTure({ ...s, szostki }, now),
+      kostka: oczka,
       pendingEvents: [
         { type: "pas", text: `${KOLORY[s.tura]}: brak ruchu przy ${oczka}`, key: "chinczyk.event.noMove", params: { oczka } },
       ],
@@ -191,19 +221,21 @@ function rzut(s: ChinczykState, oczka: number, now: number): ChinczykState {
 function ruch(s: ChinczykState, pionek: number, now: number): ChinczykState {
   const oczka = s.kostka!;
   const kolor = s.tura;
-  const pionki = s.pionki.map((p) => [...p]);
-  const teraz = pionki[kolor][pionek];
+  const pionki = [...s.pionki];
+  const teraz = pionki[idxPionka(kolor, pionek)];
   const cel = teraz === W_BAZIE ? 0 : teraz + oczka;
-  pionki[kolor][pionek] = cel;
+  pionki[idxPionka(kolor, pionek)] = cel;
 
   const zdarzenia = [];
+  const zbicia = [...s.zbicia];
   const pole = poleBezwzgledne(kolor, cel);
   if (pole !== null && !BEZPIECZNE.has(pole)) {
-    for (let k = 0; k < pionki.length; k++) {
+    for (let k = 0; k < s.sloty.length; k++) {
       if (k === kolor || !s.sloty[k]) continue;
-      for (let j = 0; j < pionki[k].length; j++) {
-        if (poleBezwzgledne(k, pionki[k][j]) === pole) {
-          pionki[k][j] = W_BAZIE;
+      for (let j = 0; j < PIONKOW; j++) {
+        if (poleBezwzgledne(k, pionki[idxPionka(k, j)]) === pole) {
+          pionki[idxPionka(k, j)] = W_BAZIE;
+          zbicia[k] += 1;
           zdarzenia.push({
             type: "zbicie",
             text: `${KOLORY[kolor]} zbija ${KOLORY[k]}`,
@@ -215,23 +247,29 @@ function ruch(s: ChinczykState, pionek: number, now: number): ChinczykState {
     }
   }
 
-  const po = { ...s, pionki };
+  const po = { ...s, pionki, zbicia };
 
-  if (pionki[kolor].every((p) => p === META)) {
+  if (pionkiKoloru(pionki, kolor).every((p) => p === META)) {
     const scores: Record<string, number> = {};
     for (const uid of s.playerUids) scores[uid] = 0;
     const uid = s.sloty[kolor];
     if (uid) scores[uid] = 1;
     return {
       ...po,
-      phase: "koniec",
+      phase: "wynik",
       phaseEndsAt: null,
       zwyciezca: kolor,
       scores,
       pendingEvents: [
         ...zdarzenia,
-        { type: "koniec", text: `${KOLORY[kolor]} wygrywa!`, key: "chinczyk.event.win", params: { kolor: KOLORY[kolor] },
-          meta: uid ? { uid, rekord: true } : undefined },
+        { type: "koniec", text: `${KOLORY[kolor]} wygrywa!`, key: "chinczyk.event.win" },
+        // Wyróżnienie tylko za coś rzadkiego. Sama wygrana nie jest wyczynem: partię
+        // wygrywa ktoś ZAWSZE, a licznik zwycięstw i tak liczy się z wyników silnika.
+        // Przejście czterema pionkami bez ani jednego powrotu do bazy jest już wyczynem.
+        ...(uid && zbicia[kolor] === 0
+          ? [{ type: "rekord", text: "Wygrał chińczyka bez straty pionka", key: "feat.chinczyk.bezStrat",
+              meta: { uid, rekord: true } }]
+          : []),
       ],
     };
   }
@@ -257,10 +295,11 @@ export const chinczykEngine: GameEngine<ChinczykState, ChinczykAction, ChinczykS
       playerUids,
       sloty: [null, null, null, null],
       doWyboru,
-      pionki: [0, 1, 2, 3].map(() => [W_BAZIE, W_BAZIE, W_BAZIE, W_BAZIE]),
+      pionki: Array<number>(4 * PIONKOW).fill(W_BAZIE),
       tura: doWyboru[0],
       kostka: null,
       szostki: 0,
+      zbicia: [0, 0, 0, 0],
       phase: "kolory",
       phaseEndsAt: ctx.now + ctx.settings.wyborMs,
       zwyciezca: null,
@@ -277,7 +316,7 @@ export const chinczykEngine: GameEngine<ChinczykState, ChinczykAction, ChinczykS
       // łagodniejsze niż dla reszty, która i tak czeka.
       if (state.phase === "rzut") return rzut(state, 1 + Math.floor(ctx.rng() * 6), ctx.now);
       if (state.phase === "ruch") {
-        const ruchy = legalneRuchy(state.pionki[state.tura], state.kostka!);
+        const ruchy = legalneRuchy(pionkiKoloru(state.pionki, state.tura), state.kostka!);
         return ruchy.length ? ruch(state, ruchy[0], ctx.now) : oddajTure(state, ctx.now);
       }
       return state;
@@ -285,7 +324,7 @@ export const chinczykEngine: GameEngine<ChinczykState, ChinczykAction, ChinczykS
 
     if (action.type === "FINISH") {
       if (ctx.uid !== state.hostUid) throw new GameError("Tylko host może zakończyć grę.", 403);
-      if (state.phase === "koniec") return state;
+      if (state.phase === "koniec") return state; // FINISH musi być idempotentny (kontrakt rdzenia)
       return { ...state, phase: "koniec", phaseEndsAt: null, pendingEvents: [] };
     }
 
@@ -311,7 +350,7 @@ export const chinczykEngine: GameEngine<ChinczykState, ChinczykAction, ChinczykS
     if (action.type === "RUSZ") {
       if (state.phase !== "ruch") throw new GameError("Najpierw rzuć kostką.");
       if (state.sloty[state.tura] !== ctx.uid) throw new GameError("To nie twoja tura.");
-      if (!legalneRuchy(state.pionki[state.tura], state.kostka!).includes(action.pionek)) {
+      if (!legalneRuchy(pionkiKoloru(state.pionki, state.tura), state.kostka!).includes(action.pionek)) {
         throw new GameError("Tym pionkiem nie możesz się teraz ruszyć.");
       }
       return ruch(state, action.pionek, ctx.now);
@@ -334,11 +373,11 @@ export const chinczykEngine: GameEngine<ChinczykState, ChinczykAction, ChinczykS
       turaUid: state.phase === "rzut" || state.phase === "ruch" ? state.sloty[state.tura] : null,
       kostka: state.kostka,
       szostki: state.szostki,
-      ruchy: state.phase === "ruch" && state.kostka ? legalneRuchy(state.pionki[state.tura], state.kostka) : [],
+      ruchy: state.phase === "ruch" && state.kostka ? legalneRuchy(pionkiKoloru(state.pionki, state.tura), state.kostka) : [],
       zwyciezca: state.zwyciezca,
       scores: state.scores,
-      // „Zakończ grę" pokazujemy dopiero na ekranie końcowym (opt-in z konwencji rdzenia).
-      canFinish: state.phase === "koniec",
+      // „Zakończ grę" pokazujemy dopiero na ekranie wyników (opt-in z konwencji rdzenia).
+      canFinish: state.phase === "wynik",
     };
   },
 

@@ -9,8 +9,8 @@ Do sierpnia 2026 aplikacja nazywała się Domówka. Stąd klucze `domowka-locale
 `domowka-session` i projekt Firebase `domowka-39gd0` — **tych nazw nie zmieniamy**:
 identyfikują dane już zapisane w przeglądarkach graczy i w backendzie.
 
-Gry (8, wszystkie w `registry.ts`): Stoper, Państwa-miasta, Wisielec, Impostor,
-Mafia, Odcień, Kasyno, Kółko i krzyżyk.
+Gry (9, wszystkie w `registry.ts`): Stoper, Państwa-miasta, Wisielec, Impostor,
+Mafia, Odcień, Kasyno, Kółko i krzyżyk, Chińczyk.
 
 Stack: Next.js 15 (App Router) + TypeScript strict + Tailwind v4 + Firebase (Firestore + Anonymous Auth) + Vercel.
 
@@ -85,6 +85,8 @@ firebase deploy --only firestore:rules
       zrzutów w README, koordynacja pasków przy dolnej krawędzi
 - [x] Faza K — sprzątanie bazy: cron kasujący wygasłe pokoje z podkolekcjami,
       poprawka `leave` (nie zostawia sierot), plan Blaze zamiast Spark
+- [~] Faza M — Chińczyk: silnik + geometria planszy + widoki (fazy 1-2 gotowe).
+      Zostało: dopracowanie kostki (faza 3), boty (faza 4), własna ilustracja kafelka
 - [x] Faza L — publiczne pokoje: trzecia zakładka z listą otwartych pokoi,
       przełącznik hosta w lobby, wejście do losowego, limit graczy w `join`;
       wcześniej naprawa faz, które czekały na gracza bez terminu
@@ -220,6 +222,16 @@ w obie strony. Rzeczy, które łatwo cofnąć przez nieuwagę:
 sztywno. Do tej fazy limitu nie było wcale — kontrola `maxPlayers` siedziała dopiero
 w `startGame`, więc publiczny pokój mógłby nazbierać tylu obcych, że żadnej gry nie da
 się odpalić, a błąd zobaczyłby dopiero host przy starcie.
+
+### Firestore nie przyjmuje tablicy w tablicy
+
+`number[][]` w stanie silnika przechodzi typy, testy i build, a wywala się dopiero przy
+starcie partii: `500 INVALID_ARGUMENT: Property publicState contains an invalid nested
+entity`. Chińczyk trzyma więc pozycje pionków w JEDNEJ płaskiej tablicy 16 pól
+(`idxPionka(kolor, pionek)`), nie w czterech czwórkach.
+
+Mapa z tablicami w wartościach jest dozwolona, ale płaska tablica indeksowana funkcją
+czyta się lepiej niż `{"0": [...], "1": [...]}` wracające z bazy jako obiekt.
 
 ### Faza, która czeka na gracza, musi mieć termin
 

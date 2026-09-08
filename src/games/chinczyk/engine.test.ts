@@ -5,6 +5,8 @@ import {
   DOM_OD,
   legalneRuchy,
   META,
+  PIONKOW,
+  pionkiKoloru,
   poleBezwzgledne,
   START,
   W_BAZIE,
@@ -33,6 +35,10 @@ function nowaGra(ilu = 2, over: Partial<ChinczykSettings> = {}): ChinczykState {
   });
   return s;
 }
+
+/** Ustawia cztery pozycje jednego koloru w płaskiej tablicy. */
+const ustaw = (pionki: number[], kolor: number, cztery: number[]) =>
+  pionki.map((p, i) => (Math.floor(i / PIONKOW) === kolor ? cztery[i % PIONKOW] : p));
 
 const rzuc = (s: ChinczykState, uid: string, oczka: number) =>
   chinczykEngine.reduce(s, { type: "RZUC" }, { uid, now: 2000, rng: kostka(oczka) });
@@ -180,14 +186,14 @@ describe("chińczyk — tura i szóstki", () => {
     s = rusz(s, kto, 0);
     s = rzuc(s, kto, 6);
     s = rusz(s, kto, 1);
-    const przed = s.pionki[s.tura].filter((p) => p !== W_BAZIE).length;
+    const przed = pionkiKoloru(s.pionki, s.tura).filter((p) => p !== W_BAZIE).length;
 
     s = rzuc(s, kto, 6);
     expect(s.sloty[s.tura]).not.toBe(kto);   // tura przepadła
     expect(s.phase).toBe("rzut");
     // trzecia szóstka NIE wyprowadziła trzeciego pionka
     const kolorKto = [0, 1, 2, 3].find((k) => s.sloty[k] === kto)!;
-    expect(s.pionki[kolorKto].filter((p) => p !== W_BAZIE)).toHaveLength(przed);
+    expect(pionkiKoloru(s.pionki, kolorKto).filter((p) => p !== W_BAZIE)).toHaveLength(przed);
   });
 
   it("licznik szóstek zeruje się po zmianie tury", () => {
@@ -209,22 +215,34 @@ describe("chińczyk — tura i szóstki", () => {
   });
 });
 
+describe("chińczyk — widoczność rzutu", () => {
+  it("rzut bez legalnego ruchu zostawia wynik na kostce", () => {
+    const s = nowaGra(2); // wszystkie pionki w bazie, więc 3 nie daje ruchu
+    const po = rzuc(s, s.sloty[s.tura]!, 3);
+    expect(po.tura).not.toBe(s.tura); // tura poszła dalej
+    expect(po.kostka).toBe(3); // ale gracz widzi, co wyrzucił
+  });
+});
+
 describe("chińczyk — zbicia", () => {
   it("wejście na cudzy pionek odsyła go do bazy", () => {
     let s = nowaGra(2);
     const kolorA = 0, kolorB = 2;
     // czerwony stoi 3 pola przed startem żółtego liczonym po trasie
     s = { ...s, tura: kolorA, phase: "ruch", kostka: 3,
-          pionki: s.pionki.map((p, k) => (k === kolorA ? [23, W_BAZIE, W_BAZIE, W_BAZIE] : p)) };
+          pionki: ustaw(s.pionki, kolorA, [23, W_BAZIE, W_BAZIE, W_BAZIE]) };
     // żółty (start 26) na postępie 1 stoi na polu 27; czerwony z 23 + 3 = 26… ustawmy dokładnie
-    s = { ...s, pionki: s.pionki.map((p, k) => (k === kolorB ? [1, W_BAZIE, W_BAZIE, W_BAZIE] : p)) };
+    s = { ...s, pionki: ustaw(s.pionki, kolorB, [1, W_BAZIE, W_BAZIE, W_BAZIE]) };
     expect(poleBezwzgledne(kolorA, 26)).toBe(26);
     expect(poleBezwzgledne(kolorB, 1)).toBe(27);
 
     // czerwony 24 + 3 = 27 trafia na żółtego
-    s = { ...s, pionki: s.pionki.map((p, k) => (k === kolorA ? [24, W_BAZIE, W_BAZIE, W_BAZIE] : p)) };
+    s = { ...s, pionki: ustaw(s.pionki, kolorA, [24, W_BAZIE, W_BAZIE, W_BAZIE]) };
     const po = rusz(s, s.sloty[kolorA]!, 0);
-    expect(po.pionki[kolorB][0]).toBe(W_BAZIE);
+    expect(pionkiKoloru(po.pionki, kolorB)[0]).toBe(W_BAZIE);
+    // Licznik strat: to z niego bierze się wyróżnienie „wygrał bez straty pionka".
+    expect(po.zbicia[kolorB]).toBe(1);
+    expect(po.zbicia[kolorA]).toBe(0);
   });
 
   it("na polu bezpiecznym zbić się NIE da", () => {
@@ -233,33 +251,31 @@ describe("chińczyk — zbicia", () => {
     // pole 34 to globus (26 + 8), czyli bezpieczne
     expect(BEZPIECZNE.has(34)).toBe(true);
     s = { ...s, tura: kolorA, phase: "ruch", kostka: 4,
-          pionki: s.pionki.map((p, k) =>
-            k === kolorA ? [30, W_BAZIE, W_BAZIE, W_BAZIE] : k === kolorB ? [8, W_BAZIE, W_BAZIE, W_BAZIE] : p) };
+          pionki: ustaw(ustaw(s.pionki, kolorA, [30, W_BAZIE, W_BAZIE, W_BAZIE]), kolorB, [8, W_BAZIE, W_BAZIE, W_BAZIE]) };
     expect(poleBezwzgledne(kolorA, 34)).toBe(34);
     expect(poleBezwzgledne(kolorB, 8)).toBe(34);
 
     const po = rusz(s, s.sloty[kolorA]!, 0);
-    expect(po.pionki[kolorB][0]).toBe(8); // stoi dalej, oba kolory dzielą pole
+    expect(pionkiKoloru(po.pionki, kolorB)[0]).toBe(8); // stoi dalej, oba kolory dzielą pole
   });
 
   it("własnego pionka się nie zbija", () => {
     let s = nowaGra(2);
     const k = 0;
     s = { ...s, tura: k, phase: "ruch", kostka: 2,
-          pionki: s.pionki.map((p, i) => (i === k ? [10, 12, W_BAZIE, W_BAZIE] : p)) };
+          pionki: ustaw(s.pionki, k, [10, 12, W_BAZIE, W_BAZIE]) };
     const po = rusz(s, s.sloty[k]!, 0);
-    expect(po.pionki[k][0]).toBe(12);
-    expect(po.pionki[k][1]).toBe(12); // oba stoją na jednym polu, nikt nie wraca
+    expect(pionkiKoloru(po.pionki, k)[0]).toBe(12);
+    expect(pionkiKoloru(po.pionki, k)[1]).toBe(12); // oba stoją na jednym polu, nikt nie wraca
   });
 
   it("pionek w korytarzu domowym jest poza zasięgiem zbicia", () => {
     let s = nowaGra(2);
     const kolorA = 0, kolorB = 2;
     s = { ...s, tura: kolorA, phase: "ruch", kostka: 1,
-          pionki: s.pionki.map((p, k) =>
-            k === kolorA ? [25, W_BAZIE, W_BAZIE, W_BAZIE] : k === kolorB ? [DOM_OD, W_BAZIE, W_BAZIE, W_BAZIE] : p) };
+          pionki: ustaw(ustaw(s.pionki, kolorA, [25, W_BAZIE, W_BAZIE, W_BAZIE]), kolorB, [DOM_OD, W_BAZIE, W_BAZIE, W_BAZIE]) };
     const po = rusz(s, s.sloty[kolorA]!, 0);
-    expect(po.pionki[kolorB][0]).toBe(DOM_OD);
+    expect(pionkiKoloru(po.pionki, kolorB)[0]).toBe(DOM_OD);
   });
 });
 
@@ -268,25 +284,50 @@ describe("chińczyk — koniec partii", () => {
     let s = nowaGra(2);
     const k = 0;
     s = { ...s, tura: k, phase: "ruch", kostka: 1,
-          pionki: s.pionki.map((p, i) => (i === k ? [META - 1, META, META, META] : p)) };
+          pionki: ustaw(s.pionki, k, [META - 1, META, META, META]) };
     const po = rusz(s, s.sloty[k]!, 0);
-    expect(po.phase).toBe("koniec");
+    expect(po.phase).toBe("wynik");
     expect(po.zwyciezca).toBe(k);
     expect(po.scores[s.sloty[k]!]).toBe(1);
+  });
+
+  it("ekran wynikow zaprasza do zakonczenia, a hostowy FINISH je gasi", () => {
+    let s = nowaGra(2);
+    const k = 0;
+    s = { ...s, tura: k, phase: "ruch", kostka: 1,
+          pionki: ustaw(s.pionki, k, [META - 1, META, META, META]) };
+    const wynik = rusz(s, s.sloty[k]!, 0);
+    expect((chinczykEngine.publicView(wynik, {}) as { canFinish: boolean }).canFinish).toBe(true);
+    expect(chinczykEngine.isFinished(wynik)).toBe(false);
+
+    const po = chinczykEngine.reduce(wynik, { type: "FINISH" }, { uid: wynik.hostUid, now: 9000, rng: () => 0.5 });
     expect(chinczykEngine.isFinished(po)).toBe(true);
+    expect((chinczykEngine.publicView(po, {}) as { canFinish: boolean }).canFinish).toBe(false);
   });
 
   it("trzy pionki w środku to jeszcze nie koniec", () => {
     let s = nowaGra(2);
     const k = 0;
     s = { ...s, tura: k, phase: "ruch", kostka: 1,
-          pionki: s.pionki.map((p, i) => (i === k ? [META - 1, META, META, 5] : p)) };
+          pionki: ustaw(s.pionki, k, [META - 1, META, META, 5]) };
     const po = rusz(s, s.sloty[k]!, 0);
-    expect(po.phase).not.toBe("koniec");
+    expect(po.phase).not.toBe("wynik");
     expect(po.zwyciezca).toBeNull();
   });
 
-  it("przycisk zakonczenia gry pojawia sie dopiero na ekranie koncowym", () => {
+  it("wyroznienie tylko za wygrana bez ani jednego powrotu do bazy", () => {
+    const k = 0;
+    const zwycieski = (zbicia: number[]) => {
+      const baza = nowaGra(2);
+      const s = { ...baza, tura: k, phase: "ruch" as const, kostka: 1, zbicia,
+                  pionki: ustaw(baza.pionki, k, [META - 1, META, META, META]) };
+      return chinczykEngine.drainEvents(rusz(s, s.sloty[k]!, 0));
+    };
+    expect(zwycieski([0, 0, 0, 0]).some((e) => e.meta?.rekord === true)).toBe(true);
+    expect(zwycieski([1, 0, 0, 0]).some((e) => e.meta?.rekord === true)).toBe(false);
+  });
+
+  it("przycisk zakonczenia gry pojawia sie dopiero na ekranie wynikow", () => {
     const s = nowaGra(2);
     const wTrakcie = chinczykEngine.publicView(s, {}) as { canFinish: boolean };
     expect(wTrakcie.canFinish).toBe(false);
@@ -310,7 +351,7 @@ describe("chińczyk — cudze ruchy i terminy", () => {
     const kto = s.sloty[s.tura]!;
     s = rzuc(s, kto, 6);
     // pionek 0 wychodzi z bazy legalnie, ale udajemy ruch pionkiem stojącym na mecie
-    s = { ...s, pionki: s.pionki.map((p, i) => (i === s.tura ? [W_BAZIE, META, META, META] : p)) };
+    s = { ...s, pionki: ustaw(s.pionki, s.tura, [W_BAZIE, META, META, META]) };
     expect(() => rusz(s, kto, 1)).toThrow();
   });
 
@@ -327,9 +368,9 @@ describe("chińczyk — cudze ruchy i terminy", () => {
     let s = nowaGra(2);
     const k = s.tura;
     s = { ...s, phase: "ruch", kostka: 3,
-          pionki: s.pionki.map((p, i) => (i === k ? [10, 20, W_BAZIE, W_BAZIE] : p)) };
+          pionki: ustaw(s.pionki, k, [10, 20, W_BAZIE, W_BAZIE]) };
     const po = chinczykEngine.reduce(s, { type: "PHASE_TIMEOUT" }, ctx(s.sloty[k]!, 99999));
-    expect(po.pionki[k][0]).toBe(13); // ruszył się pierwszy z listy
+    expect(pionkiKoloru(po.pionki, k)[0]).toBe(13); // ruszył się pierwszy z listy
   });
 
   it("bez limitu czasu faza nie ma terminu", () => {

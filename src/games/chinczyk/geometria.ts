@@ -28,14 +28,6 @@ export const KORYTARZE: readonly (readonly Pole[])[] = [
   [13, 12, 11, 10, 9].map((x) => ({ x, y: 7 })), // od prawej w lewo
 ];
 
-/** Pole na trasie, z którego wchodzi się w dany korytarz. */
-const WEJSCIA: readonly Pole[] = [
-  { x: 7, y: 14 },
-  { x: 0, y: 7 },
-  { x: 7, y: 0 },
-  { x: 14, y: 7 },
-];
-
 /** Bazy: cztery kąty planszy, po cztery miejsca na pionki. */
 export const BAZY: readonly (readonly Pole[])[] = [
   [{ x: 1.5, y: 10.5 }, { x: 3.5, y: 10.5 }, { x: 1.5, y: 12.5 }, { x: 3.5, y: 12.5 }],

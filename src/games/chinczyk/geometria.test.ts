@@ -115,4 +115,25 @@ describe("chińczyk — geometria zgadza się z silnikiem", () => {
     expect(srodkiKatow[3].x).toBeGreaterThan(BOK / 2);
     expect(srodkiKatow[3].y).toBeGreaterThan(BOK / 2);
   });
+
+  it("gniazda stoją symetrycznie w swojej bazie", () => {
+    // Baza zajmuje 6x6 kratek w kącie. Czwórka gniazd ma mieć te same marginesy
+    // z obu stron - inaczej cała grupa zjeżdża w róg i pionki wyglądają na krzywo
+    // ustawione, choć każdy z osobna stoi tam, gdzie kod mówi.
+    const rogi = [
+      { kx: 0, ky: 9 },
+      { kx: 0, ky: 0 },
+      { kx: 9, ky: 0 },
+      { kx: 9, ky: 9 },
+    ];
+    BAZY.forEach((baza, kolor) => {
+      const { kx, ky } = rogi[kolor];
+      const xs = [...new Set(baza.map((p) => p.x))].sort((a, b) => a - b);
+      const ys = [...new Set(baza.map((p) => p.y))].sort((a, b) => a - b);
+      expect(xs).toHaveLength(2);
+      expect(ys).toHaveLength(2);
+      expect(xs[0] - kx).toBeCloseTo(kx + 6 - xs[1]);
+      expect(ys[0] - ky).toBeCloseTo(ky + 6 - ys[1]);
+    });
+  });
 });

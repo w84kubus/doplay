@@ -234,3 +234,44 @@ pieces, green pieces or any green in the objects, casino chips, playing cards, m
 than three pawns, watermarks, frames or borders, any text, letters, numbers or logos
 other than the pips on the die.
 ```
+
+---
+
+## `pionki-chinczyk` (arkusz czterech pionków)
+
+Pionki na planszy chińczyka. Do tej pory były rysowane jako kolorowe krążki i wyglądały
+jak kropki, a nie jak figury. Cztery kolory na JEDNYM arkuszu, bo tylko wtedy model
+utrzyma identyczny kształt i identyczne światło — cztery osobne generacje rozjadą się
+na proporcjach i wysokości, a na planszy stoją obok siebie.
+
+**Tło musi być SZACHOWNICĄ, nie zielenią.** Jeden z pionków jest zielony, więc chroma key
+zjadłby go razem z tłem. `tnij-arkusz.py` domyślnie rozpoznaje właśnie szachownicę.
+
+Zapisujesz arkusz gdziekolwiek, potem z rootu repo:
+
+```
+python3 scripts/tnij-arkusz.py ARKUSZ.jpg pionek-czerwony,pionek-zielony,pionek-zolty,pionek-niebieski
+```
+
+Wyniki lądują w `emoji-pack/` jako PNG z przezroczystością, w równych kwadratach.
+
+```
+A sheet of exactly four game pawns standing in a single horizontal row on a checkerboard
+transparency background, evenly spaced, all four identical in shape, size, pose and
+lighting - only the colour differs. From left to right: red #E4002B, green #34D399,
+golden yellow #FFB627, blue #3B82F6.
+
+Each pawn is a classic board-game pawn seen from the front: a round ball head, a short
+narrow neck, a smoothly flaring body and a wide round base it stands on. Glossy plastic
+material with a soft vertical gradient, one clear specular highlight in the upper left of
+the head and a second smaller one on the body, thick dark navy outline around the whole
+silhouette. Cheerful sticker-like look, the same style as a modern app icon.
+
+All four pawns share one baseline and one height. Generous even margin around every pawn
+so no outline touches the edge of the image.
+
+avoid: photorealism, drop shadows or reflections on the ground, a board or a table under
+the pawns, a fifth pawn, dice, any background colour other than the checkerboard, a
+white pawn, differing pawn heights, tilted or rotated pawns, any text, letters, numbers
+or logos.
+```

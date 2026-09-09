@@ -49,8 +49,11 @@ export function ChinczykHostView({ publicState }: GameHostViewProps) {
   }
 
   return (
-    <div className="flex w-full max-w-5xl flex-col items-center gap-6 lg:flex-row lg:items-start lg:justify-center">
-      <div className="w-full max-w-2xl">
+    <div className="flex w-full max-w-5xl flex-col items-center gap-6 md:flex-row md:items-start md:justify-center">
+      {/* Telewizora nikt nie przewija, więc plansza nie może być wyższa niż ekran.
+          Kwadrat ograniczamy szerokością liczoną z wysokości okna — przy układzie
+          jeden pod drugim (poniżej `lg`) inaczej wychodziła poza dolną krawędź. */}
+      <div className="w-full" style={{ maxWidth: "min(42rem, 72dvh)" }}>
         <Plansza pionki={pub.pionki} sloty={pub.sloty.map((s) => s.uid)} tura={pub.tura} />
       </div>
 
@@ -64,7 +67,7 @@ export function ChinczykHostView({ publicState }: GameHostViewProps) {
             : t("chinczyk.turnOf", { nick: pub.sloty[pub.tura]?.nick ?? "" })}
         </div>
 
-        {!koniecPartii && <Kostka wartosc={pub.kostka} kolor={barwa} />}
+        {!koniecPartii && <Kostka wartosc={pub.kostka} kolor={barwa} bok={104} />}
 
         <ul className="flex w-full flex-col gap-2">
           {pub.sloty.map((s, k) =>

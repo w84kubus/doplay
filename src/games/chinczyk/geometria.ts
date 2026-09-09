@@ -28,12 +28,18 @@ export const KORYTARZE: readonly (readonly Pole[])[] = [
   [13, 12, 11, 10, 9].map((x) => ({ x, y: 7 })), // od prawej w lewo
 ];
 
-/** Bazy: cztery kąty planszy, po cztery miejsca na pionki. */
+/**
+ * Bazy: cztery kąty planszy, po cztery miejsca na pionki.
+ *
+ * Gniazda stoją na 2 i 4 kratce bazy, czyli SYMETRYCZNIE: margines 2, odstęp 2, margines 2.
+ * Wcześniej były na 1,5 i 3,5 (margines 1,5 / odstęp 2 / margines 2,5) i cała czwórka
+ * zjeżdżała o pół kratki w róg — dokładnie to widać jako „pionki ułożone krzywo".
+ */
 export const BAZY: readonly (readonly Pole[])[] = [
-  [{ x: 1.5, y: 10.5 }, { x: 3.5, y: 10.5 }, { x: 1.5, y: 12.5 }, { x: 3.5, y: 12.5 }],
-  [{ x: 1.5, y: 1.5 }, { x: 3.5, y: 1.5 }, { x: 1.5, y: 3.5 }, { x: 3.5, y: 3.5 }],
-  [{ x: 10.5, y: 1.5 }, { x: 12.5, y: 1.5 }, { x: 10.5, y: 3.5 }, { x: 12.5, y: 3.5 }],
-  [{ x: 10.5, y: 10.5 }, { x: 12.5, y: 10.5 }, { x: 10.5, y: 12.5 }, { x: 12.5, y: 12.5 }],
+  [{ x: 2, y: 11 }, { x: 4, y: 11 }, { x: 2, y: 13 }, { x: 4, y: 13 }],
+  [{ x: 2, y: 2 }, { x: 4, y: 2 }, { x: 2, y: 4 }, { x: 4, y: 4 }],
+  [{ x: 11, y: 2 }, { x: 13, y: 2 }, { x: 11, y: 4 }, { x: 13, y: 4 }],
+  [{ x: 11, y: 11 }, { x: 13, y: 11 }, { x: 11, y: 13 }, { x: 13, y: 13 }],
 ];
 
 /**

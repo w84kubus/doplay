@@ -20,7 +20,7 @@
   <img src="https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind v4" />
   <img src="https://img.shields.io/badge/PWA-instalowalna-5A0FC8?logo=pwa&logoColor=white" alt="PWA" />
   <img src="https://img.shields.io/badge/multiplayer-realtime-E4002B" alt="Multiplayer Realtime" />
-  <img src="https://img.shields.io/badge/testy-307-7CF0AE?logo=vitest&logoColor=black" alt="307 testów" />
+  <img src="https://img.shields.io/badge/testy-395-7CF0AE?logo=vitest&logoColor=black" alt="395 testów" />
 </p>
 
 ---
@@ -59,6 +59,14 @@ Otwierasz go z lobby; gracze zostają przy swoich telefonach.
 
 ![Ekran hosta na telewizorze: kod pokoju M2R5, kod QR i pięcioro graczy](docs/screenshots/ekran-tv.webp)
 
+### Chińczyk, na telefonie i na telewizorze
+
+Ta sama tura z dwóch stron: własna plansza z pionkami, którymi wolno się ruszyć, i wspólny
+ekran z informacją, czyja jest kolej i ile pionków każdy doprowadził do domu. Trzy z czterech
+miejsc przy stole zajmują tu boty.
+
+![Chińczyk: telefon gracza i ekran hosta obok siebie](docs/screenshots/chinczyk.webp)
+
 ## Gry
 
 | Gra | Opis | Gracze |
@@ -71,6 +79,7 @@ Otwierasz go z lobby; gracze zostają przy swoich telefonach.
 | **Odcień** | Zapamiętaj kolor. Odtwórz go z pamięci trzema suwakami. | 1–16 |
 | **Kasyno** | Obstawiaj żetony. Kto zostanie z pustymi rękami, odpada. 4 tryby: Jackpot, Double, Wheel, Sloty. | 2–16 |
 | **Kółko i krzyżyk** | Klasyk na trzy w rzędzie. Wygrany zostaje przy stole, reszta czeka w kolejce. | 2–16 |
+| **Chińczyk** | Wyrzuć szóstkę, wyjdź z bazy i zbij kogo się da. Brakuje ludzi? Zagraj z botami. | 2–4 |
 
 > **Stoper ma dwa tryby.** W **CEL** wszyscy dostają ten sam czas do trafienia i zatrzymują stoper
 > u siebie - cyfry są zamaskowane, liczysz w głowie. W **ZGADNIJ CZAS** jeden gracz jest Biegaczem
@@ -94,6 +103,7 @@ Otwierasz go z lobby; gracze zostają przy swoich telefonach.
 - **Tryb widza** - `?widz=1` wpuszcza do pokoju na podgląd, bez zajmowania miejsca, w każdej grze
 - **Pokoje publiczne** - host otwiera pokój dla obcych jednym przełącznikiem w lobby i zamyka go, gdy skład się skompletuje. Lista pokazuje, ilu czeka i jak dawno pokój stoi otwarty, a odsiewa pokoje pełne, w trakcie gry i porzucone
 - **Zasady gier** - modal z krokami dla każdej gry
+- **Boty** - brakuje ludzi do chińczyka? Host dosadza komputerowego gracza w lobby. Bot gra rozsądnie: bije, gdy może, kończy pionki i chowa się na pola bezpieczne. Gry, które nie umieją grać z botem, nie pokazują tej opcji, a przełączenie się na taką sprząta boty ze stołu
 - **Rekordy pokoju** - kto ile wygrał i lista wyczynów, trwałe przez cały czas życia pokoju
 - **Wolne miejsca** - lobby pokazuje puste sloty, żeby czekający host nie patrzył na jeden wiersz i pustkę
 - **Zakładki teczkowe** - zakładanie i dołączanie to dwie zakładki jednego formularza; nick i awatar przeżywają przełączenie
@@ -148,7 +158,7 @@ Otwierasz go z lobby; gracze zostają przy swoich telefonach.
 | Autoryzacja | Firebase Anonymous Auth |
 | Serwer | Route Handlers + `firebase-admin` |
 | PWA | Serwist (Service Worker, manifest, offline) |
-| Testy | Vitest (307 testów - pełne partie, bezpieczeństwo, kontrakty rdzenia) |
+| Testy | Vitest (395 testów - pełne partie, bezpieczeństwo, kontrakty rdzenia) |
 | Deploy | Vercel (auto-deploy z GitHub) |
 | Dźwięki | Web Audio API (zero plików audio) |
 | QR | `qrcode` (generowanie SVG) |
@@ -336,7 +346,7 @@ Ta sama lista z komentarzami jest w [`.env.local.example`](.env.local.example).
 npm run dev        # serwer deweloperski (localhost:3000)
 npm run build      # produkcyjny build
 npm run lint       # eslint
-npm run test       # vitest run (307 testów)
+npm run test       # vitest run (395 testów)
 ```
 
 ## Instalacja na telefonie (PWA)

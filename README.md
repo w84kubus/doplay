@@ -21,7 +21,7 @@
   <img src="https://img.shields.io/badge/PWA-installable-5A0FC8?logo=pwa&logoColor=white" alt="PWA" />
   <img src="https://img.shields.io/badge/i18n-PL%20%C2%B7%20EN-7CF0AE" alt="Polish and English" />
   <img src="https://img.shields.io/badge/multiplayer-realtime-E4002B" alt="Multiplayer Realtime" />
-  <img src="https://img.shields.io/badge/tests-307-7CF0AE?logo=vitest&logoColor=black" alt="307 tests" />
+  <img src="https://img.shields.io/badge/tests-395-7CF0AE?logo=vitest&logoColor=black" alt="395 tests" />
 </p>
 
 ---
@@ -66,6 +66,14 @@ Open it from the lobby; players keep their own phones.
 
 ![Host screen on a TV: room code M2R5, QR code and five players](docs/screenshots/ekran-tv.webp)
 
+### Ludo, on the phone and on the TV
+
+The same round from both sides: your own board with the pieces you may move, and the shared
+screen with whose turn it is and how many pieces each player has brought home. Three of the
+four seats here are bots.
+
+![Ludo: the player's phone and the host screen side by side](docs/screenshots/chinczyk.webp)
+
 ## Games
 
 | Game | Description | Players |
@@ -78,6 +86,7 @@ Open it from the lobby; players keep their own phones.
 | **Shade** | Memorise the colour. Rebuild it from memory with three sliders. | 1–16 |
 | **Casino** | Bet your chips. Run out and you're out. 4 modes: Jackpot, Double, Wheel, Slots. | 2–16 |
 | **Tic-tac-toe** | Three in a row. The winner keeps the table, the rest queue up to take it. | 2–16 |
+| **Ludo** | Roll a six, leave the base and knock the others home. Play against bots if you are short of people. | 2–4 |
 
 > **Stopwatch has two modes.** In **TARGET**, everyone gets the same time to hit and stops the
 > clock on their own device - the digits are masked, so you count in your head. In **GUESS THE
@@ -101,7 +110,9 @@ Open it from the lobby; players keep their own phones.
 - **Avatars** - 30 illustrated characters on colored tiles, every one a face that looks back at you; no two people in a room get the same one
 - **Spectator mode** - `?widz=1` gets you into the room to watch without taking a seat, in any game
 - **Public rooms** - the host opens the room to strangers with one switch in the lobby, and closes it again once the group is complete. The list shows how many are waiting and how long the room has been open, and drops rooms that are full, mid-game or abandoned
-- **Game rules** - modal with steps for each game
+- **Bots** - short of people for Ludo? The host seats a computer player in the lobby. It plays a
+  reasonable game: captures when it can, brings pieces home, hides on safe squares. Games that
+  cannot use a bot don't offer the option, and switching to one clears the bots off the table
 - **Room records** - who won how many times plus a list of feats, persistent for the room's lifetime
 - **Empty slots** - the lobby shows free seats, so a host waiting alone isn't staring at one row and a void
 - **Folder tabs** - creating and joining are two tabs of one form; nickname and avatar survive the switch
@@ -156,7 +167,7 @@ Open it from the lobby; players keep their own phones.
 | Auth | Firebase Anonymous Auth |
 | Server | Route Handlers + `firebase-admin` |
 | PWA | Serwist (Service Worker, manifest, offline) |
-| Tests | Vitest (307 tests - full playthroughs, security, core contracts) |
+| Tests | Vitest (395 tests - full playthroughs, security, core contracts) |
 | Deploy | Vercel (auto-deploy from GitHub) |
 | Sound | Web Audio API (zero audio files) |
 | QR | `qrcode` (SVG generation) |
@@ -347,7 +358,7 @@ See [`.env.local.example`](.env.local.example) for the same list with comments.
 npm run dev        # dev server (localhost:3000)
 npm run build      # production build
 npm run lint       # eslint
-npm run test       # vitest run (307 tests)
+npm run test       # vitest run (395 tests)
 ```
 
 ## Installing on a phone (PWA)

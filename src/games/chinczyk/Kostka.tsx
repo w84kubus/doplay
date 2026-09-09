@@ -31,6 +31,18 @@ const OCZKA: Record<number, number[]> = {
 
 /** Ile trwa potrząsanie, zanim kostka pokaże wynik. */
 const TURLANIE_MS = 700;
+/**
+ * Twardy sufit potrząsania.
+ *
+ * Poprzednia poprawka gasiła animację w efekcie od `wartosc` - ale ten efekt URUCHAMIA SIĘ
+ * TYLKO WTEDY, GDY WARTOŚĆ SIĘ ZMIENI. A ona potrafi się nie zmienić: rzut bez legalnego
+ * ruchu ZOSTAWIA wynik na kostce i oddaje turę, więc kolejny gracz, który wyrzuci tę samą
+ * liczbę, dostaje `wartosc` identyczną jak przed kliknięciem. Efekt nie startował, nic nie
+ * gasiło potrząsania i kostka kręciła się aż do wygaśnięcia tury.
+ *
+ * Dlatego animacja ma teraz własny termin, niezależny od tego, czy cokolwiek się zmieniło.
+ */
+const SUFIT_TURLANIA_MS = 1500;
 const ODBICIE_MS = 220;
 /** Jak szybko przeskakują ścianki w trakcie potrząsania. */
 const PRZESKOK_MS = 70;
@@ -72,15 +84,22 @@ export function Kostka({
 
   // Klik już poleciał na serwer, wynik jeszcze nie wrócił — potrząsamy od razu,
   // żeby gracz widział reakcję, zanim przyjdzie odpowiedź.
-  //
-  // Gaszenie przy `kreci === false` jest tu równie ważne jak zapalanie. Bez niego
-  // potrząsanie zostawało zapalone na zawsze, gdy po akcji kostka gasła (`wartosc`
-  // idzie w null i efekt niżej wychodzi wcześniej) — a to jest zwykły przebieg po
-  // KAŻDYM ruchu pionkiem.
   useEffect(() => {
     if (bezRuchu()) return;
     if (kreci) setTurla(true);
   }, [kreci]);
+
+  // Bezpiecznik: potrząsanie ZAWSZE ma koniec, choćby wynik nigdy nie przyszedł albo
+  // przyszedł identyczny jak poprzedni. Termin liczy się od zapalenia animacji i odnawia
+  // przy zmianie wartości, więc normalny rzut i tak gasi się wcześniej, po TURLANIE_MS.
+  useEffect(() => {
+    if (!turla) return;
+    const id = window.setTimeout(() => {
+      setTurla(false);
+      if (wartosc != null) setPokazywana(wartosc);
+    }, SUFIT_TURLANIA_MS);
+    return () => clearTimeout(id);
+  }, [turla, wartosc]);
 
   useEffect(() => {
     const zastane = pierwszy.current;

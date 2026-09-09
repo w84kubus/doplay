@@ -224,6 +224,46 @@ describe("chińczyk — widoczność rzutu", () => {
   });
 });
 
+describe("chińczyk — ta sama liczba dwa razy pod rząd", () => {
+  it("kostka NIE zmienia wartości między turami, gdy obaj wyrzucą to samo", () => {
+    // To jest wejście, które wywracało animację kostki: widok dostaje `wartosc` identyczną
+    // jak przed kliknięciem, więc efekt reagujący na ZMIANĘ wartości w ogóle nie startuje.
+    // Bierze się to stąd, że rzut bez legalnego ruchu zostawia wynik na kostce i oddaje turę.
+    const s = nowaGra(2); // wszystkie pionki w bazie, więc 3 nie daje żadnego ruchu
+    const pierwszy = rzuc(s, s.sloty[s.tura]!, 3);
+    expect(pierwszy.kostka).toBe(3);
+
+    const drugi = rzuc(pierwszy, pierwszy.sloty[pierwszy.tura]!, 3);
+    expect(drugi.kostka).toBe(3); // ta sama liczba, choć to inny gracz i inny rzut
+    expect(drugi.tura).not.toBe(pierwszy.tura);
+  });
+});
+
+describe("chińczyk — szóstka a wyjście z bazy", () => {
+  it("szóstka wypuszcza KAŻDY pionek z bazy, także gdy jeden już chodzi po planszy", () => {
+    // Układ ze zgłoszenia: trzy pionki w bazie, jeden na trasie, na kostce szóstka.
+    const s0 = nowaGra(2);
+    const k = s0.tura;
+    const s = { ...s0, phase: "rzut" as const, pionki: ustaw(s0.pionki, k, [12, W_BAZIE, W_BAZIE, W_BAZIE]) };
+    const po = rzuc(s, s.sloty[k]!, 6);
+
+    expect(po.phase).toBe("ruch");
+    expect(po.kostka).toBe(6);
+    const widok = chinczykEngine.publicView(po, {}) as { ruchy: number[] };
+    // Wszystkie cztery: ten z trasy i trzy z bazy.
+    expect(widok.ruchy.sort()).toEqual([0, 1, 2, 3]);
+  });
+
+  it("bez szóstki pionki z bazy NIE są do ruszenia", () => {
+    const s0 = nowaGra(2);
+    const k = s0.tura;
+    const s = { ...s0, phase: "rzut" as const, pionki: ustaw(s0.pionki, k, [12, W_BAZIE, W_BAZIE, W_BAZIE]) };
+    const po = rzuc(s, s.sloty[k]!, 3);
+    const widok = chinczykEngine.publicView(po, {}) as { ruchy: number[] };
+    expect(widok.ruchy).toEqual([0]); // tylko ten, który już chodzi
+  });
+});
+
 describe("chińczyk — zbicia", () => {
   it("wejście na cudzy pionek odsyła go do bazy", () => {
     let s = nowaGra(2);

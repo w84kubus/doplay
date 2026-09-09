@@ -48,11 +48,11 @@ export function ChinczykPlayerView({ publicState, meUid, dispatch, accent }: Gam
   // ---- WYBÓR KOLORU ----
   if (pub.phase === "kolory") {
     return (
-      <div className="flex w-full max-w-md flex-col items-center gap-4">
+      <div className="flex w-full flex-col items-center gap-4">
         <p className="font-display text-lg font-bold uppercase tracking-[0.06em] text-ink">
           {t("chinczyk.pickColour")}
         </p>
-        <div className="grid w-full grid-cols-2 gap-3">
+        <div className="grid w-full max-w-md grid-cols-2 gap-3">
           {pub.doWyboru.map((k) => {
             const zajety = pub.sloty[k].uid;
             const moj = zajety === meUid;
@@ -82,7 +82,16 @@ export function ChinczykPlayerView({ publicState, meUid, dispatch, accent }: Gam
   const barwaTury = BARWY[pub.tura] ?? accent;
 
   return (
-    <div className="flex w-full max-w-md flex-col items-center gap-4">
+    // JEDNA kolumna o wspólnej szerokości: pasek tury, plansza i strefa akcji mają być
+    // tak samo szerokie i wyśrodkowane. Szerokość bierze się z WYSOKOŚCI okna, bo plansza
+    // jest kwadratem - na niskim oknie (laptop w poziomie) inaczej spycha kostkę
+    // i przycisk pod zgięcie. Dolna granica pilnuje, żeby przy bardzo niskim oknie
+    // kolumna nie zrobiła się absurdalnie wąska.
+    <div className="flex w-full flex-col items-center gap-4">
+      <div
+        className="flex w-full flex-col items-center gap-4"
+        style={{ maxWidth: "min(100%, max(20rem, 50dvh))" }}
+      >
       {/* Czyja tura. Kolor paska mówi to szybciej niż tekst. */}
       <div
         className="font-display flex w-full items-center justify-center gap-2 rounded-[14px] border-[3px] border-stroke px-4 py-2 text-sm font-bold uppercase tracking-[0.06em]"
@@ -95,11 +104,6 @@ export function ChinczykPlayerView({ publicState, meUid, dispatch, accent }: Gam
             : t("chinczyk.turnOf", { nick: pub.sloty[pub.tura]?.nick ?? "" })}
       </div>
 
-      {/* Plansza jest kwadratem, więc na NISKIM oknie (laptop w poziomie) potrafi zepchnąć
-          kostkę i przycisk pod zgięcie. Ograniczenie szerokości wysokością okna pilnuje,
-          żeby cała tura mieściła się na ekranie bez przewijania. Na telefonie nic nie
-          zmienia: kolumna i tak jest węższa niż ten limit. */}
-      <div className="w-full" style={{ maxWidth: "min(100%, 50dvh)" }}>
       <Plansza
         pionki={pub.pionki}
         sloty={pub.sloty.map((s) => s.uid)}
@@ -108,7 +112,6 @@ export function ChinczykPlayerView({ publicState, meUid, dispatch, accent }: Gam
         mojKolor={mojKolor >= 0 ? mojKolor : null}
         onPionek={(pionek) => wyslij({ type: "RUSZ", pionek })}
       />
-      </div>
 
       {!koniecPartii && (
         // Strefa akcji ma STAŁĄ wysokość, mimo że jej zawartość zmienia się co pół tury.
@@ -146,6 +149,7 @@ export function ChinczykPlayerView({ publicState, meUid, dispatch, accent }: Gam
           </p>
         </div>
       )}
+      </div>
     </div>
   );
 }

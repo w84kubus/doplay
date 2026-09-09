@@ -180,7 +180,12 @@ export function Plansza({ pionki, sloty, tura, ruchy = [], mojKolor = null, onPi
       {/* Bazy: pełne 6x6 kratek w kącie. Wcześniej rysowałem je z przesunięciem 0,4
           jednostki do środka, więc nachodziły na pierwszą kolumnę trasy i zostawiały
           szparę przy krawędzi — plansza wyglądała na krzywo osadzoną, bo była. */}
-      {ROG_BAZY.map(([kx, ky], kolor) => (
+      {ROG_BAZY.map(([kx, ky], kolor) => {
+        // Kolor bez gracza NIE dostaje bazy. Przygaszona wersja i tak zajmowała całą
+        // ćwiartkę, więc przy dwóch graczach połowa planszy była martwym, szarym slabem
+        // ciągnącym wzrok. Puste miejsce czyta się jako „tu nikt nie gra" od razu.
+        if (!sloty[kolor]) return null;
+        return (
         <div
           key={`baza-${kolor}`}
           className="absolute rounded-[16px] border-[3px]"
@@ -188,7 +193,6 @@ export function Plansza({ pionki, sloty, tura, ruchy = [], mojKolor = null, onPi
             ...kratka(kx, ky, 6),
             borderColor: BARWY[kolor],
             background: `color-mix(in srgb, ${BARWY[kolor]} 72%, transparent)`,
-            opacity: sloty[kolor] ? 1 : 0.3,
           }}
         >
           {BAZY[kolor].map((m, i) => (
@@ -208,11 +212,14 @@ export function Plansza({ pionki, sloty, tura, ruchy = [], mojKolor = null, onPi
             />
           ))}
         </div>
-      ))}
+        );
+      })}
 
       {/* Trasa. Pole startowe dostaje barwę właściciela, „globus" jaśniejszą obwódkę. */}
       {TRASA.map((p, i) => {
-        const wlasciciel = [0, 1, 2, 3].find((k) => poleStartowe(k).x === p.x && poleStartowe(k).y === p.y);
+        const wl = [0, 1, 2, 3].find((k) => poleStartowe(k).x === p.x && poleStartowe(k).y === p.y);
+        // Pole startowe koloru, którym nikt nie gra, jest zwykłym polem trasy.
+        const wlasciciel = wl !== undefined && sloty[wl] ? wl : undefined;
         const bezpieczne = BEZPIECZNE.has(i);
         return (
           <div
@@ -241,9 +248,11 @@ export function Plansza({ pionki, sloty, tura, ruchy = [], mojKolor = null, onPi
             className="absolute rounded-[28%] border-2"
             style={{
               ...kratka(p.x, p.y),
-              borderColor: BARWY[kolor],
-              background: `color-mix(in srgb, ${BARWY[kolor]} 88%, transparent)`,
-              opacity: sloty[kolor] ? 1 : 0.3,
+              // Korytarz bez gracza to zwykłe pole planszy, nie przygaszona kolorowa smuga.
+              borderColor: sloty[kolor] ? BARWY[kolor] : "rgb(255 255 255 / 0.24)",
+              background: sloty[kolor]
+                ? `color-mix(in srgb, ${BARWY[kolor]} 88%, transparent)`
+                : "rgb(255 255 255 / 0.20)",
             }}
           />
         )),
@@ -267,7 +276,7 @@ export function Plansza({ pionki, sloty, tura, ruchy = [], mojKolor = null, onPi
             style={{
               clipPath: ksztalt,
               background: BARWY[kolor],
-              opacity: sloty[kolor] ? 0.75 : 0.18,
+              opacity: sloty[kolor] ? 0.75 : 0,
             }}
           />
         ))}

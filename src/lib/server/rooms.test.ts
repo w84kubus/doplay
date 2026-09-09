@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isConnected, newPlayer, pickNewHost, samiLudzie } from "./rooms";
+import { isConnected, maBota, newPlayer, pickNewHost, samiLudzie } from "./rooms";
 import { DISCONNECT_AFTER_MS, type Player, type PlayerMap } from "@/lib/types/room";
 
 function mkPlayers(now: number): PlayerMap {
@@ -60,5 +60,24 @@ describe("boty w pokoju", () => {
     const players: PlayerMap = { bot_1: bot("bot_1"), bot_2: bot("bot_2", 1) };
     expect(samiLudzie(players)).toHaveLength(0);
     expect(pickNewHost(players, ["bot_1"], "kto-inny", 100)).toBeNull();
+  });
+});
+
+describe("wykrywanie botów w składzie", () => {
+  const czlowiek = (uid: string): Player => ({
+    uid, nick: uid, avatar: "cat", joinedAt: 0, isHost: false,
+    connected: true, lastSeenAt: 0, totalScore: 0,
+  });
+  const bot = (uid: string): Player => ({ ...czlowiek(uid), bot: true });
+
+  it("pusty pokój i sami ludzie to brak botów", () => {
+    expect(maBota({})).toBe(false);
+    expect(maBota({ a: czlowiek("a"), b: czlowiek("b") })).toBe(false);
+  });
+
+  it("jeden bot wśród ludzi wystarczy", () => {
+    // Na tym stoi bramka w `startGame`: gra bez `wspieraBoty` nie ruszy, gdy w pokoju
+    // został bot z poprzedniej partii. Inaczej dostałby rolę i nigdy nic nie zrobił.
+    expect(maBota({ a: czlowiek("a"), bot_1: bot("bot_1") })).toBe(true);
   });
 });

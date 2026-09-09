@@ -21,7 +21,7 @@ import { useRoom } from "@/hooks/useRoom";
 import { usePresence } from "@/hooks/usePresence";
 import { LobbySkeleton } from "@/components/LobbySkeleton";
 import { SpectatorRoom } from "@/components/SpectatorRoom";
-import { apiPost } from "@/lib/client/api";
+import { apiDelete, apiPost } from "@/lib/client/api";
 import { normalizeRoomCode } from "@/lib/room-code";
 import { useSession } from "@/lib/store/session";
 import { GAME_LIST } from "@/games/manifests";
@@ -63,6 +63,30 @@ export default function LobbyPage() {
       setActiveRoom({ code: room.code, nick });
     }
   }, [amMember, room, uid, code, setActiveRoom]);
+
+  // Zmiana gry na taką, która nie gra z botami, sprząta stół sama.
+  //
+  // Bez tego bot zostawał w składzie i dowiadywałeś się o nim dopiero przy „Zaczynamy",
+  // bo `startGame` odmawia startu takiej gry z botem w pokoju. Wolimy zabrać go od razu,
+  // gdy widać, po co był, niż wyświetlić błąd trzy kliknięcia później.
+  //
+  // Warunek pilnuje, żeby nie zapętlić się na jednym żądaniu: po skasowaniu botów lista
+  // graczy przychodzi z Firestore już bez nich i efekt nie ma czego robić.
+  const sprzatanieBotow = useRef(false);
+  useEffect(() => {
+    if (!room || !uid || room.hostUid !== uid || room.status !== "lobby") return;
+    const gra = GAME_LIST.find((g) => g.id === gameId);
+    if (!gra || gra.wspieraBoty) return;
+    if (!Object.values(room.players).some((p) => p.bot)) return;
+    if (sprzatanieBotow.current) return;
+
+    sprzatanieBotow.current = true;
+    apiDelete(`/api/rooms/${room.code}/bot`, { wszystkie: true })
+      .catch(() => {})
+      .finally(() => {
+        sprzatanieBotow.current = false;
+      });
+  }, [room, uid, gameId]);
 
   // Rozróżniamy „nigdy nie dołączył" (→ ekran dołączania) od „wyrzucony/wyszedł" (→ start).
   const wasMemberRef = useRef(false);
@@ -212,8 +236,9 @@ export default function LobbyPage() {
           minSlots={zaMaloGraczy ? 0 : 4}
         />
 
-        {/* Boty. Tylko host i tylko w lobby — po starcie skład jest zamknięty. */}
-        {isHost && room.status === "lobby" && (
+        {/* Boty. Tylko host, tylko w lobby i tylko w grze, która je obsługuje.
+            Rdzeń nie wie, że chodzi o Chińczyka — pyta manifest o `wspieraBoty`. */}
+        {isHost && room.status === "lobby" && wybrana?.wspieraBoty && (
           <BotControls
             code={room.code}
             ilu={Object.values(room.players).filter((p) => p.bot).length}

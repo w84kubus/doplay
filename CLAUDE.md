@@ -261,6 +261,17 @@ bezpieczne, nie liczy wariantów w głąb.
 Przycisk w lobby jest ograniczony limitem WYBRANEJ gry, nie `MAX_W_POKOJU` — inaczej host
 dosadziłby chińczykowi piętnaście botów i dowiedziałby się o tym przy „Zaczynamy".
 
+**Boty są opt-inem manifestu (`wspieraBoty`), nie funkcją całego rdzenia.** Bot rusza się
+tylko tam, gdzie silnik przy `PHASE_TIMEOUT` gra ZA nieobecnego. Dziś deklaruje to wyłącznie
+Chińczyk. W Stoperze, Państwach-miastach, Odcieniu i Kasynie termin tylko przewija fazę, więc
+bot byłby milczącym miejscem przy stole; w Mafii i Impostorze wręcz szkodliwym — rolą, która
+nigdy nie zadziała. Przycisk nie pokazuje się bez tej deklaracji, a `startGame` odmawia startu
+gry bez `wspieraBoty`, gdy w pokoju został bot z POPRZEDNIEJ partii.
+
+`games/boty.test.ts` pilnuje kontraktu na całym rejestrze, ale łapie tylko część przypadków
+(Mafię, Impostora, Wisielca) — zasięg opisany w samym pliku. Przy dokładaniu botów do kolejnej
+gry czyta się jej `PHASE_TIMEOUT`, a nie zielony test.
+
 ### Faza, która czeka na gracza, musi mieć termin
 
 `phaseEndsAt: null` w fazie, która czeka na akcję konkretnych ludzi, to zakleszczenie.

@@ -11,6 +11,11 @@ export function isConnected(player: Player, now: number): boolean {
   return now - player.lastSeenAt < DISCONNECT_AFTER_MS;
 }
 
+/** Czy w pokoju siedzi choć jeden bot. */
+export function maBota(players: PlayerMap): boolean {
+  return Object.values(players).some((p) => p.bot === true);
+}
+
 /** Czy w pokoju został jeszcze ktokolwiek żywy. Pokój z samymi botami jest pusty. */
 export function samiLudzie(players: PlayerMap): Player[] {
   return Object.values(players).filter((p) => !p.bot);

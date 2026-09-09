@@ -56,10 +56,15 @@ export async function POST(req: Request, ctx: { params: Promise<{ code: string }
   }
 }
 
+// Body: { wszystkie?: boolean }. Bez tego pola wychodzi jeden bot — ostatnio dosadzony,
+// czyli odwrotność kliknięcia „dodaj". Z `wszystkie` wychodzą wszystkie naraz, jednym
+// zapisem: tak lobby sprząta stół po przełączeniu na grę, która botów nie obsługuje.
 export async function DELETE(req: Request, ctx: { params: Promise<{ code: string }> }) {
   try {
     const uid = await requireUid(req);
     const code = codeParamSchema.parse((await ctx.params).code);
+    const body = await req.json().catch(() => ({}));
+    const wszystkie = body?.wszystkie === true;
     const db = getAdminDb();
     const ref = db.doc(`rooms/${code}`);
 
@@ -76,13 +81,18 @@ export async function DELETE(req: Request, ctx: { params: Promise<{ code: string
       const boty = Object.values(room.players)
         .filter((p) => p.bot)
         .sort((a, b) => b.joinedAt - a.joinedAt);
-      if (!boty.length) throw new ApiError(409, "W tym pokoju nie ma botów.");
+      // Sprzątanie po zmianie gry ma być IDEMPOTENTNE: pusty pokój nie jest błędem,
+      // bo lobby wysyła to żądanie samo i nie ma komu pokazać komunikatu.
+      if (!boty.length) {
+        if (wszystkie) return;
+        throw new ApiError(409, "W tym pokoju nie ma botów.");
+      }
 
-      zabrany = boty[0].uid;
-      t.update(ref, {
-        [`players.${zabrany}`]: FieldValue.delete(),
-        version: room.version + 1,
-      });
+      const doZabrania = wszystkie ? boty : [boty[0]];
+      zabrany = doZabrania.map((b) => b.uid).join(",");
+      const update: Record<string, unknown> = { version: room.version + 1 };
+      for (const b of doZabrania) update[`players.${b.uid}`] = FieldValue.delete();
+      t.update(ref, update);
     });
 
     return NextResponse.json({ uid: zabrany });

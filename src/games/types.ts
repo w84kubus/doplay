@@ -92,6 +92,18 @@ export interface GameManifest<C = unknown> {
    * Nowa gra bez tego pola po prostu działa, tylko bez treningu (zasada 4).
    */
   soloPath?: string;
+  /**
+   * Czy do tej gry wolno dosadzić bota (SPEC: opt-in jak `soloPath`).
+   *
+   * Bot nie ma własnego napędu — jego ruch wykonuje `PHASE_TIMEOUT`. Gra nadaje się
+   * do gry z botem TYLKO wtedy, gdy jej silnik po upływie terminu gra ZA gracza,
+   * a nie po prostu przewija fazę. W większości gier bot byłby milczącym miejscem
+   * przy stole, a w Mafii i Impostorze wręcz szkodliwym: rolą, która nigdy nie działa.
+   *
+   * Rdzeń nie zna żadnej konkretnej gry — pyta manifest. Gra bez tego pola po prostu
+   * nie pokazuje przycisku dosadzania.
+   */
+  wspieraBoty?: boolean;
   estimatedMinutes: [number, number];
   defaultSettings: C;
   settingsSchema: ZodType<C>;

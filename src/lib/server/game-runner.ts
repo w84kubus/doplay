@@ -8,6 +8,7 @@ import { mulberry32, randomSeed, shuffle } from "@/games/rng";
 import { GameError, type GameEngine } from "@/games/types";
 import type { Room } from "@/lib/types/room";
 import { buildHighlights, winnersOf } from "./records";
+import { maBota } from "./rooms";
 
 // Runner gier (SPEC §3.1): JEDYNE miejsce, gdzie zapisuje się stan gry. Klient nigdy nie pisze.
 // Każda akcja: zweryfikuj → uruchom czysty reducer → zapisz public/private/secret/events.
@@ -138,6 +139,14 @@ export async function startGame(
 
     if (room.hostUid !== hostUid) throw new ApiError(403, "Tylko host może zacząć grę.");
     if (room.status !== "lobby") throw new ApiError(409, "Gra już trwa.");
+
+    // Bot nie ma własnego napędu: rusza się tylko wtedy, gdy silnik gra za nieobecnego
+    // przy PHASE_TIMEOUT. W grze, która tego nie robi, byłby milczącym miejscem przy
+    // stole - w Mafii albo Impostorze wręcz rolą, która nigdy nie zadziała. Przycisk
+    // dosadzania i tak się tam nie pokazuje, ale bot mógł zostać z POPRZEDNIEJ gry.
+    if (!manifest.wspieraBoty && maBota(room.players)) {
+      throw new ApiError(409, "Ta gra nie gra z botami - zabierz je z pokoju.");
+    }
 
     const count = Object.keys(room.players).length;
     if (count < manifest.minPlayers)

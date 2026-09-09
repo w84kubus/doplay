@@ -264,6 +264,54 @@ describe("chińczyk — szóstka a wyjście z bazy", () => {
   });
 });
 
+describe("chińczyk — trzy szóstki pod rząd", () => {
+  /** Rzuca i, jeśli wypadł ruch, wykonuje pierwszy legalny. */
+  const tura = (s: ChinczykState, oczka: number) => {
+    const uid = s.sloty[s.tura]!;
+    const po = rzuc(s, uid, oczka);
+    if (po.phase !== "ruch") return po;
+    const ruchy = (chinczykEngine.publicView(po, {}) as { ruchy: number[] }).ruchy;
+    return rusz(po, uid, ruchy[0]);
+  };
+
+  it("trzecia szóstka zabiera turę i mówi o tym wprost", () => {
+    const s0 = nowaGra(2);
+    const moj = s0.tura;
+    let s = tura(s0, 6);
+    expect(s.tura).toBe(moj); // szóstka daje dodatkowy rzut
+    s = tura(s, 6);
+    expect(s.tura).toBe(moj);
+    expect(s.szostki).toBe(2);
+
+    s = rzuc(s, s.sloty[moj]!, 6);
+    expect(s.tura).not.toBe(moj); // trzecia szóstka: tura przepada
+    // Bez tego pola zasada była niewidzialna: `szostki` wraca do zera, licznik gaśnie
+    // i z perspektywy gracza tura znika bez słowa.
+    expect(s.spalona).toBe(moj);
+    expect((chinczykEngine.publicView(s, {}) as { spalona: number | null }).spalona).toBe(moj);
+  });
+
+  it("dwie szóstki i zwykły rzut to normalna tura, bez komunikatu", () => {
+    const s0 = nowaGra(2);
+    const moj = s0.tura;
+    let s = tura(tura(s0, 6), 6);
+    s = rzuc(s, s.sloty[moj]!, 3);
+    expect(s.tura).toBe(moj);
+    expect(s.phase).toBe("ruch");
+    expect(s.spalona).toBeNull();
+    expect((chinczykEngine.publicView(s, {}) as { ruchy: number[] }).ruchy.length).toBeGreaterThan(0);
+  });
+
+  it("komunikat znika przy kolejnym rzucie", () => {
+    const s0 = nowaGra(2);
+    const moj = s0.tura;
+    let s = rzuc(tura(tura(s0, 6), 6), s0.sloty[moj]!, 6);
+    expect(s.spalona).toBe(moj);
+    s = rzuc(s, s.sloty[s.tura]!, 2);
+    expect(s.spalona).toBeNull();
+  });
+});
+
 describe("chińczyk — zbicia", () => {
   it("wejście na cudzy pionek odsyła go do bazy", () => {
     let s = nowaGra(2);

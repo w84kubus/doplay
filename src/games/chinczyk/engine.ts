@@ -94,6 +94,14 @@ export interface ChinczykState extends WithEvents {
   zbicia: number[];
   /** uid-y graczy sterowanych przez komputer. Kolory są im przydzielane jak ludziom. */
   botUidy: string[];
+  /**
+   * Kolor, któremu trzecia szóstka pod rząd właśnie zabrała turę, albo null.
+   *
+   * Bez tego pola zasada była NIEWIDZIALNA: tura znikała bez słowa, a licznik „szóstki
+   * pod rząd" gasł w tej samej chwili, bo `szostki` wraca do zera. Z perspektywy gracza
+   * wyglądało to jak zacięcie gry, nie jak przepis.
+   */
+  spalona: number | null;
   phase: Faza;
   phaseEndsAt: number | null;
   zwyciezca: number | null;
@@ -218,6 +226,7 @@ function rzut(s: ChinczykState, oczka: number, now: number): ChinczykState {
   if (szostki >= LIMIT_SZOSTEK) {
     return {
       ...oddajTure({ ...s, szostki }, now),
+      spalona: s.tura,
       pendingEvents: [
         { type: "szostki", text: `${KOLORY[s.tura]}: trzy szóstki, tura przepada`, key: "chinczyk.event.threeSixes" },
       ],
@@ -233,6 +242,7 @@ function rzut(s: ChinczykState, oczka: number, now: number): ChinczykState {
     // samej klatce, w której się zapaliła, i gracz nie wiedział, co wyrzucił.
     return {
       ...oddajTure({ ...s, szostki }, now),
+      spalona: null,
       kostka: oczka,
       pendingEvents: [
         { type: "pas", text: `${KOLORY[s.tura]}: brak ruchu przy ${oczka}`, key: "chinczyk.event.noMove", params: { oczka } },
@@ -240,7 +250,7 @@ function rzut(s: ChinczykState, oczka: number, now: number): ChinczykState {
     };
   }
 
-  return { ...s, kostka: oczka, szostki, phase: "ruch", phaseEndsAt: terminTury(s, now), pendingEvents: [] };
+  return { ...s, kostka: oczka, szostki, spalona: null, phase: "ruch", phaseEndsAt: terminTury(s, now), pendingEvents: [] };
 }
 
 /** Przesuwa pionek, zbija co trzeba i rozstrzyga, czy partia się kończy. */
@@ -323,6 +333,7 @@ export const chinczykEngine: GameEngine<ChinczykState, ChinczykAction, ChinczykS
       doWyboru,
       pionki: Array<number>(4 * PIONKOW).fill(W_BAZIE),
       botUidy: playerUids.filter((u) => ctx.players[u]?.bot === true),
+      spalona: null,
       tura: doWyboru[0],
       kostka: null,
       szostki: 0,
@@ -407,6 +418,7 @@ export const chinczykEngine: GameEngine<ChinczykState, ChinczykAction, ChinczykS
       turaUid: state.phase === "rzut" || state.phase === "ruch" ? state.sloty[state.tura] : null,
       kostka: state.kostka,
       szostki: state.szostki,
+      spalona: state.spalona,
       ruchy: state.phase === "ruch" && state.kostka ? legalneRuchy(pionkiKoloru(state.pionki, state.tura), state.kostka) : [],
       zwyciezca: state.zwyciezca,
       scores: state.scores,

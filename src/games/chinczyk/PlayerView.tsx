@@ -21,6 +21,8 @@ interface Pub {
   turaUid: string | null;
   kostka: number | null;
   szostki: number;
+  /** Kolor, któremu trzecia szóstka właśnie zabrała turę. */
+  spalona: number | null;
   ruchy: number[];
   zwyciezca: number | null;
   scores: Record<string, number>;
@@ -144,8 +146,18 @@ export function ChinczykPlayerView({ publicState, meUid, dispatch, accent }: Gam
             )}
           </div>
 
-          <p className={`text-xs font-semibold text-bursztyn ${mojaTura && pub.szostki > 0 ? "" : "invisible"}`}>
-            {t("chinczyk.sixes", { n: pub.szostki })}
+          {/* Dwa komunikaty w jednym miejscu, bo nigdy nie występują naraz: ostrzeżenie
+              przed trzecią szóstką ORAZ informacja, że właśnie zabrała turę. To drugie
+              było wcześniej niewidoczne - tura znikała bez słowa i wyglądało to na
+              zacięcie gry, a nie na przepis. */}
+          <p
+            className={`text-center text-xs font-semibold text-bursztyn ${
+              (mojaTura && pub.szostki > 0) || pub.spalona === mojKolor ? "" : "invisible"
+            }`}
+          >
+            {pub.spalona === mojKolor
+              ? t("chinczyk.burned")
+              : t("chinczyk.sixes", { n: pub.szostki })}
           </p>
         </div>
       )}

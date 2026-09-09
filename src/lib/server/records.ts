@@ -30,7 +30,12 @@ export function buildHighlights(
       gameId,
       uid: ev.meta!.uid as string,
       text: ev.text,
-      ...(ev.key ? { key: ev.key, params: ev.params } : {}),
+      // `params` DOKŁADAMY tylko wtedy, gdy naprawdę są. Firestore odrzuca `undefined`
+      // w zapisie, a zdarzenie z kluczem bez parametrów (np. „wygrał w pojedynkę") jest
+      // zupełnie normalne. Skutek był nieproporcjonalny do błędu: `update()` rzucał
+      // wyjątkiem, transakcja się cofała i KAŻDY kolejny zapis w tym pokoju powtarzał
+      // to samo — partia stawała w miejscu, a klient wyglądał na zawieszonego.
+      ...(ev.key ? { key: ev.key, ...(ev.params ? { params: ev.params } : {}) } : {}),
       at: now,
     }));
   if (!fresh.length) return null; // nic nowego — nie ruszamy pola w Firestore

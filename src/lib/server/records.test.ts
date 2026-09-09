@@ -87,3 +87,28 @@ describe("rekordy pokoju — zgłoszenia z silników", () => {
     expect(buildHighlights(zwykle, "mafia", 50)).toBeNull();
   });
 });
+
+describe("wyróżnienia — zgodność z Firestore", () => {
+  it("nie wystawia pola params, gdy zdarzenie go nie ma", () => {
+    // Firestore odrzuca `undefined` w zapisie. Zdarzenie z kluczem, ale bez parametrów
+    // („wygrał w pojedynkę", „wygrał bez straty pionka") jest normalne — a wystawienie
+    // `params: undefined` wywracało CAŁY zapis pokoju i zawieszało partię na dobre.
+    const wynik = buildHighlights(
+      [{ type: "rekord", text: "Wygrał w pojedynkę", key: "feat.mafia.solo", meta: { uid: "a", rekord: true } }],
+      "mafia",
+      1000,
+    );
+    expect(wynik).toHaveLength(1);
+    expect("params" in wynik![0]).toBe(false);
+    expect(JSON.stringify(wynik)).not.toContain("undefined");
+  });
+
+  it("parametry przechodzą, gdy zdarzenie je niesie", () => {
+    const wynik = buildHighlights(
+      [{ type: "rekord", text: "x", key: "feat.x", params: { n: 3 }, meta: { uid: "a", rekord: true } }],
+      "stoper",
+      1000,
+    );
+    expect(wynik![0].params).toEqual({ n: 3 });
+  });
+});

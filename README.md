@@ -21,7 +21,7 @@
   <img src="https://img.shields.io/badge/PWA-installable-5A0FC8?logo=pwa&logoColor=white" alt="PWA" />
   <img src="https://img.shields.io/badge/i18n-PL%20%C2%B7%20EN-7CF0AE" alt="Polish and English" />
   <img src="https://img.shields.io/badge/multiplayer-realtime-E4002B" alt="Multiplayer Realtime" />
-  <img src="https://img.shields.io/badge/tests-395-7CF0AE?logo=vitest&logoColor=black" alt="395 tests" />
+  <img src="https://img.shields.io/badge/tests-412-7CF0AE?logo=vitest&logoColor=black" alt="412 tests" />
 </p>
 
 ---
@@ -66,13 +66,13 @@ Open it from the lobby; players keep their own phones.
 
 ![Host screen on a TV: room code M2R5, QR code and five players](docs/screenshots/ekran-tv.webp)
 
-### Ludo, on the phone and on the TV
+### Ludo
 
-The same round from both sides: your own board with the pieces you may move, and the shared
-screen with whose turn it is and how many pieces each player has brought home. Three of the
-four seats here are bots.
+The board, the die and the pieces you are allowed to move this turn. Colours with nobody on
+them take up no room - with two players you get two quarters and a clean board. The second
+seat here is a bot, added in the lobby with one tap.
 
-![Ludo: the player's phone and the host screen side by side](docs/screenshots/chinczyk.webp)
+![Ludo on a phone: the board with pieces, the die and the roll button](docs/screenshots/chinczyk.webp)
 
 ## Games
 
@@ -235,7 +235,8 @@ src/
 │   ├── mafia/                  # 🔪 Mafia
 │   ├── odcien/                 # 🎨 Shade
 │   ├── kasyno/                 # 🎰 Casino
-│   └── kolko/                  # ⭕ Tic-tac-toe
+│   ├── kolko/                  # ⭕ Tic-tac-toe
+│   └── chinczyk/               # 🎲 Ludo (engine, board geometry, bot)
 │
 ├── components/                 # React components
 │   ├── game/                   # GameShell, LobbyGames, GameRulesCard

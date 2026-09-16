@@ -20,7 +20,7 @@
   <img src="https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind v4" />
   <img src="https://img.shields.io/badge/PWA-instalowalna-5A0FC8?logo=pwa&logoColor=white" alt="PWA" />
   <img src="https://img.shields.io/badge/multiplayer-realtime-E4002B" alt="Multiplayer Realtime" />
-  <img src="https://img.shields.io/badge/testy-395-7CF0AE?logo=vitest&logoColor=black" alt="395 testów" />
+  <img src="https://img.shields.io/badge/testy-412-7CF0AE?logo=vitest&logoColor=black" alt="412 testów" />
 </p>
 
 ---
@@ -59,13 +59,13 @@ Otwierasz go z lobby; gracze zostają przy swoich telefonach.
 
 ![Ekran hosta na telewizorze: kod pokoju M2R5, kod QR i pięcioro graczy](docs/screenshots/ekran-tv.webp)
 
-### Chińczyk, na telefonie i na telewizorze
+### Chińczyk
 
-Ta sama tura z dwóch stron: własna plansza z pionkami, którymi wolno się ruszyć, i wspólny
-ekran z informacją, czyja jest kolej i ile pionków każdy doprowadził do domu. Trzy z czterech
-miejsc przy stole zajmują tu boty.
+Plansza, kostka i pionki, którymi wolno się w tej turze ruszyć. Kolory bez gracza nie zajmują
+miejsca - przy dwóch osobach zostają dwie ćwiartki i czysta plansza. Drugie miejsce przy stole
+zajmuje tu bot, dosadzony w lobby jednym kliknięciem.
 
-![Chińczyk: telefon gracza i ekran hosta obok siebie](docs/screenshots/chinczyk.webp)
+![Chińczyk na telefonie: plansza z pionkami, kostka i przycisk rzutu](docs/screenshots/chinczyk.webp)
 
 ## Gry
 
@@ -223,7 +223,8 @@ src/
 │   ├── mafia/                  # 🔪 Mafia
 │   ├── odcien/                 # 🎨 Odcień
 │   ├── kasyno/                 # 🎰 Kasyno
-│   └── kolko/                  # ⭕ Kółko i krzyżyk
+│   ├── kolko/                  # ⭕ Kółko i krzyżyk
+│   └── chinczyk/               # 🎲 Chińczyk (silnik, geometria planszy, bot)
 │
 ├── components/                 # Komponenty React
 │   ├── game/                   # GameShell, LobbyGames, GameRulesCard

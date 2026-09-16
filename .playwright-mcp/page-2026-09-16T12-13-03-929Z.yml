@@ -1,0 +1,56 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - heading "Nowy pokój" [level=1] [ref=e4]
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - link "Nowy pokój" [ref=e9] [cursor=pointer]:
+            - /url: /nowy
+          - link "Dołącz" [ref=e10] [cursor=pointer]:
+            - /url: /dolacz
+          - link "Publiczne" [ref=e11] [cursor=pointer]:
+            - /url: /publiczne
+        - generic [ref=e12]:
+          - generic [ref=e13]:
+            - generic [ref=e14]: Twój nick
+            - textbox "Twój nick" [ref=e15]:
+              - /placeholder: np. Damian
+              - text: Jakub
+          - generic [ref=e16]:
+            - generic [ref=e17]: Awatar
+            - button "Losuj" [ref=e21]
+            - radiogroup "Wybierz awatar" [ref=e25]:
+              - radio "Awatar cat" [checked] [ref=e26]
+              - radio "Awatar dog" [ref=e28]
+              - radio "Awatar rabbit" [ref=e30]
+              - radio "Awatar panda" [ref=e32]
+              - radio "Awatar squirrel" [ref=e34]
+              - radio "Awatar rat" [ref=e36]
+              - radio "Awatar lion" [ref=e38]
+              - radio "Awatar tiger" [ref=e40]
+              - radio "Awatar giraffe" [ref=e42]
+              - radio "Awatar sloth" [ref=e44]
+              - radio "Awatar bird" [ref=e46]
+              - radio "Awatar owl" [ref=e48]
+              - radio "Awatar penguin" [ref=e50]
+              - radio "Awatar bee" [ref=e52]
+              - radio "Awatar bug" [ref=e54]
+              - radio "Awatar bat" [ref=e56]
+              - radio "Awatar fish" [ref=e58]
+              - radio "Awatar shark" [ref=e60]
+              - radio "Awatar turtle" [ref=e62]
+              - radio "Awatar frog" [ref=e64]
+              - radio "Awatar octopus" [ref=e66]
+              - radio "Awatar jellyfish" [ref=e68]
+              - radio "Awatar crab" [ref=e70]
+              - radio "Awatar snail" [ref=e72]
+              - radio "Awatar worm" [ref=e74]
+              - radio "Awatar unicorn" [ref=e76]
+              - radio "Awatar dragon" [ref=e78]
+              - radio "Awatar ghost" [ref=e80]
+              - radio "Awatar bot" [ref=e82]
+              - radio "Awatar skull" [ref=e84]
+      - button "Zakładam pokój" [ref=e86] [cursor=pointer]
+      - link "← wróć" [ref=e87] [cursor=pointer]:
+        - /url: /
+  - alert [ref=e88]

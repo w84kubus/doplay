@@ -1,0 +1,13 @@
+- main [ref=f1e2]:
+  - generic [ref=f1e3]:
+    - generic [ref=f1e4]:
+      - generic [ref=f1e5]: Dołącz do pokoju
+      - button "Kod pokoju J J N Y. Kliknij, żeby skopiować." [ref=f1e7] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f1e8]: J
+        - generic [aria-hidden] [ref=f1e9]: J
+        - generic [aria-hidden] [ref=f1e10]: "N"
+        - generic [aria-hidden] [ref=f1e11]: "Y"
+      - generic [ref=f1e14]: doplay.pl
+    - generic [ref=f1e15]:
+      - heading "Gracze (0)" [level=2] [ref=f1e16]
+      - paragraph [ref=f1e17]: Zaproś znajomych i zaczynajcie.

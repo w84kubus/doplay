@@ -64,7 +64,7 @@ The interface switches whole: nothing is left half-translated.
 A separate landscape layout for a laptop or TV - huge room code, QR to scan, and who's already in.
 Open it from the lobby; players keep their own phones.
 
-![Host screen on a TV: room code M2R5, QR code and five players](docs/screenshots/ekran-tv.webp)
+![Host screen on a TV: room code 2GQ7, QR code and five players](docs/screenshots/ekran-tv.webp)
 
 ### Ludo
 

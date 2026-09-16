@@ -57,7 +57,7 @@ Interfejs przełącza się w całości: nic nie zostaje przetłumaczone do poło
 Osobny układ poziomy na laptopa albo telewizor - wielki kod pokoju, QR do zeskanowania i kto już jest.
 Otwierasz go z lobby; gracze zostają przy swoich telefonach.
 
-![Ekran hosta na telewizorze: kod pokoju M2R5, kod QR i pięcioro graczy](docs/screenshots/ekran-tv.webp)
+![Ekran hosta na telewizorze: kod pokoju 2GQ7, kod QR i pięcioro graczy](docs/screenshots/ekran-tv.webp)
 
 ### Chińczyk
 

@@ -119,7 +119,8 @@ describe("państwa-miasta — pamięć liter między partiami", () => {
 
   it("pamięć jest mała i niesie tylko litery", () => {
     const s = partia();
-    expect(Object.keys(pmEngine.pamiec!(s))).toEqual(["usedLetters"]);
+    // `pamiec` z kontraktu zwraca `unknown` - rdzeń świadomie nie zna kształtu.
+    expect(Object.keys(pmEngine.pamiec!(s) as Record<string, unknown>)).toEqual(["usedLetters"]);
   });
 });
 

@@ -66,13 +66,13 @@ Open it from the lobby; players keep their own phones.
 
 ![Host screen on a TV: room code 2GQ7, QR code and five players](docs/screenshots/ekran-tv.webp)
 
-### Ludo
+### Ludo, on the phone and on the TV
 
-The board, the die and the pieces you are allowed to move this turn. Colours with nobody on
-them take up no room - with two players you get two quarters and a clean board. The second
-seat here is a bot, added in the lobby with one tap.
+The same turn from both sides: your own board with the pieces you may move highlighted, and the
+shared screen with whose turn it is and how many pieces each player has brought home. Three of
+the four seats here are bots, added in the lobby.
 
-![Ludo on a phone: the board with pieces, the die and the roll button](docs/screenshots/chinczyk.webp)
+![Ludo: the player's phone and the host screen side by side, same turn and same die](docs/screenshots/chinczyk.webp)
 
 ## Games
 

@@ -112,7 +112,11 @@ export function Kostka({
     // trzęsła się w nieskończoność po każdym ruchu pionkiem.
     if (wartosc == null || wartosc === poprz) {
       setTurla(false);
-      if (wartosc != null) setPokazywana(wartosc);
+      // Brak rzutu = brak liczby. Wcześniej na kostce zostawał wynik sprzed ruchu, choć
+      // `aria-label` mówił już samo „Kostka" — czytający ekran wiedział, że nic nie ma,
+      // a patrzący widział liczbę. Na dwóch ekranach tego samego pokoju wyglądało to
+      // jak rozjazd stanu: telefon pokazywał jedną liczbę, telewizor inną.
+      setPokazywana(wartosc ?? 1);
       return;
     }
 

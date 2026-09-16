@@ -59,13 +59,13 @@ Otwierasz go z lobby; gracze zostają przy swoich telefonach.
 
 ![Ekran hosta na telewizorze: kod pokoju 2GQ7, kod QR i pięcioro graczy](docs/screenshots/ekran-tv.webp)
 
-### Chińczyk
+### Chińczyk, na telefonie i na telewizorze
 
-Plansza, kostka i pionki, którymi wolno się w tej turze ruszyć. Kolory bez gracza nie zajmują
-miejsca - przy dwóch osobach zostają dwie ćwiartki i czysta plansza. Drugie miejsce przy stole
-zajmuje tu bot, dosadzony w lobby jednym kliknięciem.
+Ta sama tura z dwóch stron: własna plansza z podświetlonymi pionkami, którymi wolno się ruszyć,
+i wspólny ekran z informacją, czyja jest kolej oraz ile pionków każdy doprowadził do domu.
+Trzy z czterech miejsc przy stole zajmują tu boty, dosadzone w lobby.
 
-![Chińczyk na telefonie: plansza z pionkami, kostka i przycisk rzutu](docs/screenshots/chinczyk.webp)
+![Chińczyk: telefon gracza i ekran hosta obok siebie, ta sama tura i ta sama kostka](docs/screenshots/chinczyk.webp)
 
 ## Gry
 

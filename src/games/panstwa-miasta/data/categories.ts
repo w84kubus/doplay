@@ -29,7 +29,12 @@ export const CATEGORY_SETS: Record<string, { name: string; categories: string[] 
 
 export type CategorySetId = keyof typeof CATEGORY_SETS;
 
-// Pula liter (SPEC §5.3): domyślnie polski alfabet bez Q V X Y i bez ogonków.
-export const BASE_LETTERS = "ABCDEFGHIJKLMNOPRSTUWZ".split("");
-// Hardcore dokłada ogonki.
-export const HARDCORE_LETTERS = "ĄĆĘŁŃÓŚŹŻ".split("");
+// Pula liter (SPEC §5.3): polski alfabet bez Q V X Y, czyli bez liter, od których
+// nie zaczyna się żadne polskie słowo.
+//
+// Ł siedziało wcześniej w puli hardcore razem z ogonkami i to był błąd rzeczowy:
+// od Ł zaczyna się mnóstwo zwykłych słów (Łódź, Łotwa, łoś, łyżka, łąka), więc
+// wyrzucanie go do trybu dla zaawansowanych niepotrzebnie zwężało pulę.
+export const BASE_LETTERS = "ABCDEFGHIJKLŁMNOPRSTUWZ".split("");
+// Hardcore dokłada ogonki - te zaczynają naprawdę niewiele słów.
+export const HARDCORE_LETTERS = "ĄĆĘŃÓŚŹŻ".split("");

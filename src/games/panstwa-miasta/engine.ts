@@ -34,6 +34,12 @@ export interface PmState extends WithEvents {
   categories: string[];
   letterPool: string[];
   usedLetters: string[];
+  /**
+   * Kiedy ruszyła TA partia. Nie służy do liczenia czasu, tylko do odróżnienia partii
+   * od poprzedniej w tym samym pokoju: bez tego brudnopis w `localStorage` klejony
+   * z kodu pokoju i numeru rundy trafiał z powrotem do pól w następnej partii.
+   */
+  startedAt: number;
   round: number;
   phase: Phase;
   phaseEndsAt: number | null;
@@ -243,6 +249,7 @@ export const pmEngine: GameEngine<PmState, PmAction, PmSettings> = {
       categories,
       letterPool,
       usedLetters: [],
+      startedAt: ctx.now,
       round: 0,
       phase: "losowanie",
       phaseEndsAt: null,
@@ -368,6 +375,7 @@ export const pmEngine: GameEngine<PmState, PmAction, PmSettings> = {
 
     const base = {
       round: state.round,
+      startedAt: state.startedAt,
       totalRounds: state.settings.rounds,
       phase: state.phase,
       letter: state.letter,

@@ -9,6 +9,8 @@ import { AvatarIcon } from "@/components/AvatarIcon";
 
 interface Common {
   round: number;
+  /** Znacznik TEJ partii - odróżnia brudnopisy od poprzedniej gry w tym samym pokoju. */
+  startedAt: number;
   totalRounds: number;
   phase: "losowanie" | "pisanie" | "weryfikacja" | "wyniki" | "koniec";
   letter: string;
@@ -210,19 +212,38 @@ function WritingPhase({
   pub: Pub; room: GameViewProps["room"]; priv: unknown; isHost: boolean;
   dispatch: (a: unknown) => Promise<void>; now: number; accent: string; nickOf: (u: string) => string;
 }) {
-  const draftKey = `pm-draft-${room.code}-${pub.round}`;
+  // Klucz brudnopisu musi rozróżniać PARTIE, nie tylko rundy.
+  //
+  // Wcześniej był to `kod pokoju + numer rundy`. Numer rundy startuje od 1 w KAŻDEJ
+  // partii, więc druga gra w tym samym pokoju wczytywała do pól odpowiedzi z pierwszej:
+  // runda 1 dostawała brudnopis rundy 1 sprzed godziny, runda 2 - brudnopis rundy 2.
+  // Stąd zgłoszenie „zostają poprzednie hasła".
+  const prefiks = `pm-draft-${room.code}-`;
+  const draftKey = `${prefiks}${pub.startedAt}-${pub.round}`;
   const [answers, setAnswers] = useState<string[]>(() => pub.categories.map(() => ""));
-  const loaded = useRef(false);
+  const zaladowany = useRef<string | null>(null);
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Wczytaj draft z localStorage / privateView (odporność na odświeżenie, SPEC §5.3).
   useEffect(() => {
-    if (loaded.current) return;
-    loaded.current = true;
+    if (zaladowany.current === draftKey) return;
+    zaladowany.current = draftKey;
     const saved = typeof localStorage !== "undefined" ? localStorage.getItem(draftKey) : null;
     const fromPriv = (priv as { answers?: string[] } | null)?.answers;
+    // Każda gałąź KOŃCZY się ustawieniem pól. Wcześniej brak brudnopisu po prostu
+    // wychodził z efektu i w polach zostawało to, co było - czyli poprzednia runda.
     if (saved) setAnswers(JSON.parse(saved));
     else if (fromPriv && fromPriv.some((x) => x)) setAnswers(pub.categories.map((_, i) => fromPriv[i] ?? ""));
+    else setAnswers(pub.categories.map(() => ""));
+
+    // Brudnopisy poprzednich partii w tym pokoju są już bezużyteczne, a zostawałyby
+    // w przeglądarce na zawsze - klucz z czasem startu nigdy się nie powtórzy.
+    if (typeof localStorage !== "undefined") {
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith(prefiks) && !k.startsWith(`${prefiks}${pub.startedAt}-`)) localStorage.removeItem(k);
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draftKey]);
 

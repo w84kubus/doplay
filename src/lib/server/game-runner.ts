@@ -46,6 +46,8 @@ function persist(
   recentActionIds?: string[],
   /** Poprzedni stan silnika — jeśli podany, private docs piszemy tylko gdy się zmieniły. */
   prevState?: unknown,
+  /** Id gry — potrzebne tylko do zapisania pamięci międzypartyjnej pod właściwym kluczem. */
+  gameId?: string,
 ) {
   const players = room.players;
   const phase = engine.phase(state);
@@ -69,6 +71,15 @@ function persist(
     status: finished ? "finished" : "playing",
     version: room.version + 1,
   };
+
+  // Pamięć międzypartyjna (opt-in silnika). Rdzeń nie wie, co tam jest — przenosi to
+  // do `init` następnej partii tej samej gry w tym pokoju. Zapisujemy przy każdym
+  // stanie, bo partia bywa przerywana w połowie, a to, co już się wydarzyło, ma się liczyć.
+  const gra = gameId ?? room.gameId;
+  if (engine.pamiec && gra) {
+    const pamiec = engine.pamiec(state);
+    if (pamiec !== undefined) update[`pamiec.${gra}`] = pamiec;
+  }
 
   t.set(ref.collection("secret").doc("state"), {
     fullState: cleanState,
@@ -159,10 +170,19 @@ export async function startGame(
     const rng = mulberry32(seed);
     const seatOrder = shuffle(Object.keys(room.players), rng);
 
-    const state = engine.init({ players: room.players, seatOrder, settings, now, rng, seed });
+    const state = engine.init({
+      players: room.players,
+      seatOrder,
+      settings,
+      now,
+      rng,
+      seed,
+      // Co ta gra zapamiętała z poprzednich partii w tym pokoju.
+      pamiec: room.pamiec?.[gameId],
+    });
 
     t.update(ref, { gameId, settings, seatOrder, round: 0, narratorUid: room.narratorUid ?? null });
-    persist(t, ref, { ...room, seatOrder, phase: "" }, engine, state, seed, now);
+    persist(t, ref, { ...room, seatOrder, phase: "" }, engine, state, seed, now, undefined, undefined, gameId);
     logger.info("gra wystartowała", { room: code, game: gameId });
   });
 }

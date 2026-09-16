@@ -91,6 +91,19 @@ function firstLetterOk(answer: string, letter: string): boolean {
   if (!a) return false;
   return a.charAt(0).toLocaleUpperCase("pl") === letter;
 }
+/**
+ * Litery zużyte w poprzednich partiach tego pokoju (`GameEngine.pamiec`).
+ *
+ * Wartość przychodzi z Firestore, więc nie ufamy jej kształtowi: wszystko poza tablicą
+ * napisów traktujemy jak brak pamięci. Litery spoza bieżącej puli (np. ogonki z partii
+ * granej w trybie hardcore) są nieszkodliwe - `pickLetter` i tak filtruje po puli.
+ */
+function zapamietaneLitery(pamiec: unknown): string[] {
+  const l = (pamiec as { usedLetters?: unknown } | null | undefined)?.usedLetters;
+  if (!Array.isArray(l)) return [];
+  return l.filter((x): x is string => typeof x === "string");
+}
+
 function pickLetter(state: PmState, rng: () => number): { letter: string; used: string[] } {
   let pool = state.letterPool.filter((l) => !state.usedLetters.includes(l));
   let used = state.usedLetters;
@@ -248,7 +261,10 @@ export const pmEngine: GameEngine<PmState, PmAction, PmSettings> = {
       playerUids: ctx.seatOrder.length ? ctx.seatOrder : Object.keys(ctx.players),
       categories,
       letterPool,
-      usedLetters: [],
+      // Kontynuacja po poprzednich partiach w tym pokoju. Bez tego każda nowa gra
+      // zaczynała pulę od zera i przy pięciu rundach trzy gry na cztery powtarzały
+      // którąś literę - stąd wrażenie „ciągle te same".
+      usedLetters: zapamietaneLitery(ctx.pamiec),
       startedAt: ctx.now,
       round: 0,
       phase: "losowanie",
@@ -453,6 +469,11 @@ export const pmEngine: GameEngine<PmState, PmAction, PmSettings> = {
   scores(state) {
     return state.scores;
   },
+  /** Co przenosimy do następnej partii w tym pokoju: wyłącznie zużyte litery. */
+  pamiec(state) {
+    return { usedLetters: state.usedLetters };
+  },
+
   drainEvents(state): GameEvent[] {
     return state.pendingEvents;
   },

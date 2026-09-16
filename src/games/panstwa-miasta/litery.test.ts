@@ -76,6 +76,53 @@ describe("państwa-miasta — pula liter", () => {
   });
 });
 
+describe("państwa-miasta — pamięć liter między partiami", () => {
+  const players: PlayerMap = { a: gracz("a", true), b: gracz("b") };
+  const partia = (pamiec?: unknown, now = 1000) =>
+    pmEngine.init({
+      players, seatOrder: ["a", "b"], settings: pmSettingsSchema.parse({}),
+      now, rng: mulberry32(7), seed: 7, pamiec,
+    });
+
+  it("bez pamięci partia zaczyna z pełną pulą", () => {
+    // `init` od razu rozgrywa pierwszą rundę, więc na liście zużytych jest już
+    // wylosowana litera - i tylko ona.
+    expect(partia().usedLetters).toHaveLength(1);
+  });
+
+  it("nowa partia nie powtarza liter z poprzedniej", () => {
+    const pierwsza = partia();
+    const zuzyte = ["A", "B", "C", "D", "E"];
+    const druga = partia(pmEngine.pamiec!({ ...pierwsza, usedLetters: zuzyte }));
+    // Zapamiętane zostają, a na koniec dochodzi litera wylosowana w tej partii.
+    expect(druga.usedLetters.slice(0, zuzyte.length)).toEqual(zuzyte);
+    expect(druga.usedLetters).toHaveLength(zuzyte.length + 1);
+    // Litera tej partii musi wypaść POZA tym, co już było.
+    expect(zuzyte).not.toContain(druga.letter);
+  });
+
+  it("pamięć z bazy o nieoczekiwanym kształcie nie wywraca partii", () => {
+    // Wartość wraca z Firestore, więc może być czymkolwiek - stara wersja dokumentu,
+    // ręczna edycja w konsoli, cokolwiek. Ma wtedy znaczyć „brak pamięci", nie wyjątek.
+    for (const smiec of [null, undefined, 42, "ABC", {}, { usedLetters: "ABC" }, { usedLetters: [1, 2] }]) {
+      // Zostaje sama litera tej partii - czyli dokładnie tyle, co przy braku pamięci.
+      expect(partia(smiec).usedLetters).toHaveLength(1);
+    }
+  });
+
+  it("gdy poprzednie partie zużyły całą pulę, losowanie rusza od nowa", () => {
+    const wszystkie = [...BASE_LETTERS];
+    const s = partia({ usedLetters: wszystkie });
+    // `pickLetter` resetuje pulę, gdy nie ma z czego wybierać - inaczej nie byłoby litery.
+    expect(BASE_LETTERS).toContain(s.letter);
+  });
+
+  it("pamięć jest mała i niesie tylko litery", () => {
+    const s = partia();
+    expect(Object.keys(pmEngine.pamiec!(s))).toEqual(["usedLetters"]);
+  });
+});
+
 describe("państwa-miasta — znacznik partii", () => {
   it("każda partia dostaje własny startedAt i widać go w publicView", () => {
     const players: PlayerMap = { a: gracz("a", true), b: gracz("b") };

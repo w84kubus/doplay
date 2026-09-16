@@ -29,6 +29,11 @@ export class GameError extends Error {
 
 export interface InitContext<C> {
   players: PlayerMap;
+  /**
+   * Co ta gra zapamiętała z POPRZEDNICH partii w tym pokoju (patrz `GameEngine.pamiec`).
+   * `undefined`, gdy gra nic nie zapamiętuje albo to pierwsza partia.
+   */
+  pamiec?: unknown;
   seatOrder: string[]; // losowany raz przy starcie (SPEC §8, pkt 8)
   settings: C;
   now: number; // czas serwera
@@ -73,6 +78,22 @@ export interface GameEngine<S, A, C> {
 
   /** Zdarzenia wygenerowane przez ostatnią redukcję. Runner je zapisuje i czyści (SPEC §3.4). */
   drainEvents(state: S): GameEvent[];
+
+  /**
+   * Co przenieść do NASTĘPNEJ partii tej gry w tym samym pokoju (opt-in, jak `canFinish`).
+   *
+   * Rdzeń nie wie, co to znaczy - zapisuje zwróconą wartość pod `rooms/{kod}.pamiec[gameId]`
+   * i oddaje ją z powrotem w `InitContext.pamiec`. Gra bez tej metody działa jak dotąd,
+   * czyli każdą partię zaczyna od zera.
+   *
+   * Zapisywane przy KAŻDYM stanie, nie dopiero na koniec: partia bywa przerywana w połowie,
+   * a wtedy to, co zdążyło się wydarzyć, ma się liczyć tak samo.
+   *
+   * Wartość musi być czystym JSON-em i musi być MAŁA - leży w dokumencie pokoju obok
+   * stanu gry. Państwa-miasta trzymają tu listę zużytych liter, żeby kolejna partia nie
+   * losowała w kółko tych samych.
+   */
+  pamiec?(state: S): unknown;
 }
 
 export interface GameManifest<C = unknown> {

@@ -73,6 +73,11 @@ export interface Room {
   publicState: Record<string, unknown>;
   version: number; // optimistic lock (SPEC §8, pkt 11)
   records?: RoomRecords;
+  /**
+   * Co poszczególne gry zapamiętały między partiami, po `gameId` (patrz `GameEngine.pamiec`).
+   * Rdzeń nie interpretuje zawartości - przenosi ją z powrotem do `init` następnej partii.
+   */
+  pamiec?: Record<string, unknown>;
 }
 
 // Ile ms bez pinga oznacza „rozłączony" (SPEC §3.7).

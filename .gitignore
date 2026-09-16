@@ -61,3 +61,6 @@ next-env.d.ts
 # Zrzuty ekranu wrzucane do rootu na potrzeby rozmowy (10 MB) — nie należą do repo
 /*.jpg
 /domowka-icon/
+
+# Ślady po narzędziu Playwright MCP (zrzuty, logi konsoli) - nie należą do repo.
+.playwright-mcp/

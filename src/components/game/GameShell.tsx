@@ -44,6 +44,16 @@ export function GameShell({
   const [muted, setMutedState] = useState(false);
   const [confirmAbort, setConfirmAbort] = useState(false);
   const [confirmFinish, setConfirmFinish] = useState(false);
+  /** Serwer odrzucił ostatnią akcję — gracz musi się o tym dowiedzieć. */
+  const [odrzucona, setOdrzucona] = useState(false);
+
+  // Komunikat gaśnie sam. To podpowiedź „kliknięcie nie weszło", nie błąd do zamykania,
+  // a w grze na czas nie ma czasu na zamykanie okienek.
+  useEffect(() => {
+    if (!odrzucona) return;
+    const id = setTimeout(() => setOdrzucona(false), 5000);
+    return () => clearTimeout(id);
+  }, [odrzucona]);
 
   useEffect(() => {
     unlockAudio();
@@ -68,8 +78,20 @@ export function GameShell({
   const { PlayerView } = comps;
 
   // C2: actionId generowany raz per kliknięcie — serwer odrzuca duplikaty.
+  //
+  // Odrzucona akcja MUSI dojść do gracza, a wcześniej nie docierała w ŻADNEJ grze:
+  // część widoków gasiła błąd przez `.catch(() => {})`, reszta zostawiała nieobsłużone
+  // odrzucenie w konsoli. Z perspektywy grającego kliknięcie po prostu nic nie robiło —
+  // stąd zgłoszenie „wypadła szóstka, a nie dało się wystawić pionka".
+  //
+  // Najczęstsza przyczyna to rozjazd: ekran pokazuje stan sprzed kilku sekund, więc gracz
+  // klika pionek, którym po stronie serwera nie ma już czym ruszyć. Komunikat mówi o tym
+  // wprost, zamiast powtarzać techniczną treść z serwera — ta jest wyłącznie po polsku
+  // i nie przeszłaby przez dwujęzyczność interfejsu (zasada 5).
   const dispatch = (action: unknown): Promise<void> =>
-    apiPost(`/api/rooms/${room.code}/action`, { action, actionId: newActionId() }).then(() => undefined);
+    apiPost(`/api/rooms/${room.code}/action`, { action, actionId: newActionId() })
+      .then(() => setOdrzucona(false))
+      .catch(() => setOdrzucona(true));
   const finished = room.status === "finished";
   // Gra zgłasza, że w tej fazie sama oferuje zakończenie rozgrywki (patrz niżej).
   const canFinish = (room.publicState as { canFinish?: boolean } | undefined)?.canFinish === true;
@@ -115,6 +137,17 @@ export function GameShell({
           accent={accent}
         />
       </div>
+
+      {/* Odrzucona akcja. Nad sterowaniem, nie na nim — dolna krawędź należy do
+          „Przerwij i wróć do lobby" (patrz notices.ts: jeden komunikat naraz). */}
+      {odrzucona && (
+        <p
+          role="status"
+          className="relative w-full max-w-3xl rounded-[14px] border-[3px] border-bursztyn bg-panel px-4 py-2 text-center text-sm font-bold text-ink animate-[fadeIn_0.2s_ease]"
+        >
+          {t("game.actionRejected")}
+        </p>
+      )}
 
       {!wakeSupported && (
         <p className="relative w-full max-w-3xl text-center text-xs font-semibold text-ink-muted">

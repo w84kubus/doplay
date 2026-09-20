@@ -469,6 +469,7 @@ const pl = {
   "game.again": "Jeszcze raz",
   "game.unknown": "Nieznana gra: {id}",
   "game.wakeHint": "Ustaw wygaszanie ekranu na dłużej - Twoja przeglądarka nie utrzyma go sama.",
+  "game.actionRejected": "Ruch nie wszedł - plansza zdążyła się zmienić. Odśwież stronę, jeśli się powtórzy.",
 
   // — połączenie —
   "conn.offline": "Brak połączenia - próbuję wrócić…",
@@ -1050,6 +1051,7 @@ const en: Record<Key, string> = {
   "game.again": "Play again",
   "game.unknown": "Unknown game: {id}",
   "game.wakeHint": "Set your screen timeout longer - your browser won't keep it awake.",
+  "game.actionRejected": "That move did not go through - the board moved on. Refresh the page if it keeps happening.",
 
   "conn.offline": "No connection - trying to reconnect…",
   "conn.online": "✓ Connected",

@@ -87,6 +87,7 @@ the four seats here are bots, added in the lobby.
 | **Casino** | Bet your chips. Run out and you're out. 4 modes: Jackpot, Double, Wheel, Slots. | 2–16 |
 | **Tic-tac-toe** | Three in a row. The winner keeps the table, the rest queue up to take it. | 2–16 |
 | **Ludo** | Roll a six, leave the base and knock the others home. Play against bots if you are short of people. | 2–4 |
+| **Four in a Row** | Drop your discs and line up four before your opponent does. Play a bot if nobody else is free. | 2–16 |
 
 > **Stopwatch has two modes.** In **TARGET**, everyone gets the same time to hit and stops the
 > clock on their own device - the digits are masked, so you count in your head. In **GUESS THE
@@ -110,9 +111,11 @@ the four seats here are bots, added in the lobby.
 - **Avatars** - 30 illustrated characters on colored tiles, every one a face that looks back at you; no two people in a room get the same one
 - **Spectator mode** - `?widz=1` gets you into the room to watch without taking a seat, in any game
 - **Public rooms** - the host opens the room to strangers with one switch in the lobby, and closes it again once the group is complete. The list shows how many are waiting and how long the room has been open, and drops rooms that are full, mid-game or abandoned
-- **Bots** - short of people for Ludo? The host seats a computer player in the lobby. It plays a
-  reasonable game: captures when it can, brings pieces home, hides on safe squares. Games that
-  cannot use a bot don't offer the option, and switching to one clears the bots off the table
+- **Bots** - short of people for Ludo or Four in a Row? The host seats a computer player in the
+  lobby. Each bot plays a reasonable game of its own: Ludo captures when it can, brings pieces
+  home and hides on safe squares; Four in a Row wins when it can, blocks when it must, and won't
+  hand you a win by stacking underneath one. Games that cannot use a bot don't offer the option,
+  and switching to one clears the bots off the table
 - **Room records** - who won how many times plus a list of feats, persistent for the room's lifetime
 - **Empty slots** - the lobby shows free seats, so a host waiting alone isn't staring at one row and a void
 - **Folder tabs** - creating and joining are two tabs of one form; nickname and avatar survive the switch
@@ -236,7 +239,8 @@ src/
 │   ├── odcien/                 # 🎨 Shade
 │   ├── kasyno/                 # 🎰 Casino
 │   ├── kolko/                  # ⭕ Tic-tac-toe
-│   └── chinczyk/               # 🎲 Ludo (engine, board geometry, bot)
+│   ├── chinczyk/               # 🎲 Ludo (engine, board geometry, bot)
+│   └── czworki/                # 🔴 Four in a Row (engine, bot, proportional board)
 │
 ├── components/                 # React components
 │   ├── game/                   # GameShell, LobbyGames, GameRulesCard

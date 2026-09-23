@@ -97,6 +97,17 @@ const pl: Record<string, GameRules> = {
     ],
     tip: "Mafia wygrywa, gdy jest ich tyle samo co reszty.",
   },
+  czworki: {
+    howTo: "Wrzucasz żetony do kolumn, a one spadają na sam dół. Wygrywa ten, kto pierwszy ustawi cztery swoje w rzędzie - w poziomie, pionie albo na skos. Gracie we dwoje, reszta pokoju czeka w kolejce.",
+    steps: [
+      "Dotykasz kolumny, żeton spada na najniższe wolne pole",
+      "Na zmianę dokładacie po jednym żetonie",
+      "Cztery swoje w linii kończą rundę",
+      "Zapełniona plansza bez czwórki to remis",
+      "Wygrany zostaje przy stole, przegrany idzie na koniec kolejki",
+    ],
+    tip: "Środkowa kolumna leży na największej liczbie możliwych czwórek - dlatego zaczyna się od niej. Uważaj też, co podkładasz: twój żeton buduje przeciwnikowi podest o pole wyżej.",
+  },
   chinczyk: {
     howTo: "Klasyczny chińczyk. Wyprowadź cztery pionki z bazy, obejdź planszę i wprowadź je do środka. Kto pierwszy zbierze tam komplet, wygrywa.",
     steps: [
@@ -193,6 +204,17 @@ const en: Record<string, GameRules> = {
       "Play until the town or the mafia wins",
     ],
     tip: "The mafia wins once they equal the number of everyone else.",
+  },
+  czworki: {
+    howTo: "Drop discs into the columns and watch them fall to the bottom. First to line up four of their own - across, up or diagonally - takes the round. Two of you play, the rest of the room waits in the queue.",
+    steps: [
+      "Tap a column and the disc drops to the lowest free slot",
+      "You take turns adding one disc at a time",
+      "Four of your own in a line end the round",
+      "A full board with no four is a draw",
+      "The winner stays at the table, the loser goes to the back of the queue",
+    ],
+    tip: "The middle column sits on more possible fours than any other, which is why you open there. And watch what you hand over: your disc is a step up for your opponent.",
   },
   chinczyk: {
     howTo: "Classic Ludo. Get four pieces out of your base, walk them round the board and bring them into the centre. First to gather all four there wins.",

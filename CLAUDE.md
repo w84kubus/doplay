@@ -9,8 +9,8 @@ Do sierpnia 2026 aplikacja nazywała się Domówka. Stąd klucze `domowka-locale
 `domowka-session` i projekt Firebase `domowka-39gd0` — **tych nazw nie zmieniamy**:
 identyfikują dane już zapisane w przeglądarkach graczy i w backendzie.
 
-Gry (9, wszystkie w `registry.ts`): Stoper, Państwa-miasta, Wisielec, Impostor,
-Mafia, Odcień, Kasyno, Kółko i krzyżyk, Chińczyk.
+Gry (10, wszystkie w `registry.ts`): Stoper, Państwa-miasta, Wisielec, Impostor,
+Mafia, Odcień, Kasyno, Kółko i krzyżyk, Chińczyk, Czwórki.
 
 Stack: Next.js 15 (App Router) + TypeScript strict + Tailwind v4 + Firebase (Firestore + Anonymous Auth) + Vercel.
 
@@ -233,6 +233,31 @@ entity`. Chińczyk trzyma więc pozycje pionków w JEDNEJ płaskiej tablicy 16 p
 Mapa z tablicami w wartościach jest dozwolona, ale płaska tablica indeksowana funkcją
 czyta się lepiej niż `{"0": [...], "1": [...]}` wracające z bazy jako obiekt.
 
+### Plansza zna tylko PUŁAP rozmiaru, nigdy rzeczywisty
+
+Komponent planszy dostaje `rozmiar` jako górną granicę pola. Realny rozmiar wychodzi dopiero
+z szerokości ekranu albo z limitu wysokości i bywa o połowę mniejszy. Każda wartość policzona
+z pułapu w pikselach rozjeżdża się wtedy z tym, co widać — a rozjazd jest niewidoczny na
+telefonie, na którym się to pisze, i uderza dopiero na telewizorze.
+
+W Czwórkach kosztowało to dwie pomyłki: obwódka `0,16 × 110 px` na polu, które wyszło 65 px,
+zamieniła zwycięską czwórkę w cztery obwarzanki z punkcikiem w środku, a odstęp 6 px przy polu
+38 px dał 16 % zamiast zaplanowanych 13 %.
+
+- Promienie i obwódki: `radial-gradient` w procentach PROMIENIA, nie `border` ani `box-shadow`.
+- Odstępy: `margin` w procentach (liczy się od szerokości pola), nie `gap` (procent odstępu
+  w kolumnie liczyłby się od jej wysokości, którą same pola dopiero wyznaczają).
+- Animacja spadania: `translateY` w procentach własnej wysokości.
+- Cień głębi otworu może zostać w pikselach — kilka pikseli wygląda tak samo w każdej skali.
+
+Sprawdzać pomiarem, nie okiem: `getBoundingClientRect` dwóch sąsiednich pól i stosunek odstępu
+do szerokości pola musi wyjść tak samo na telefonie i na ekranie TV.
+
+Drugi wniosek z tej samej gry: **plansza wyższa niż Kółko musi mieć limit WYSOKOŚCI**, nie tylko
+szerokości. Sześć rzędów dobranych do szerokości schodziło poniżej ekranu 1280x720 i z sześciu
+rzędów widać było trzy. Limit wchodzi przez `maxWidth: min(Xpx, Ydvh)` — tak samo jak
+w Chińczyku (`min(42rem, 72dvh)`), bo to szerokość rządzi rozmiarem pola.
+
 ### Boty jeżdżą na istniejących tickach
 
 Bot to zwykły wpis w `players` z flagą `bot: true`. Nie ma tokenu, nie pinguje i nigdy
@@ -262,8 +287,8 @@ Przycisk w lobby jest ograniczony limitem WYBRANEJ gry, nie `MAX_W_POKOJU` — i
 dosadziłby chińczykowi piętnaście botów i dowiedziałby się o tym przy „Zaczynamy".
 
 **Boty są opt-inem manifestu (`wspieraBoty`), nie funkcją całego rdzenia.** Bot rusza się
-tylko tam, gdzie silnik przy `PHASE_TIMEOUT` gra ZA nieobecnego. Dziś deklaruje to wyłącznie
-Chińczyk. W Stoperze, Państwach-miastach, Odcieniu i Kasynie termin tylko przewija fazę, więc
+tylko tam, gdzie silnik przy `PHASE_TIMEOUT` gra ZA nieobecnego. Dziś deklarują to Chińczyk
+i Czwórki. W Stoperze, Państwach-miastach, Odcieniu i Kasynie termin tylko przewija fazę, więc
 bot byłby milczącym miejscem przy stole; w Mafii i Impostorze wręcz szkodliwym — rolą, która
 nigdy nie zadziała. Przycisk nie pokazuje się bez tej deklaracji, a `startGame` odmawia startu
 gry bez `wspieraBoty`, gdy w pokoju został bot z POPRZEDNIEJ partii.

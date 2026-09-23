@@ -15,11 +15,13 @@ import { odcienManifest } from "./odcien/manifest";
 import { kasynoManifest } from "./kasyno/manifest";
 import { kolkoManifest } from "./kolko/manifest";
 import { chinczykManifest } from "./chinczyk/manifest";
+import { czworkiManifest } from "./czworki/manifest";
 import { mafiaEngine } from "./mafia/engine";
 import { odcienEngine } from "./odcien/engine";
 import { kasynoEngine } from "./kasyno/engine";
 import { kolkoEngine } from "./kolko/engine";
 import { chinczykEngine } from "./chinczyk/engine";
+import { czworkiEngine } from "./czworki/engine";
 
 export interface GameEntry {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,6 +40,7 @@ export const GAMES: Record<string, GameEntry> = {
   [kasynoManifest.id]: { manifest: kasynoManifest, engine: kasynoEngine },
   [kolkoManifest.id]: { manifest: kolkoManifest, engine: kolkoEngine },
   [chinczykManifest.id]: { manifest: chinczykManifest, engine: chinczykEngine },
+  [czworkiManifest.id]: { manifest: czworkiManifest, engine: czworkiEngine },
 };
 
 /** Manifesty do wyboru gry w lobby (kolejność jak w SPEC §1). */

@@ -60,6 +60,11 @@ export const GAME_COMPONENTS: Record<string, GameComponents> = {
     PlayerView: dynamic(() => import("./chinczyk/PlayerView").then((m) => m.ChinczykPlayerView), { loading: Loading }),
     HostView: dynamic(() => import("./chinczyk/HostView").then((m) => m.ChinczykHostView), { loading: Loading }),
   },
+  czworki: {
+    Settings: dynamic(() => import("./czworki/Settings").then((m) => m.CzworkiSettingsPanel)),
+    PlayerView: dynamic(() => import("./czworki/PlayerView").then((m) => m.CzworkiPlayerView), { loading: Loading }),
+    HostView: dynamic(() => import("./czworki/HostView").then((m) => m.CzworkiHostView), { loading: Loading }),
+  },
   mafia: {
     Settings: dynamic(() => import("./mafia/Settings").then((m) => m.MafiaSettingsPanel)),
     PlayerView: dynamic(() => import("./mafia/PlayerView").then((m) => m.MafiaPlayerView), { loading: Loading }),

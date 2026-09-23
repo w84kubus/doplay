@@ -97,6 +97,18 @@ const pl: Record<string, GameRules> = {
     ],
     tip: "Mafia wygrywa, gdy jest ich tyle samo co reszty.",
   },
+  statki: {
+    howTo: "Każdy ma własną flotę na własnej planszy i nikt nie widzi cudzej. Strzelacie na przemian w pola przeciwnika, aż jedna flota pójdzie na dno.",
+    steps: [
+      "Flota jest wylosowana od razu - możesz ją poprzestawiać albo wylosować od nowa",
+      "Dotknij statku, żeby go wybrać, potem pola, żeby go przenieść; „Obróć\" zmienia kierunek",
+      "Statki nie mogą się stykać, nawet rogiem",
+      "Strzelacie na przemian, dotykając pól na planszy przeciwnika",
+      "Trafienie daje kolejny strzał (można wyłączyć), pudło oddaje turę",
+      "Wygrywa ten, kto pierwszy zatopi całą flotę przeciwnika",
+    ],
+    tip: "Po zatopieniu statku woda dookoła odsłania się sama - statki nie mogą się stykać, więc nie ma tam czego szukać. Zaczynaj od pól w szachownicę: każdy statek dłuższy niż jedno pole musi na którymś z nich stanąć.",
+  },
   czworki: {
     howTo: "Wrzucasz żetony do kolumn, a one spadają na sam dół. Wygrywa ten, kto pierwszy ustawi cztery swoje w rzędzie - w poziomie, pionie albo na skos. Gracie we dwoje, reszta pokoju czeka w kolejce.",
     steps: [
@@ -204,6 +216,18 @@ const en: Record<string, GameRules> = {
       "Play until the town or the mafia wins",
     ],
     tip: "The mafia wins once they equal the number of everyone else.",
+  },
+  statki: {
+    howTo: "Everyone gets their own fleet on their own board, and nobody sees anyone else's. You take turns firing at your opponent's squares until one fleet goes down.",
+    steps: [
+      "Your fleet is dealt at once - rearrange it or shuffle for a new layout",
+      "Tap a ship to select it, then a square to move it; \"Rotate\" turns it",
+      "Ships may not touch, not even at the corners",
+      "Take turns firing by tapping squares on your opponent's board",
+      "A hit earns another shot (you can switch this off), a miss passes the turn",
+      "First to sink the whole enemy fleet wins",
+    ],
+    tip: "Sinking a ship reveals the water around it by itself - ships cannot touch, so there is nothing to look for there. Open on a chequerboard pattern: every ship longer than one square has to sit on one of those.",
   },
   czworki: {
     howTo: "Drop discs into the columns and watch them fall to the bottom. First to line up four of their own - across, up or diagonally - takes the round. Two of you play, the rest of the room waits in the queue.",

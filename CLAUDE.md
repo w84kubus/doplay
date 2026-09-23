@@ -9,8 +9,8 @@ Do sierpnia 2026 aplikacja nazywała się Domówka. Stąd klucze `domowka-locale
 `domowka-session` i projekt Firebase `domowka-39gd0` — **tych nazw nie zmieniamy**:
 identyfikują dane już zapisane w przeglądarkach graczy i w backendzie.
 
-Gry (10, wszystkie w `registry.ts`): Stoper, Państwa-miasta, Wisielec, Impostor,
-Mafia, Odcień, Kasyno, Kółko i krzyżyk, Chińczyk, Czwórki.
+Gry (11, wszystkie w `registry.ts`): Stoper, Państwa-miasta, Wisielec, Impostor,
+Mafia, Odcień, Kasyno, Kółko i krzyżyk, Chińczyk, Czwórki, Statki.
 
 Stack: Next.js 15 (App Router) + TypeScript strict + Tailwind v4 + Firebase (Firestore + Anonymous Auth) + Vercel.
 
@@ -233,6 +233,34 @@ entity`. Chińczyk trzyma więc pozycje pionków w JEDNEJ płaskiej tablicy 16 p
 Mapa z tablicami w wartościach jest dozwolona, ale płaska tablica indeksowana funkcją
 czyta się lepiej niż `{"0": [...], "1": [...]}` wracające z bazy jako obiekt.
 
+### Gra z trwałą ukrytą planszą (Statki)
+
+Impostor i Mafia chowają ROLĘ, Państwa-miasta odpowiedzi jednej rundy. Statki są pierwsze
+z trwałym, prywatnym układem, który przeciwnik odkrywa przez całą partię — i to zmienia
+sposób testowania, nie samą architekturę (flota leży w `secret/state` jak każdy sekret).
+
+- **`publicView` wystawia wyłącznie SKUTKI strzałów**: trafienia, pudła i pola zatopionych.
+  Nigdy floty ani niczego, z czego da się ją odtworzyć.
+- Wyciek tutaj **nie wywala partii i nie rzuca wyjątkiem** — po prostu ktoś z otwartym
+  DevToolsem wygrywa każdą partię i nikt nie wie dlaczego. Dlatego tajność ma własny plik
+  testów (`tajnosc.test.ts`), osobny od reguł gry.
+- Właściwy test tajności to **nierozróżnialność, nie „nie ma pola X"**: przesunięcie
+  NIETKNIĘTEGO statku w dowolne inne dopuszczalne miejsce musi dać bajt w bajt ten sam
+  `publicView`. Pierwsza wersja porównywała liczby w całym widoku i nie działała — obie
+  plansze numerują pola tak samo, więc pole 50 gracza A wyglądało jak wyciek pola 50 gracza B.
+- **Ekran TV dostaje sam `publicState`**, więc nie ma z czego narysować floty. To nie jest
+  ostrożność widoku, tylko konsekwencja kontraktu — i dlatego działa bez pilnowania.
+- **Bot dostaje dokładnie to, co widzi człowiek** (własne strzały i ich skutki), a nie stan
+  silnika. Inaczej grałby bezbłędnie, a wyciek mógłby się kiedyś przelać do widoku.
+- Pole `sklad` w widoku publicznym nazywa się tak, a nie `flota`, świadomie: dwa pola o tej
+  samej nazwie, jedno jawne i jedno tajne, prosiłyby się o pomyłkę przy dokładaniu czegokolwiek.
+
+Osobno warto zapamiętać pułapkę, którą wyłapał dopiero test rekordu: `zakoncz` PODMIENIAŁ
+bufor zdarzeń, więc wygrana w ostatniej rundzie kasowała zdarzenia tej rundy — a przy
+domyślnym ustawieniu Statków (jedna partia) wygrana ZAWSZE wypada w ostatniej. Ginął
+komunikat o zwycięstwie i rekord za suchą wygraną. Zdarzenia rundy trzeba DOKLEIĆ do
+zdarzenia końca gry. To samo dotyczyło Czwórek i zostało poprawione razem.
+
 ### Plansza zna tylko PUŁAP rozmiaru, nigdy rzeczywisty
 
 Komponent planszy dostaje `rozmiar` jako górną granicę pola. Realny rozmiar wychodzi dopiero
@@ -287,8 +315,8 @@ Przycisk w lobby jest ograniczony limitem WYBRANEJ gry, nie `MAX_W_POKOJU` — i
 dosadziłby chińczykowi piętnaście botów i dowiedziałby się o tym przy „Zaczynamy".
 
 **Boty są opt-inem manifestu (`wspieraBoty`), nie funkcją całego rdzenia.** Bot rusza się
-tylko tam, gdzie silnik przy `PHASE_TIMEOUT` gra ZA nieobecnego. Dziś deklarują to Chińczyk
-i Czwórki. W Stoperze, Państwach-miastach, Odcieniu i Kasynie termin tylko przewija fazę, więc
+tylko tam, gdzie silnik przy `PHASE_TIMEOUT` gra ZA nieobecnego. Dziś deklarują to Chińczyk,
+Czwórki i Statki. W Stoperze, Państwach-miastach, Odcieniu i Kasynie termin tylko przewija fazę, więc
 bot byłby milczącym miejscem przy stole; w Mafii i Impostorze wręcz szkodliwym — rolą, która
 nigdy nie zadziała. Przycisk nie pokazuje się bez tej deklaracji, a `startGame` odmawia startu
 gry bez `wspieraBoty`, gdy w pokoju został bot z POPRZEDNIEJ partii.

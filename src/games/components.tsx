@@ -65,6 +65,11 @@ export const GAME_COMPONENTS: Record<string, GameComponents> = {
     PlayerView: dynamic(() => import("./czworki/PlayerView").then((m) => m.CzworkiPlayerView), { loading: Loading }),
     HostView: dynamic(() => import("./czworki/HostView").then((m) => m.CzworkiHostView), { loading: Loading }),
   },
+  statki: {
+    Settings: dynamic(() => import("./statki/Settings").then((m) => m.StatkiSettingsPanel)),
+    PlayerView: dynamic(() => import("./statki/PlayerView").then((m) => m.StatkiPlayerView), { loading: Loading }),
+    HostView: dynamic(() => import("./statki/HostView").then((m) => m.StatkiHostView), { loading: Loading }),
+  },
   mafia: {
     Settings: dynamic(() => import("./mafia/Settings").then((m) => m.MafiaSettingsPanel)),
     PlayerView: dynamic(() => import("./mafia/PlayerView").then((m) => m.MafiaPlayerView), { loading: Loading }),

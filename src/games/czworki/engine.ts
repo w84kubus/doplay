@@ -211,7 +211,18 @@ function rozstrzygnij(s: CzworkiState, zwyciezca: string | null, linia: readonly
         : { type: "wynik", text: "Remis.", key: "czworki.event.draw", params: {} },
     ],
   };
-  return koniecPartii ? { ...zakoncz(stan), ostatnia: stan.ostatnia, scores } : stan;
+  if (!koniecPartii) return stan;
+
+  // Zdarzenie rundy doklejamy do zdarzenia końca gry, zamiast pozwolić `zakoncz`
+  // podmienić bufor — inaczej ostatnia runda partii nigdy nie trafiałaby do feedu
+  // z informacją, KTO ją wygrał.
+  const zakonczona = zakoncz(stan);
+  return {
+    ...zakonczona,
+    ostatnia: stan.ostatnia,
+    scores,
+    pendingEvents: [...stan.pendingEvents, ...zakonczona.pendingEvents],
+  };
 }
 
 /** Wrzuca żeton do kolumny i rozlicza planszę. Wspólne dla ruchu gracza i timeoutu. */

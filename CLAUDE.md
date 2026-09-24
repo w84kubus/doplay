@@ -130,6 +130,13 @@ znacznie trudniejsze do zauważenia niż czerwony build.
 | `games/rules.ts` | karta „Jak grać?" — PL i EN osobno | przycisk zasad nic nie pokazuje |
 | `lib/i18n/dict.ts` | `game.{id}.name` i `game.{id}.tagline` | zamiast nazwy widać surowy klucz |
 
+Ilustrowany kafelek to osobna, OPCJONALNA rzecz: plik `public/games/{id}.webp` (192x192,
+przezroczysty) plus id w `ILLUSTRATED` w `components/GameIcon.tsx`. Gra bez tego dostaje
+ikonę Lucide i działa normalnie — ale stoi w lobby obok dziesięciu rysunków jako płaski
+znaczek i widać to natychmiast. Obrazki z Gemini mają kratkę przezroczystości WRYSOWANĄ
+w JPEG, więc alfę robi się samemu: `scripts/kafelek.py` wycina tło wypełnieniem od
+krawędzi (progiem na biel nie można — biel jest też w rysunku), przycina i skaluje.
+
 To są tablice rejestracyjne, nie logika — rdzeń nadal nie zna żadnej konkretnej gry.
 Sprawdzone przy dodawaniu Kółka i krzyżyka: sześć testów kontraktu z `finish.test.ts`
 przeszło od razu, bez dotykania `GameShell` ani `game-runner`.

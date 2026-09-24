@@ -13,6 +13,8 @@ const ILLUSTRATED = new Set([
   "kasyno",
   "kolko",
   "chinczyk",
+  "czworki",
+  "statki",
 ]);
 
 export function GameIcon({

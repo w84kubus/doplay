@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  dziobWPlanszy,
   flotaZachlanna,
   FLOTY,
   losujFlote,
@@ -11,6 +12,7 @@ import {
   zatopiony,
   type Statek,
 } from "./plansza";
+import { idxPola, kolumnaPola, wierszPola } from "./plansza";
 import { mulberry32 } from "@/games/rng";
 
 const BOK = 8;
@@ -130,5 +132,70 @@ describe("statki — zatapianie", () => {
   it("polaZatopionych zwraca tylko statki, które faktycznie poszły na dno", () => {
     const flota: Statek[] = [trojmasztowiec, { dlugosc: 2, pole: 30, poziomo: false }];
     expect(polaZatopionych(flota, BOK, new Set([9, 10, 11, 30]))).toEqual([9, 10, 11]);
+  });
+});
+
+describe("statki — dociskanie statku do planszy", () => {
+  // Arytmetyka spod przeciągania palcem i spod przycisku obrotu. Wyszła z widoku tutaj,
+  // bo to jedyna część tego gestu, którą da się sprawdzić bez przeglądarki — a psuje się
+  // cicho: statek po prostu nie rusza się z miejsca i wygląda to na zepsuty przycisk.
+
+  it("w środku planszy nie zmienia niczego", () => {
+    expect(dziobWPlanszy(3, 2, 2, true, BOK)).toBe(idxPola(2, 2, BOK));
+    expect(dziobWPlanszy(3, 2, 2, false, BOK)).toBe(idxPola(2, 2, BOK));
+  });
+
+  it("cofa statek poziomy przy prawej krawędzi", () => {
+    // Czteromasztowiec celowany w kolumnę 7 musi zacząć się w kolumnie 4.
+    expect(dziobWPlanszy(4, 1, 7, true, BOK)).toBe(idxPola(1, 4, BOK));
+    expect(dziobWPlanszy(2, 1, 7, true, BOK)).toBe(idxPola(1, 6, BOK));
+  });
+
+  it("cofa statek pionowy przy dolnej krawędzi", () => {
+    expect(dziobWPlanszy(4, 7, 1, false, BOK)).toBe(idxPola(4, 1, BOK));
+    expect(dziobWPlanszy(3, 6, 1, false, BOK)).toBe(idxPola(5, 1, BOK));
+  });
+
+  it("nie wypuszcza statku przed lewą ani górną krawędź", () => {
+    // Tak wychodzi przy chwycie za rufę: `kolumna - offset` bywa ujemne.
+    expect(dziobWPlanszy(3, 0, -2, true, BOK)).toBe(idxPola(0, 0, BOK));
+    expect(dziobWPlanszy(3, -2, 0, false, BOK)).toBe(idxPola(0, 0, BOK));
+  });
+
+  it("obraca wzdłuż właściwej osi", () => {
+    // Poziomo dociska KOLUMNĘ i zostawia wiersz, pionowo odwrotnie. Zamiana tych dwóch
+    // miejsc daje ruch, który wygląda prawie dobrze i jest nie do wypatrzenia okiem.
+    expect(wierszPola(dziobWPlanszy(4, 6, 7, true, BOK), BOK)).toBe(6);
+    expect(kolumnaPola(dziobWPlanszy(4, 7, 6, false, BOK), BOK)).toBe(6);
+  });
+
+  it("statek dłuższy niż plansza nie daje ujemnego pola", () => {
+    // Sytuacja niemożliwa przy naszych flotach (najdłuższy statek ma 4 pola, najmniejsza
+    // plansza 8), ale funkcja ma z niej wyjść liczbą, a nie indeksem spoza tablicy.
+    // Dociskana jest tylko oś, wzdłuż której statek leży — wiersz statku poziomego
+    // zostaje tam, gdzie celował gracz.
+    const pole = dziobWPlanszy(12, 3, 3, true, BOK);
+    expect(kolumnaPola(pole, BOK)).toBe(0);
+    expect(wierszPola(pole, BOK)).toBe(3);
+    expect(pole).toBeGreaterThanOrEqual(0);
+  });
+
+  it("każde dociśnięte ustawienie MIEŚCI SIĘ na planszy", () => {
+    // Właściwa obietnica tej funkcji, sprawdzona na wszystkim naraz.
+    for (const dlugosc of [1, 2, 3, 4]) {
+      for (let w = -3; w < BOK + 3; w++) {
+        for (let k = -3; k < BOK + 3; k++) {
+          for (const poziomo of [true, false]) {
+            const wiersz = Math.min(Math.max(w, 0), BOK - 1);
+            const kolumna = Math.min(Math.max(k, 0), BOK - 1);
+            const pole = dziobWPlanszy(dlugosc, wiersz, kolumna, poziomo, BOK);
+            expect(
+              polaStatku({ dlugosc, pole, poziomo }, BOK),
+              `${dlugosc}-masztowiec z (${wiersz},${kolumna}) ${poziomo ? "poziomo" : "pionowo"} wypadł poza planszę`,
+            ).not.toBeNull();
+          }
+        }
+      }
+    }
   });
 });

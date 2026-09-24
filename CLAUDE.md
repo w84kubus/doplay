@@ -261,6 +261,37 @@ domyślnym ustawieniu Statków (jedna partia) wygrana ZAWSZE wypada w ostatniej.
 komunikat o zwycięstwie i rekord za suchą wygraną. Zdarzenia rundy trzeba DOKLEIĆ do
 zdarzenia końca gry. To samo dotyczyło Czwórek i zostało poprawione razem.
 
+### Przeciąganie palcem po planszy
+
+Ustawianie floty w Statkach idzie przeciąganiem (Pointer Events). Cztery rzeczy decydują
+o tym, czy gest jest znośny, i każda z nich osobno potrafi go zepsuć:
+
+- **Podgląd lokalny, zanim wróci serwer.** Klient nadal nie zapisuje stanu gry (zasada 1) —
+  to wyłącznie podgląd w `useState`, czyszczony, gdy serwer przyśle to samo ustawienie,
+  plus bezpiecznik czasowy na wypadek odrzucenia. Bez tego statek stał w starym miejscu
+  przez całą podróż do Firestore'a i z powrotem, a ręka była już gdzie indziej. Zmierzone:
+  2 ms do odrysowania zamiast pełnego obiegu sieciowego.
+- **Chwycony kawałek zostaje pod palcem.** Przenoszenie DZIOBA na wskazane pole sprawia,
+  że złapanie czteromasztowca za rufę przerzuca go o trzy pola w bok.
+- **Dociskanie do krawędzi zamiast odmowy.** Palec celuje w statek, nie w jego dziób,
+  więc przy ścianie ustawienie trzeba cofnąć, a nie uznać za nielegalne. Ta sama funkcja
+  (`dziobWPlanszy`) obsługuje obrót — bez niej obrót przy prawej krawędzi po cichu nic
+  nie robił i przycisk wyglądał na zepsuty.
+- **`touch-action: none` TYLKO na statkach.** Na całej kracie odbiera przewijanie strony,
+  a ekran ustawiania jest wyższy niż telefon.
+
+Pozostałe pułapki: `setPointerCapture` w `try/catch` (bez przechwytywania gest nadal
+działa, bo pole liczymy ze współrzędnych przez `elementFromPoint`, a stan gestu jest
+wspólny dla całej kraty), oraz zduszenie `click`, które przeglądarka wysyła po
+przeciągnięciu na pole startowe — inaczej jedno pociągnięcie robi dwie rzeczy naraz.
+
+Dotknięcie zostaje jako DRUGA droga do tego samego: przeciągania nie obsłuży klawiatura
+ani czytnik ekranu.
+
+Przy sprawdzaniu w przeglądarce: faza ustawiania ma termin (domyślnie 45 s). Debugowanie
+trwa dłużej, więc połowa moich prób przeciągania poszła po ekranie STRZELANIA i wyglądała
+na niedziałający gest. Najpierw `document.body.innerText`, potem wnioski.
+
 ### Plansza zna tylko PUŁAP rozmiaru, nigdy rzeczywisty
 
 Komponent planszy dostaje `rozmiar` jako górną granicę pola. Realny rozmiar wychodzi dopiero

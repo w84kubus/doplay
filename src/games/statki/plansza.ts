@@ -124,6 +124,25 @@ export function losujFlote(
   return null;
 }
 
+/**
+ * Dziób statku DOCIŚNIĘTY do planszy.
+ *
+ * Bierze pole, w które celuje gracz, i cofa je tyle, ile trzeba, żeby cały statek się
+ * zmieścił. Dwa miejsca tego potrzebują i oba wyglądałyby bez tego na zepsute:
+ * przeciąganie przy krawędzi (palec celuje w statek, nie w jego dziób) oraz obrót
+ * czteromasztowca stojącego przy prawej ścianie, który inaczej po cichu nie robi nic.
+ */
+export function dziobWPlanszy(
+  dlugosc: number,
+  wiersz: number,
+  kolumna: number,
+  poziomo: boolean,
+  bok: number,
+): number {
+  const dociśnij = (x: number) => Math.min(Math.max(x, 0), Math.max(bok - dlugosc, 0));
+  return poziomo ? idxPola(wiersz, dociśnij(kolumna), bok) : idxPola(dociśnij(wiersz), kolumna, bok);
+}
+
 /** Które pola floty są już trafione. */
 export function trafioneStatku(s: Statek, bok: number, strzaly: ReadonlySet<number>): number {
   const pola = polaStatku(s, bok) ?? [];

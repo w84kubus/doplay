@@ -155,3 +155,19 @@ describe("kolko — widoki", () => {
     expect(kolkoEngine.privateView(s, "b")).toMatchObject({ gram: false, znak: null });
   });
 });
+
+describe("kolko — zdarzenia ostatniej rundy", () => {
+  it("wynik ostatniej rundy nie ginie pod zdarzeniem końca gry", () => {
+    // `zakoncz` PODMIENIAŁ bufor zdarzeń, więc rozstrzygnięcie rundy, po której partia
+    // się kończy, nie docierało do feedu — a to akurat ta runda, o której wszyscy mówią.
+    const wygrana = [0, 3, 1, 4, 2];
+    let s = ruchy(gra({ rounds: 3 }), wygrana);
+    s = ruchy(kolkoEngine.reduce(s, { type: "NEXT" }, ctx("host")), wygrana);
+    s = ruchy(kolkoEngine.reduce(s, { type: "NEXT" }, ctx("host")), wygrana);
+
+    expect(s.phase).toBe("koniec");
+    const klucze = kolkoEngine.drainEvents(s).map((e) => e.key);
+    expect(klucze).toContain("kolko.event.win");
+    expect(klucze).toContain("kolko.event.gameOver");
+  });
+});

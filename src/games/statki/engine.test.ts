@@ -305,3 +305,26 @@ describe("statki — partie i rotacja pary", () => {
     expect(() => statkiEngine.reduce(gra(), { type: "NEXT" }, ctx("host"))).toThrow();
   });
 });
+
+describe("statki — zdarzenia ostatniej partii", () => {
+  it("przy DOMYŚLNEJ jednej partii wygrana i rekord docierają do feedu", () => {
+    // Osobny test od tych wyżej, i to jest cała jego racja bytu: pomocnik `zFlotami`
+    // gra z `rounds: 0`, więc nigdy nie wchodzi w gałąź końca gry — a przy domyślnym
+    // ustawieniu (jedna partia) wygrana wypada w ostatniej rundzie ZAWSZE. Wcześniej
+    // `zakoncz` podmieniał wtedy bufor zdarzeń i ginęło jedno i drugie.
+    const s: StatkiState = {
+      ...gra({ rounds: 1, dodatkowyStrzal: true }),
+      floty: { host: [statek(2, 40)], a: [statek(2, 9)] },
+      gotowi: ["host", "a"], phase: "strzal", strzaly: { host: [], a: [] }, tura: 0,
+    };
+    let po = statkiEngine.reduce(s, { type: "STRZEL", pole: 9 }, ctx("host"));
+    po = statkiEngine.reduce(po, { type: "STRZEL", pole: 10 }, ctx("host"));
+
+    expect(po.phase, "jedna partia kończy całą grę").toBe("koniec");
+    const zdarzenia = statkiEngine.drainEvents(po);
+    expect(zdarzenia.map((e) => e.key)).toEqual(
+      expect.arrayContaining(["statki.event.win", "statki.event.dry", "statki.event.gameOver"]),
+    );
+    expect(zdarzenia.filter((e) => e.meta?.rekord === true)).toHaveLength(1);
+  });
+});

@@ -423,3 +423,19 @@ describe("czwórki — pełne partie", () => {
     }
   });
 });
+
+describe("czwórki — zdarzenia ostatniej rundy", () => {
+  it("wynik ostatniej rundy nie ginie pod zdarzeniem końca gry", () => {
+    // Ten sam błąd co w Kółku i w Statkach: `zakoncz` podmieniał bufor zdarzeń zamiast
+    // do niego dopisać, więc runda kończąca partię nie miała w feedzie zwycięzcy.
+    const pionem = [0, 1, 0, 1, 0, 1, 0];
+    let s = wrzuty(gra({ rounds: 3 }), pionem);
+    s = wrzuty(czworkiEngine.reduce(s, { type: "NEXT" }, ctx("host")), pionem);
+    s = wrzuty(czworkiEngine.reduce(s, { type: "NEXT" }, ctx("host")), pionem);
+
+    expect(s.phase).toBe("koniec");
+    const klucze = czworkiEngine.drainEvents(s).map((e) => e.key);
+    expect(klucze).toContain("czworki.event.win");
+    expect(klucze).toContain("czworki.event.gameOver");
+  });
+});

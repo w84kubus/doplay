@@ -125,7 +125,18 @@ function rozstrzygnij(s: KolkoState, zwyciezca: string | null, linia: readonly n
         : { type: "wynik", text: "Remis.", key: "kolko.event.draw", params: {} },
     ],
   };
-  return koniecPartii ? { ...zakoncz(stan), ostatnia: stan.ostatnia, scores } : stan;
+  if (!koniecPartii) return stan;
+
+  // Zdarzenie rundy DOKLEJAMY do zdarzenia końca gry, zamiast pozwolić `zakoncz`
+  // podmienić bufor. Inaczej ostatnia runda partii — ta, po której zapada wynik —
+  // nigdy nie trafiałaby do feedu z informacją, kto ją wygrał.
+  const zakonczona = zakoncz(stan);
+  return {
+    ...zakonczona,
+    ostatnia: stan.ostatnia,
+    scores,
+    pendingEvents: [...stan.pendingEvents, ...zakonczona.pendingEvents],
+  };
 }
 
 /** Stawia znak i rozlicza planszę. Wspólne dla ruchu gracza i dla timeoutu. */

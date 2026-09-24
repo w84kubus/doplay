@@ -53,11 +53,11 @@ The interface switches whole: nothing is left half-translated.
 
 **Polski**
 
-![Doplay in Polish: landing, joining a room, lobby and a Hangman round](docs/screenshots/telefony-pl.webp)
+![Doplay in Polish: landing, joining a room, lobby and a Four in a Row round](docs/screenshots/telefony-pl.webp)
 
 **English**
 
-![Doplay in English: landing, joining a room, lobby and a Hangman round](docs/screenshots/telefony-en.webp)
+![Doplay in English: landing, joining a room, lobby and a Four in a Row round](docs/screenshots/telefony-en.webp)
 
 ### Host screen (TV)
 
@@ -73,6 +73,21 @@ shared screen with whose turn it is and how many pieces each player has brought 
 the four seats here are bots, added in the lobby.
 
 ![Ludo: the player's phone and the host screen side by side, same turn and same die](docs/screenshots/chinczyk.webp)
+
+### Battleships: your fleet is yours alone
+
+Left to right: arranging the fleet, a shot landing, and what the shared screen shows. Drag a ship
+to move it - the piece you grabbed stays under your finger, and it turns red where it will not fit.
+
+The middle phone is the point of the game. A sunk ship turns solid and **the water around it opens
+by itself** - ships may not touch, so there is nothing left to look for there. Below your opponent's
+board, the fleet bar dims the ships already down.
+
+And the TV, which everybody in the room can see, shows **only what shots have revealed**. Nobody's
+fleet is ever on that screen, including yours - the engine never sends it, so there is nothing to
+leak. That is the part the tests care about most.
+
+![Battleships: arranging the fleet, a sunk ship on the phone, and both boards on the TV](docs/screenshots/statki.webp)
 
 ## Games
 

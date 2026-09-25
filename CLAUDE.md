@@ -243,9 +243,25 @@ i zatwierdzenia.
 
 Zmierzone przed zmianą (`scripts/pomiar-api.sh`, z Polski, produkcja):
 
-- `/api/time`, endpoint zwracający samo `Date.now()` — **260 ms**,
-- `/api/rooms/publiczne`, jedno zapytanie do Firestore — **400 ms**,
+- `/api/time`, endpoint zwracający samo `Date.now()` — 260 ms,
+- `/api/rooms/publiczne`, jedno zapytanie do Firestore — 400 ms,
 - czyli sam round trip funkcja→baza kosztował **~140 ms**.
+
+**Z tych trzech liczb porównywalna jest tylko ostatnia.** Pierwsza wersja skryptu wołała
+`curl` osobno dla każdej próby, więc każda płaciła TCP + TLS do edge'a (~130 ms), których
+przeglądarka nie płaci — dwie pierwsze liczby są o tę stałą zawyżone. RÓŻNICA między nimi
+jest w porządku, bo obie płaciły ten sam narzut. Skrypt po poprawce trzyma jedno połączenie
+na endpoint i liczy medianę, więc jego wyniki są bezwzględne, ale NIE zestawiaj ich wprost
+z tymi dwoma powyżej.
+
+Po przeniesieniu, już poprawionym skryptem: funkcja bez bazy ~90 ms, z bazą ~130 ms,
+round trip do bazy **~40 ms**. Czyli trzykrotnie krócej niż przed zmianą, a transakcja
+robi ten round trip co najmniej dwa razy.
+
+Zimny start wychodzi osobno i jest teraz największą pojedynczą liczbą: **1,2–1,4 s** na
+endpoincie dotykającym bazy, przy ~300 ms na tym bez bazy. To nie region, tylko budzenie
+instancji (import `firebase-admin`, podpisanie JWT, wymiana na token). Dla gry imprezowej
+trafia w najgorszy moment — pierwsze kliknięcie wieczoru.
 
 Stąd `"regions": ["fra1"]` w `vercel.json`. Frankfurt jest ~20 ms od Warszawy zamiast ~140.
 Vercel nie ma polskiego regionu, a plan Hobby pozwala wybrać dokładnie jeden — i o to chodzi.

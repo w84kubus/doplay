@@ -230,6 +230,48 @@ sztywno. Do tej fazy limitu nie było wcale — kontrola `maxPlayers` siedziała
 w `startGame`, więc publiczny pokój mógłby nazbierać tylu obcych, że żadnej gry nie da
 się odpalić, a błąd zobaczyłby dopiero host przy starcie.
 
+### Funkcje muszą stać obok bazy, nie obok użytkownika
+
+Firestore tego projektu siedzi w `europe-central2`, czyli w Warszawie. Funkcje na Vercelu
+domyślnie ruszają w `iad1` (Waszyngton) i nikt tego nie zauważa, bo nic się nie psuje —
+jest tylko WOLNO, i to tym bardziej, im więcej graczy.
+
+Droga jednego kliknięcia wyglądała tak: telefon w Polsce → edge w Sztokholmie → funkcja
+w Waszyngtonie → Firestore w Warszawie → i z powrotem tą samą trasą. Atlantyk dwa razy
+na każdy round trip do bazy, a transakcja potrzebuje co najmniej dwóch: odczytu
+i zatwierdzenia.
+
+Zmierzone przed zmianą (`scripts/pomiar-api.sh`, z Polski, produkcja):
+
+- `/api/time`, endpoint zwracający samo `Date.now()` — **260 ms**,
+- `/api/rooms/publiczne`, jedno zapytanie do Firestore — **400 ms**,
+- czyli sam round trip funkcja→baza kosztował **~140 ms**.
+
+Stąd `"regions": ["fra1"]` w `vercel.json`. Frankfurt jest ~20 ms od Warszawy zamiast ~140.
+Vercel nie ma polskiego regionu, a plan Hobby pozwala wybrać dokładnie jeden — i o to chodzi.
+
+Dwie rzeczy, które warto rozumieć przy diagnozie następnym razem:
+
+- **Odczyty były szybkie przez cały czas.** Klient czyta Firestore BEZPOŚREDNIO przez
+  `onSnapshot`, Polska→Warszawa to ~20 ms. Przez Vercela idą tylko ZAPISY (zasada 1).
+  Dlatego objaw jest mylący: cudze ruchy pojawiają się natychmiast, a własne kliknięcie
+  wisi. Kto tego nie wie, zaczyna podejrzewać realtime albo hosting.
+- **Dlatego jest gorzej przy większej liczbie graczy.** Baza ma `concurrencyMode:
+  PESSIMISTIC`, więc transakcja trzyma blokadę na dokumencie pokoju. Im dłuższy round trip,
+  tym dłużej blokada jest zajęta, a wszyscy piszą do tego samego dokumentu. Skrócenie
+  round tripu skraca blokadę i rywalizacja znika sama, bez zmian w kodzie.
+
+Region sprawdza się nagłówkiem: `x-vercel-id: arn1::iad1` znaczy „wszedł w Sztokholmie,
+wykonał się w Waszyngtonie". Lokalizację bazy da się odczytać z Admin API
+(`GET https://firestore.googleapis.com/v1/projects/{id}/databases/(default)` → `locationId`).
+
+Następny próg, gdyby kiedyś było trzeba: pingi piszą do `rooms/{kod}`, czyli do JEDNEGO
+dokumentu, a Firestore wytrzymuje tam około jednego zapisu na sekundę. Przy ośmiu graczach
+same pingi to ~0,8 zapisu/s, zanim ktokolwiek zrobi ruch. Lekarstwem jest przeniesienie
+obecności do `rooms/{kod}/presence/{uid}` — każdy pisze do swojego dokumentu i nikt z nikim
+nie konkuruje, a ping przestaje budzić listenery pozostałych. To już zmiana w rdzeniu
+(obecność, migracja hosta, kasowanie pokoju), więc nie na zapas.
+
 ### Firestore nie przyjmuje tablicy w tablicy
 
 `number[][]` w stanie silnika przechodzi typy, testy i build, a wywala się dopiero przy

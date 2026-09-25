@@ -260,8 +260,31 @@ robi ten round trip co najmniej dwa razy.
 
 Zimny start wychodzi osobno i jest teraz największą pojedynczą liczbą: **1,2–1,4 s** na
 endpoincie dotykającym bazy, przy ~300 ms na tym bez bazy. To nie region, tylko budzenie
-instancji (import `firebase-admin`, podpisanie JWT, wymiana na token). Dla gry imprezowej
-trafia w najgorszy moment — pierwsze kliknięcie wieczoru.
+instancji. Rozłożony na części (pomiar lokalny, zakotwiczony w różnicy zimne/ciepłe
+z produkcji):
+
+| Faza | Ile | Czyje |
+|---|---|---|
+| Alokacja kontenera + boot Node + bundle Next | ~300–800 ms | Vercela |
+| `import firebase-admin` przy zimnym cache plików | ~240 ms | nasze |
+| Pierwsze zapytanie: JWT→token dostępu + kanał gRPC | ~250 ms | nasze |
+| Sam odczyt z bazy | ~40 ms | już OK po zmianie regionu |
+
+Trasy z autoryzacją płacą jeszcze **~90 ms** na klucze publiczne do `verifyIdToken`,
+i to SZEREGOWO przed bazą. Stąd rozgrzewka w `admin.ts` — patrz komentarz tam.
+Zysk ~70 ms, zmierzony na ośmiu próbach na wariant.
+
+Dwie rzeczy, które wyszły przy mierzeniu i oszczędzą komuś ślepej uliczki:
+
+- **Sam `credential.getAccessToken()` nie wystarczy.** Wymiana tokenu to 153 ms, ale
+  pierwsze zapytanie PO NIEJ i tak kosztuje kolejne 192 ms — kanał gRPC zestawia się
+  dopiero przy prawdziwym zapytaniu. Rozgrzewać trzeba zapytaniem.
+- **Trzy próby to za mało, żeby cokolwiek z tego wnioskować.** Na trzech wyszło mi
+  100–190 ms zysku, na ośmiu 70 ms. Sieć do Google jitteruje bardziej, niż wynosi
+  mierzony efekt; mediana z ośmiu, nie średnia z trzech.
+
+Zimny start boli RAZ na przerwę w ruchu, a nie w trakcie grania — to problem pierwszego
+wrażenia, nie płynności. Ścieżka ciepła to ~130 ms i ona rządzi odczuciem z gry.
 
 Stąd `"regions": ["fra1"]` w `vercel.json`. Frankfurt jest ~20 ms od Warszawy zamiast ~140.
 Vercel nie ma polskiego regionu, a plan Hobby pozwala wybrać dokładnie jeden — i o to chodzi.

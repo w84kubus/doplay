@@ -289,6 +289,18 @@ wrażenia, nie płynności. Ścieżka ciepła to ~130 ms i ona rządzi odczuciem
 Stąd `"regions": ["fra1"]` w `vercel.json`. Frankfurt jest ~20 ms od Warszawy zamiast ~140.
 Vercel nie ma polskiego regionu, a plan Hobby pozwala wybrać dokładnie jeden — i o to chodzi.
 
+**To samo musi stać w ustawieniach PROJEKTU, nie tylko w repo.** Przez chwilę było inaczej:
+`vercel.json` mówił `fra1`, a projekt dalej miał `iad1` w `serverlessFunctionRegion`
+i w `functionDefaultRegions`. Repo wygrywa, więc działało — ale dwa źródła prawdy, które
+mówią co innego, odzywają się później: wystarczy, że ktoś usunie `regions` przy porządkach,
+i funkcje po cichu wracają za ocean. Objawem jest „znowu zrobiło się wolno" bez żadnej
+zmiany w kodzie. Wyrównane przez API; w panelu to Settings → Functions → Region.
+
+Fluid compute (`defaultResourceConfig.fluid`) jest WŁĄCZONY i był od początku — sprawdzone
+w API, nie zgadywane. Dlatego zimny start płaci realnie tylko pierwszy gracz po przerwie:
+instancje żyją dłużej i jedna obsługuje wiele żądań naraz. Pomiar 1,2–1,4 s brałem na
+projekcie, który akurat zszedł do zera, bo nikt nie grał.
+
 Dwie rzeczy, które warto rozumieć przy diagnozie następnym razem:
 
 - **Odczyty były szybkie przez cały czas.** Klient czyta Firestore BEZPOŚREDNIO przez

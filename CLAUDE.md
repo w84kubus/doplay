@@ -417,6 +417,30 @@ szerokości. Sześć rzędów dobranych do szerokości schodziło poniżej ekran
 rzędów widać było trzy. Limit wchodzi przez `maxWidth: min(Xpx, Ydvh)` — tak samo jak
 w Chińczyku (`min(42rem, 72dvh)`), bo to szerokość rządzi rozmiarem pola.
 
+### Układ z telefonu na desktopie bywa odwrotnością tego, co trzeba
+
+Statki pokazują dwie plansze. Na telefonie jedyne sensowne ułożenie to jedna pod drugą,
+bo brakuje szerokości — i tak było zrobione. Na laptopie jest DOKŁADNIE ODWROTNIE:
+szerokości zostaje w nadmiarze, a tnie wysokość.
+
+Zmierzone przed poprawką, okno 1440x820: plansza przeciwnika **295x295 px** (pole 25 px),
+własna flota **164x164** (pole 13 px), przy **1145 px niewykorzystanej szerokości** —
+i strona i tak się przewijała. Trzynastopikselowe pole jest nieczytelne.
+
+Po ułożeniu plansz obok siebie od `md` w górę: **426 px** i **335 px**, pola 37 i 29,
+bez przewijania. Te same liczby w niższym oknie 1440x640: 333 i 333.
+
+Mechanizm, bo nie jest oczywisty: limit wysokości kraty musi być INNY w każdym z układów,
+a zwykły props nie zna punktów łamania. Dlatego `Krata` czyta `var(--krata-maxwys, Xdvh)`,
+gdzie X to wartość z propsa jako domyślna, a widok nadpisuje zmienną klasą Tailwinda
+(`[--krata-maxwys:36dvh] md:[--krata-maxwys:52dvh]`). Decyzja o układzie zostaje w widoku,
+a komponent planszy pozostaje głupi.
+
+Drugi wniosek z tej samej poprawki: **paski pod planszą trzeba sprawdzić przy dziesięciu
+pozycjach, nie przy pięciu**. Flota dla planszy 10x10 ma dziesięć statków i przy `gap-1.5`
+ostatni jednomasztowiec spadał do drugiego rzędu — wyglądało to jak usterka renderowania,
+a nie jak pasek floty. Plansza 8x8 ma pięć statków i problemu nie pokazywała.
+
 ### Boty jeżdżą na istniejących tickach
 
 Bot to zwykły wpis w `players` z flagą `bot: true`. Nie ma tokenu, nie pinguje i nigdy

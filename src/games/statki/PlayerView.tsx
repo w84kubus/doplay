@@ -400,39 +400,48 @@ export function StatkiPlayerView({ room, publicState, privateState, meUid, isHos
         </p>
       )}
 
-      <div className="flex w-full flex-col items-center gap-1">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-ink-muted">
-          {gram ? t("statki.rivalBoardOf", { nick: nickOf(przeciwnik) }) : nickOf(przeciwnik)}
-        </p>
-        <Krata
-          bok={pub.bok}
-          stany={cudzeStany}
-          rozmiar={46}
-          maxWys={36}
-          accent={accent}
-          etykieta={t("statki.rivalBoard")}
-          aktywne={(pole) => mojaTura && !oddane.has(pole)}
-          onPole={(pole) => {
-            vibrate(20);
-            dispatch({ type: "STRZEL", pole });
-          }}
-        />
-        <Flota sklad={pub.sklad} zatopionych={pub.plansze[przeciwnik]?.zatopionych ?? 0} accent={accent} />
-      </div>
+      {/* Na telefonie plansze stoją jedna pod drugą, bo szerokości jest mało. Na desktopie
+          jest ODWROTNIE: szerokości zostaje 1145 px niewykorzystanych, a to wysokość tnie
+          planszę do 295 px i strona i tak się przewija. Dlatego od `md` w górę idą obok
+          siebie — tak samo jak na ekranie TV i z tego samego powodu.
 
-      <div className="flex w-full flex-col items-center gap-1">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-ink-muted">
-          {gram ? t("statki.myBoard") : nickOf(ja)}
-        </p>
-        <Krata
-          bok={pub.bok}
-          stany={mojeStany}
-          rozmiar={26}
-          maxWys={20}
-          accent={accent}
-          etykieta={t("statki.myBoard")}
-        />
-        <Flota sklad={pub.sklad} zatopionych={pub.plansze[ja]?.zatopionych ?? 0} accent={accent} />
+          Limit wysokości siedzi w zmiennej `--krata-maxwys`, bo musi być inny w każdym
+          z tych układów, a props nie zna punktów łamania. Plansza przeciwnika dostaje
+          więcej miejsca niż własna flota (`flex-[3]` kontra `flex-[2]`): w tę się celuje,
+          tamta jest do sprawdzania, co oberwało. */}
+      <div className="flex w-full flex-col items-center gap-3 md:flex-row md:items-start md:justify-center md:gap-6">
+        <div className="flex w-full min-w-0 flex-col items-center gap-1 [--krata-maxwys:36dvh] md:flex-[3] md:[--krata-maxwys:52dvh]">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-ink-muted">
+            {gram ? t("statki.rivalBoardOf", { nick: nickOf(przeciwnik) }) : nickOf(przeciwnik)}
+          </p>
+          <Krata
+            bok={pub.bok}
+            stany={cudzeStany}
+            rozmiar={52}
+            accent={accent}
+            etykieta={t("statki.rivalBoard")}
+            aktywne={(pole) => mojaTura && !oddane.has(pole)}
+            onPole={(pole) => {
+              vibrate(20);
+              dispatch({ type: "STRZEL", pole });
+            }}
+          />
+          <Flota sklad={pub.sklad} zatopionych={pub.plansze[przeciwnik]?.zatopionych ?? 0} accent={accent} />
+        </div>
+
+        <div className="flex w-full min-w-0 flex-col items-center gap-1 [--krata-maxwys:20dvh] md:flex-[2] md:[--krata-maxwys:52dvh]">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-ink-muted">
+            {gram ? t("statki.myBoard") : nickOf(ja)}
+          </p>
+          <Krata
+            bok={pub.bok}
+            stany={mojeStany}
+            rozmiar={36}
+            accent={accent}
+            etykieta={t("statki.myBoard")}
+          />
+          <Flota sklad={pub.sklad} zatopionych={pub.plansze[ja]?.zatopionych ?? 0} accent={accent} />
+        </div>
       </div>
 
       {pub.kolejka.length > 0 && (

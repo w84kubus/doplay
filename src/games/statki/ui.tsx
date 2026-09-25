@@ -66,7 +66,14 @@ export function Krata({
   stany: StanPola[];
   /** GÓRNA GRANICA boku pola w px. Węższy ekran zmniejsza kratę proporcjonalnie. */
   rozmiar: number;
-  /** Ile wysokości ekranu (w dvh) krata może najwyżej zająć. */
+  /**
+   * Ile wysokości ekranu (w dvh) krata może najwyżej zająć — wartość DOMYŚLNA.
+   *
+   * Nadpisuje ją zmienna `--krata-maxwys` ustawiona gdziekolwiek wyżej w drzewie.
+   * Jest tak, bo limit musi być różny na telefonie i na desktopie (tam plansze stoją
+   * obok siebie, a nie jedna pod drugą), a zwykły props nie zna punktów łamania.
+   * Zmienną ustawia się klasą Tailwinda, czyli w tym samym miejscu co resztę układu.
+   */
   maxWys?: number;
   onPole?: (pole: number) => void;
   /** Które pola reagują na dotyk. Null = żadne. */
@@ -87,9 +94,7 @@ export function Krata({
   onPusc?: (przesuniety: boolean) => void;
 }) {
   const bokKraty = rozmiar * (bok + (bok + 1) * (ODSTEP / 100));
-  const ograniczenie = maxWys
-    ? `min(${Math.round(bokKraty)}px, ${maxWys.toFixed(1)}dvh)`
-    : `${Math.round(bokKraty)}px`;
+  const ograniczenie = `min(${Math.round(bokKraty)}px, var(--krata-maxwys, ${(maxWys ?? 100).toFixed(1)}dvh))`;
   const podswietlone = new Set(wybrane ?? []);
 
   // Przeciąganie na wskaźnikach (Pointer Events), nie na osobnych obsługach myszy i dotyku.
@@ -219,7 +224,11 @@ export function Flota({
   // Które statki poszły na dno, nie wiadomo — wiadomo tylko ILE. Dlatego gasimy
   // je od najdłuższego: to informacja o liczbie, nie o tym, który konkretnie.
   return (
-    <div className="flex flex-wrap items-center justify-center gap-1.5">
+    // Pasek musi zmieścić dziesięć statków (plansza 10x10) w kolumnie węższej niż plansza
+    // przeciwnika. Przy `gap-1.5` ostatni jednomasztowiec spadał do drugiego rzędu i wyglądał
+    // jak usterka, a nie jak pasek floty. Zawijanie zostaje na wypadek jeszcze węższych
+    // ekranów, ale przy normalnych szerokościach nie ma już czego zawijać.
+    <div className="flex max-w-full flex-wrap items-center justify-center gap-x-1 gap-y-1.5">
       {[...sklad].sort((a, b) => b - a).map((dlugosc, i) => (
         <span
           key={i}

@@ -3,14 +3,14 @@
   "configurations": [
     {
       "name": "domowka",
-      "runtimeExecutable": "sh",
-      "runtimeArgs": ["-c", "cd /Users/jakub/domowka && npm run dev"],
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
       "port": 3000
     },
     {
       "name": "domowka-prod",
-      "runtimeExecutable": "sh",
-      "runtimeArgs": ["-c", "npm start"],
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["start"],
       "port": 3000
     }
   ]
